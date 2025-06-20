@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"YfmMUx7Lt9\",\"type\":\"onboarding\",\"data\":{\"onboarding_name\":\"AU Localisation\",\"col\":12}},{\"id\":\"suIF92wV1R\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Australian Localisation\",\"col\":12}}]",
+ "content": "[{\"id\":\"0UnkUcajmK\",\"type\":\"onboarding\",\"data\":{\"onboarding_name\":\"AU Localisation\",\"col\":12}},{\"id\":\"suIF92wV1R\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Australian Localisation\",\"col\":12}}]",
  "creation": "2025-06-19 23:36:17.700703",
  "custom_blocks": [
   {
@@ -18,7 +18,7 @@
  "is_hidden": 0,
  "label": "AU Localisation",
  "links": [],
- "modified": "2025-06-20 13:58:54.460971",
+ "modified": "2025-06-20 15:11:23.142870",
  "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
  "name": "AU Localisation",

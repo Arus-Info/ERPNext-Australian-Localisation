@@ -8,6 +8,10 @@ app_license = "gpl-3.0"
 # Apps
 # ------------------
 app_include_js = "australian_localisation.bundle.js"
+
+fixtures = [
+    {"dt" : "Custom HTML Block", "filters" : { "name" : "Australian Localisation"}}
+]
 # required_apps = []
 
 # Each item in the list will be shown as an app in the apps page
