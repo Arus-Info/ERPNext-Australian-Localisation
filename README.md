@@ -3,7 +3,7 @@
 Australian Localisation for ERPNext
 
 ### Prerequisites
-ERPNext v15.x.x (Expecting Frappe Release on Australian Chart of Accounts)
+ERPNext v15.x.x (Waiting for Frappe Release on Australian Chart of Accouts)
 
 ### Installation
 
