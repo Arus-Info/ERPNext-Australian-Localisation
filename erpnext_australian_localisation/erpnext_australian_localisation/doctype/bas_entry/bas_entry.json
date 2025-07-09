@@ -1,0 +1,137 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-06-30 15:03:04.063473",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "voucher_number",
+  "column_break_nmkm",
+  "voucher_type",
+  "section_break_ixoq",
+  "g1",
+  "g2",
+  "g3",
+  "g9",
+  "column_break_rokb",
+  "g10",
+  "g11",
+  "g14",
+  "g20"
+ ],
+ "fields": [
+  {
+   "fieldname": "voucher_number",
+   "fieldtype": "Dynamic Link",
+   "in_list_view": 1,
+   "label": "Voucher Number",
+   "options": "voucher_type"
+  },
+  {
+   "fieldname": "column_break_nmkm",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "voucher_type",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Voucher Type",
+   "options": "DocType"
+  },
+  {
+   "fieldname": "section_break_ixoq",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "g1",
+   "fieldtype": "Currency",
+   "label": "G1"
+  },
+  {
+   "default": "0",
+   "fieldname": "g3",
+   "fieldtype": "Currency",
+   "label": "G3"
+  },
+  {
+   "fieldname": "column_break_rokb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "g2",
+   "fieldtype": "Currency",
+   "label": "G2"
+  },
+  {
+   "default": "0",
+   "fieldname": "g9",
+   "fieldtype": "Currency",
+   "label": "G9"
+  },
+  {
+   "default": "0",
+   "fieldname": "g10",
+   "fieldtype": "Currency",
+   "label": "G10"
+  },
+  {
+   "default": "0",
+   "fieldname": "g14",
+   "fieldtype": "Currency",
+   "label": "G14"
+  },
+  {
+   "default": "0",
+   "fieldname": "g11",
+   "fieldtype": "Currency",
+   "label": "G11"
+  },
+  {
+   "default": "0",
+   "fieldname": "g20",
+   "fieldtype": "Currency",
+   "label": "G20"
+  }
+ ],
+ "grid_page_length": 50,
+ "in_create": 1,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-07-09 16:11:51.838868",
+ "modified_by": "Administrator",
+ "module": "ERPNext Australian Localisation",
+ "name": "BAS Entry",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User"
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager"
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Auditor"
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

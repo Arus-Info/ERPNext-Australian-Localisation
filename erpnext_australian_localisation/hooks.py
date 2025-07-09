@@ -155,6 +155,21 @@ before_uninstall = "erpnext_australian_localisation.uninstall.before_uninstall"
 # 	}
 # }
 
+doc_events = {
+    "Sales Invoice" : { 
+        "on_submit" : "erpnext_australian_localisation.overrides.invoices.on_submit" ,
+        "on_cancel" : "erpnext_australian_localisation.overrides.invoices.on_cancel"
+        },
+    "Purchase Invoice" : { 
+        "on_submit" : "erpnext_australian_localisation.overrides.invoices.on_submit", 
+        "on_cancel" : "erpnext_australian_localisation.overrides.invoices.on_cancel"
+        },
+     "Expense Claim" : { 
+        "on_submit" : "erpnext_australian_localisation.overrides.invoices.expense_on_submit",
+        "on_cancel" : "erpnext_australian_localisation.overrides.invoices.on_cancel"
+        }
+}
+
 # Scheduled Tasks
 # ---------------
 
