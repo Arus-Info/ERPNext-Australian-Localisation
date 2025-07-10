@@ -36,7 +36,7 @@ def on_submit(doc, event):
 			bas.g2 = total
 		elif tax_template == "AU Sales - GST Free":
 			bas.g3 = total
-		elif tax_template == "AU Sales - GST ":
+		elif tax_template == "AU Sales - GST":
 			bas.g3 = amount_0
 
 	elif "Purchase" in tax_template_doctype:
