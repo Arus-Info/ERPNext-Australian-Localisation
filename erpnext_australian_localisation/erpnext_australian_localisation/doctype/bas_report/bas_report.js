@@ -5,7 +5,6 @@ let reporting_period = ""
 
 frappe.ui.form.on("BAS Report", {
 	refresh(frm) {
-
 		if (frm.is_new()) {
 		}
 		else {
@@ -33,7 +32,6 @@ frappe.ui.form.on("BAS Report", {
 	start_date(frm) {
 		frm.trigger("update_end_date")
 	},
-
 	update_end_date: async function (frm) {
 		if (frm.doc.start_date && frm.doc.company) {
 			if (!reporting_period) {
@@ -84,5 +82,4 @@ frappe.ui.form.on("BAS Report", {
 			}
 		}
 	}
-
 });
