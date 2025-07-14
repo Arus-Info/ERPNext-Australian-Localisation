@@ -1,0 +1,186 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:BAS-{start_date}-{###}",
+ "creation": "2025-07-11 14:39:01.881471",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_szad",
+  "company",
+  "start_date",
+  "column_break_xsiv",
+  "reporting_status",
+  "end_date",
+  "section_break_fwyr",
+  "column_break_ogwt",
+  "net_gst",
+  "g1",
+  "g4",
+  "g14",
+  "column_break_ocbf",
+  "1a",
+  "g2",
+  "g10",
+  "column_break_vahx",
+  "1b",
+  "g3",
+  "g11",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_szad",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "start_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Start Date",
+   "reqd": 1,
+   "set_only_once": 1
+  },
+  {
+   "fieldname": "column_break_xsiv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "reporting_status",
+   "fieldtype": "Select",
+   "label": "Reporting Status",
+   "options": "In Review\nValidated",
+   "reqd": 1
+  },
+  {
+   "fieldname": "end_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "End Date",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_fwyr",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "net_gst",
+   "fieldtype": "Currency",
+   "label": "Net GST",
+   "read_only_depends_on": "eval:doc.reporting_status !== \"In Review\";"
+  },
+  {
+   "fieldname": "g1",
+   "fieldtype": "Currency",
+   "label": "G1",
+   "read_only_depends_on": "eval:doc.reporting_status !== \"In Review\";"
+  },
+  {
+   "fieldname": "g4",
+   "fieldtype": "Currency",
+   "label": "G4",
+   "read_only_depends_on": "eval:doc.reporting_status !== \"In Review\";"
+  },
+  {
+   "fieldname": "g14",
+   "fieldtype": "Currency",
+   "label": "G14",
+   "read_only_depends_on": "eval:doc.reporting_status !== \"In Review\";"
+  },
+  {
+   "fieldname": "column_break_ocbf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "1a",
+   "fieldtype": "Currency",
+   "label": "1A",
+   "read_only_depends_on": "eval:doc.reporting_status !== \"In Review\";"
+  },
+  {
+   "fieldname": "g2",
+   "fieldtype": "Currency",
+   "label": "G2",
+   "read_only_depends_on": "eval:doc.reporting_status !== \"In Review\";"
+  },
+  {
+   "fieldname": "g10",
+   "fieldtype": "Currency",
+   "label": "G10",
+   "read_only_depends_on": "eval:doc.reporting_status !== \"In Review\";"
+  },
+  {
+   "fieldname": "column_break_vahx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "1b",
+   "fieldtype": "Currency",
+   "label": "1B",
+   "read_only_depends_on": "eval:doc.reporting_status !== \"In Review\";"
+  },
+  {
+   "fieldname": "g3",
+   "fieldtype": "Currency",
+   "label": "G3",
+   "read_only_depends_on": "eval:doc.reporting_status !== \"In Review\";"
+  },
+  {
+   "fieldname": "g11",
+   "fieldtype": "Currency",
+   "label": "G11",
+   "read_only_depends_on": "eval:doc.reporting_status !== \"In Review\";"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "BAS Report",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "column_break_ogwt",
+   "fieldtype": "Column Break"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-07-14 19:27:04.779917",
+ "modified_by": "Administrator",
+ "module": "ERPNext Australian Localisation",
+ "name": "BAS Report",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

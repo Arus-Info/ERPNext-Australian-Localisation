@@ -156,6 +156,9 @@ before_uninstall = "erpnext_australian_localisation.uninstall.before_uninstall"
 # }
 
 doc_events = {
+    # "GL Entry" : {
+    #     "" : ""
+    # },
     "Sales Invoice" : { 
         "on_submit" : "erpnext_australian_localisation.overrides.invoices.on_submit" ,
         "on_cancel" : "erpnext_australian_localisation.overrides.invoices.on_cancel"

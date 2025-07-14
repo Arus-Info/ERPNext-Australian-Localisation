@@ -13,11 +13,15 @@
   "g2",
   "g3",
   "g9",
+  "1a",
   "column_break_rokb",
   "g10",
   "g11",
   "g14",
-  "g20"
+  "g20",
+  "1b",
+  "section_break_usfy",
+  "company"
  ],
  "fields": [
   {
@@ -93,13 +97,34 @@
    "fieldname": "g20",
    "fieldtype": "Currency",
    "label": "G20"
+  },
+  {
+   "fieldname": "1a",
+   "fieldtype": "Currency",
+   "label": "1A"
+  },
+  {
+   "fieldname": "1b",
+   "fieldtype": "Currency",
+   "label": "1B"
+  },
+  {
+   "fieldname": "section_break_usfy",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "in_create": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-07-09 16:11:51.838868",
+ "modified": "2025-07-11 17:02:06.965005",
  "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
  "name": "BAS Entry",
