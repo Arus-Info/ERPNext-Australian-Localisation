@@ -5,7 +5,8 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "make_tax_category_mandatory"
+  "make_tax_category_mandatory",
+  "bas_reporting_period"
  ],
  "fields": [
   {
@@ -13,13 +14,19 @@
    "fieldname": "make_tax_category_mandatory",
    "fieldtype": "Check",
    "label": "Make Tax Category Mandatory"
+  },
+  {
+   "fieldname": "bas_reporting_period",
+   "fieldtype": "Table",
+   "label": "BAS Reporting Period",
+   "options": "BAS Reporting Period"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-06-20 02:33:50.003926",
+ "modified": "2025-07-11 14:54:18.407192",
  "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
  "name": "Australian Localisation Settings",

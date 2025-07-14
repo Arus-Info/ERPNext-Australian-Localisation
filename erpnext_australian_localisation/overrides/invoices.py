@@ -8,9 +8,12 @@ from erpnext.controllers.taxes_and_totals import (
 
 def on_submit(doc, event):
 
+	print("Print thsfew r skdhferocaserwarasva;s;svlurvalue",frappe.get_list("GL Entry", filters={"voucher_no" : doc.name}))
+
 	bas = frappe.new_doc("BAS Entry")
 	bas.voucher_type = doc.doctype
 	bas.voucher_number = doc.name
+	bas.company = doc.company
 
 	if doc.doctype in ["Sales Invoice"]:
 		tax_template_doctype = "Sales Taxes and Charges Template"
@@ -55,6 +58,7 @@ def expense_on_submit(doc, event):
 	bas = frappe.new_doc("BAS Entry")
 	bas.voucher_type = doc.doctype
 	bas.voucher_number = doc.name
+	bas.company = doc.company
 
 	temp = {}
 
