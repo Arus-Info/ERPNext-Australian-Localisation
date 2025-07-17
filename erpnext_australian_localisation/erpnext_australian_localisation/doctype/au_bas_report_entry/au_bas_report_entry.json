@@ -1,0 +1,107 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-07-18 01:02:11.554632",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "date",
+  "voucher_type",
+  "voucher_no",
+  "column_break_xggy",
+  "account",
+  "tax_code",
+  "section_break_hpns",
+  "gst_pay_basis",
+  "gst_pay_amount",
+  "column_break_wfig",
+  "gst_offset_basis",
+  "gst_offset_amount"
+ ],
+ "fields": [
+  {
+   "fieldname": "voucher_type",
+   "fieldtype": "Link",
+   "label": "Voucher Type",
+   "options": "DocType"
+  },
+  {
+   "fieldname": "column_break_xggy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "voucher_no",
+   "fieldtype": "Dynamic Link",
+   "in_list_view": 1,
+   "label": "Voucher No",
+   "options": "voucher_type"
+  },
+  {
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Date"
+  },
+  {
+   "fieldname": "account",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Account",
+   "options": "Account"
+  },
+  {
+   "fieldname": "tax_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Tax Code",
+   "options": "AU Tax Code"
+  },
+  {
+   "fieldname": "section_break_hpns",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "gst_pay_basis",
+   "fieldtype": "Currency",
+   "label": "GST Pay Basis"
+  },
+  {
+   "default": "0",
+   "fieldname": "gst_pay_amount",
+   "fieldtype": "Currency",
+   "label": "GST Pay Amount"
+  },
+  {
+   "fieldname": "column_break_wfig",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "gst_offset_basis",
+   "fieldtype": "Currency",
+   "label": "GST Offset Basis"
+  },
+  {
+   "default": "0",
+   "fieldname": "gst_offset_amount",
+   "fieldtype": "Currency",
+   "label": "GST Offset Amount"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-07-18 01:08:57.065080",
+ "modified_by": "Administrator",
+ "module": "ERPNext Australian Localisation",
+ "name": "AU BAS Report Entry",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

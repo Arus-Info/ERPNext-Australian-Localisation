@@ -10,17 +10,19 @@ frappe.ui.form.on("AU BAS Report", {
 		else {
 			frm.trigger("update_reporting_period")
 			frm.add_custom_button(__("Update BAS Data"), () => {
-				// frappe.call({
-				// 	method: "erpnext_australian_localisation.erpnext_australian_localisation.doctype.bas_report.bas_report.get_gst",
-				// 	args: {
-				// 		company: frm.doc.company,
-				// 		start_date: frm.doc.start_date,
-				// 		end_date: frm.doc.end_date
-				// 	},
-				// 	callback: function (data) {
-				// 		console.log(data.message)
-				// 	}
-				// })
+				frappe.dom.freeze()
+				frappe.call({
+					method: "erpnext_australian_localisation.erpnext_australian_localisation.doctype.au_bas_report.au_bas_report.get_gst",
+					args: {
+						name : frm.doc.name,
+						company: frm.doc.company,
+						start_date: frm.doc.start_date,
+						end_date: frm.doc.end_date
+					},
+					callback: function () {
+						frappe.dom.unfreeze()
+					}
+				})
 			})
 		}
 	},
@@ -35,14 +37,14 @@ frappe.ui.form.on("AU BAS Report", {
 	update_end_date: async function (frm) {
 		if (frm.doc.start_date && frm.doc.company) {
 			if (!reporting_period) {
-				frappe.throw("Please set reporting period in <a href='/app/australian-localisation-settings/AU Localisation Settings' > ERPNext Australian Settings </a>")
+				frappe.throw("Please set reporting period in <a href='/app/au-localisation-settings/AU Localisation Settings' > ERPNext Australian Settings </a>")
 			}
 			else if (reporting_period) {
 				if (reporting_period === "Monthly") {
 					await frm.set_value("start_date", moment(frm.doc.start_date).startOf("month").format())
 						.then((e) => {
 							if (e === null) {
-								frappe.msgprint("Start date is changed to " + frm.doc.start_date + " to keep it in line with the " + reporting_period + " BAS setup")
+								frappe.msgprint("Start date is changed to " + moment(frm.doc.start_date).format('DD-MM-YY') + " to keep it in line with the " + reporting_period + " BAS setup")
 
 							}
 						})
@@ -58,7 +60,7 @@ frappe.ui.form.on("AU BAS Report", {
 							await frm.set_value("start_date", data.message[0])
 								.then((e) => {
 									if (e === null) {
-										frappe.msgprint("Start date is changed to " + frm.doc.start_date + " to keep it in line with the " + reporting_period + " BAS setup")
+										frappe.msgprint("Start date is changed to " + moment(frm.doc.start_date).format('DD-MM-YY') + " to keep it in line with the " + reporting_period + " BAS setup")
 
 									}
 								})

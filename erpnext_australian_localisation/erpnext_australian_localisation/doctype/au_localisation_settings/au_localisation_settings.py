@@ -12,7 +12,7 @@ class AULocalisationSettings(Document):
 
 @frappe.whitelist()
 def is_draft(company):
-	bas_report = frappe.get_list("AU BAS Report", filters = { "docstatus" : 0})
+	bas_report = frappe.get_list("AU BAS Report", filters = { "docstatus" : 0, "company" : company})
 	if bas_report :
 		return True
 	return False

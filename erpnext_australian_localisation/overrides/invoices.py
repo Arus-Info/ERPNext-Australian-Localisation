@@ -57,22 +57,23 @@ def on_submit(doc, event):
 			else :
 				temp['gst_offset_amount'] = tax.tax_amount
 			result.append(temp)
+	if result :
+		result = pd.DataFrame(result)
 
-	result = pd.DataFrame(result)
+		result = result.groupby(['bas_label','account','tax_code']).sum(['gst_pay_basis','gst_pay_amount']).reset_index()
 
-	result = result.groupby(['bas_label','account','tax_code']).sum(['gst_pay_basis','gst_pay_amount']).reset_index()
+		bas_entries = result.to_dict(orient='records')
 
-	bas_entries = result.to_dict(orient='records')
-
-	for bas_entry in bas_entries :
-		bas_doc = frappe.new_doc("AU BAS Entry")
-		bas_doc.update({
-			**bas_entry,
-			"date" : doc.posting_date,
-			"voucher_type" : doc.doctype,
-			"voucher_no" : doc.name
-		})
-		bas_doc.save(ignore_permissions = True)
+		for bas_entry in bas_entries :
+			bas_doc = frappe.new_doc("AU BAS Entry")
+			bas_doc.update({
+				**bas_entry,
+				"date" : doc.posting_date,
+				"voucher_type" : doc.doctype,
+				"voucher_no" : doc.name,
+				"company" : doc.company
+			})
+			bas_doc.save(ignore_permissions = True)
 
 def expense_on_submit(doc, event):
 	bas = frappe.new_doc("BAS Entry")
@@ -95,7 +96,6 @@ def expense_on_submit(doc, event):
 
 def on_update(doc, event):
 
-	print("doctype")
 	if doc.doctype in ["Sales Invoice"]:
 		tax_template_doctype = "Sales Taxes and Charges Template"
 	elif doc.doctype in ["Purchase Invoice"]:
@@ -107,12 +107,15 @@ def on_update(doc, event):
 
 	for item in doc.items:
 		if item.au_tax_code != "AUSINPTAX" :
-			item_tax_template = frappe.db.get_value(
-				"Item Tax Template", item.item_tax_template, "title"
-			)
+			if item.item_tax_template:
+				item_tax_template = frappe.db.get_value(
+					"Item Tax Template", item.item_tax_template, "title"
+				)
+			else :
+				item_tax_template = ""
 			tax_code = frappe.db.get_value(
 				"AU Tax Determination",
-				{"bp_tax_template": tax_template, "item_tax_template": item_tax_template if item_tax_template else ""},
+				{"bp_tax_template": tax_template, "item_tax_template": item_tax_template},
 				"tax_code",
 			)
 			item.au_tax_code = tax_code
