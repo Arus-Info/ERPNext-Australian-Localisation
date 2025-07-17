@@ -33,7 +33,7 @@
  "modified": "2025-07-11 15:08:48.374319",
  "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
- "name": "BAS Reporting Period",
+ "name": "AU BAS Reporting Period",
  "owner": "Administrator",
  "permissions": [],
  "row_format": "Dynamic",

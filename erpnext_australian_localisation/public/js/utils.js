@@ -1,2 +1,2 @@
 
-window.australian_localisation_settings = frappe.boot.australian_localisation_settings;
+window.au_localisation_settings = frappe.boot.au_localisation_settings;

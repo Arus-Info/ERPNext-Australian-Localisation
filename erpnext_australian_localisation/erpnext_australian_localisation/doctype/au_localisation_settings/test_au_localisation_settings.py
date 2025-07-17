@@ -5,5 +5,5 @@
 from frappe.tests.utils import FrappeTestCase
 
 
-class TestBASEntry(FrappeTestCase):
+class TestAULocalisationSettings(FrappeTestCase):
 	pass

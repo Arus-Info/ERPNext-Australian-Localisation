@@ -1,0 +1,90 @@
+{
+ "actions": [],
+ "autoname": "format:AU-TAD-{###}",
+ "creation": "2025-07-15 22:21:27.629919",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "type",
+  "column_break_albw",
+  "bp_tax_template",
+  "item_tax_template",
+  "section_break_lpcz",
+  "tax_code",
+  "column_break_nytf",
+  "tax_description"
+ ],
+ "fields": [
+  {
+   "fieldname": "type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Type",
+   "options": "Sales\nPurchase"
+  },
+  {
+   "fieldname": "column_break_albw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "bp_tax_template",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "BP Tax Template"
+  },
+  {
+   "fieldname": "item_tax_template",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Item Tax Template"
+  },
+  {
+   "fieldname": "section_break_lpcz",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "tax_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Tax Code",
+   "options": "AU Tax Code"
+  },
+  {
+   "fieldname": "column_break_nytf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "tax_code.tax_description",
+   "fieldname": "tax_description",
+   "fieldtype": "Data",
+   "label": "Tax Description"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-07-16 18:52:33.655027",
+ "modified_by": "Administrator",
+ "module": "ERPNext Australian Localisation",
+ "name": "AU Tax Determination",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

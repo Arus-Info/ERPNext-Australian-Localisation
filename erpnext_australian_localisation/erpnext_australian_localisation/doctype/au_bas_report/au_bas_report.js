@@ -3,24 +3,24 @@
 
 let reporting_period = ""
 
-frappe.ui.form.on("BAS Report", {
+frappe.ui.form.on("AU BAS Report", {
 	refresh(frm) {
 		if (frm.is_new()) {
 		}
 		else {
 			frm.trigger("update_reporting_period")
 			frm.add_custom_button(__("Update BAS Data"), () => {
-				frappe.call({
-					method: "erpnext_australian_localisation.erpnext_australian_localisation.doctype.bas_report.bas_report.get_gst",
-					args: {
-						company: frm.doc.company,
-						start_date: frm.doc.start_date,
-						end_date: frm.doc.end_date
-					},
-					callback: function (data) {
-						console.log(data.message)
-					}
-				})
+				// frappe.call({
+				// 	method: "erpnext_australian_localisation.erpnext_australian_localisation.doctype.bas_report.bas_report.get_gst",
+				// 	args: {
+				// 		company: frm.doc.company,
+				// 		start_date: frm.doc.start_date,
+				// 		end_date: frm.doc.end_date
+				// 	},
+				// 	callback: function (data) {
+				// 		console.log(data.message)
+				// 	}
+				// })
 			})
 		}
 	},
@@ -35,7 +35,7 @@ frappe.ui.form.on("BAS Report", {
 	update_end_date: async function (frm) {
 		if (frm.doc.start_date && frm.doc.company) {
 			if (!reporting_period) {
-				frappe.throw("Please set reporting period in <a href='/app/australian-localisation-settings/Australian Localisation Settings' > ERPNext Australian Settings </a>")
+				frappe.throw("Please set reporting period in <a href='/app/australian-localisation-settings/AU Localisation Settings' > ERPNext Australian Settings </a>")
 			}
 			else if (reporting_period) {
 				if (reporting_period === "Monthly") {
@@ -74,7 +74,7 @@ frappe.ui.form.on("BAS Report", {
 	},
 
 	update_reporting_period(frm) {
-		let brp = australian_localisation_settings.bas_reporting_period
+		let brp = au_localisation_settings.bas_reporting_period
 		for (let i = 0; i < brp.length; i++) {
 			if (brp[i].company === frm.doc.company) {
 				reporting_period = brp[i].reporting_period;

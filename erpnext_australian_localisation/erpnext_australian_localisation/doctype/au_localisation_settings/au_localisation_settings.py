@@ -5,14 +5,14 @@ import frappe
 from frappe.model.document import Document
 
 
-class AustralianLocalisationSettings(Document):
+class AULocalisationSettings(Document):
 
 	def on_update(self):
 		frappe.cache.delete_keys("bootinfo")
 
 @frappe.whitelist()
 def is_draft(company):
-	bas_report = frappe.get_list("BAS Report", filters = { "docstatus" : 0})
+	bas_report = frappe.get_list("AU BAS Report", filters = { "docstatus" : 0})
 	if bas_report :
 		return True
 	return False

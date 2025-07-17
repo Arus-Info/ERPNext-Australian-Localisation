@@ -5,5 +5,5 @@
 from frappe.model.document import Document
 
 
-class BASEntry(Document):
+class AUBASLabel(Document):
 	pass

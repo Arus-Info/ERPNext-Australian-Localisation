@@ -1,0 +1,131 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:BAS-{date}-{####}",
+ "creation": "2025-07-16 16:32:24.865303",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "bas_label",
+  "voucher_type",
+  "account",
+  "gst_pay_basis",
+  "gst_offset_basis",
+  "column_break_orwl",
+  "date",
+  "voucher_no",
+  "tax_code",
+  "gst_pay_amount",
+  "gst_offset_amount"
+ ],
+ "fields": [
+  {
+   "fieldname": "bas_label",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "BAS Label",
+   "options": "AU BAS Label"
+  },
+  {
+   "fieldname": "voucher_type",
+   "fieldtype": "Link",
+   "label": "Voucher Type",
+   "options": "DocType"
+  },
+  {
+   "fieldname": "voucher_no",
+   "fieldtype": "Dynamic Link",
+   "in_list_view": 1,
+   "label": "Voucher No",
+   "options": "voucher_type"
+  },
+  {
+   "fieldname": "account",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Account",
+   "options": "Account"
+  },
+  {
+   "default": "0",
+   "fieldname": "gst_pay_basis",
+   "fieldtype": "Currency",
+   "label": "GST Pay Basis"
+  },
+  {
+   "default": "0",
+   "fieldname": "gst_offset_basis",
+   "fieldtype": "Currency",
+   "label": "GST Offset Basis"
+  },
+  {
+   "fieldname": "column_break_orwl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Date"
+  },
+  {
+   "fieldname": "tax_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Tax Code",
+   "options": "AU Tax Code"
+  },
+  {
+   "default": "0",
+   "fieldname": "gst_pay_amount",
+   "fieldtype": "Currency",
+   "label": "GST Pay Amount"
+  },
+  {
+   "default": "0",
+   "fieldname": "gst_offset_amount",
+   "fieldtype": "Currency",
+   "label": "GST Offset Amount"
+  }
+ ],
+ "grid_page_length": 50,
+ "in_create": 1,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-07-17 20:25:33.060644",
+ "modified_by": "Administrator",
+ "module": "ERPNext Australian Localisation",
+ "name": "AU BAS Entry",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User"
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager"
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Auditor"
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

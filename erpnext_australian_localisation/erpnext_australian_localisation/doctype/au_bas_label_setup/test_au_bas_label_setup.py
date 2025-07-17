@@ -5,5 +5,5 @@
 from frappe.tests.utils import FrappeTestCase
 
 
-class TestAustralianLocalisationSettings(FrappeTestCase):
+class TestAUBASLabelSetup(FrappeTestCase):
 	pass

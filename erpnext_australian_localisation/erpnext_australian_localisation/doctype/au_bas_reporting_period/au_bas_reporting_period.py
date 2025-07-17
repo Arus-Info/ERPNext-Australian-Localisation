@@ -5,5 +5,5 @@
 from frappe.model.document import Document
 
 
-class BASReportingPeriod(Document):
+class AUBASReportingPeriod(Document):
 	pass

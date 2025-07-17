@@ -10,7 +10,7 @@ app_license = "gpl-3.0"
 app_include_js = "australian_localisation.bundle.js"
 
 fixtures = [
-    {"dt" : "Custom HTML Block", "filters" : { "name" : "Australian Localisation"}}
+	{"dt" : "Custom HTML Block", "filters" : { "name" : "Australian Localisation"}}
 ]
 # required_apps = []
 
@@ -48,7 +48,9 @@ fixtures = [
 # page_js = {"page" : "public/js/file.js"}
 
 doctype_js = {
-    "Item" : "public/js/item.js"
+	"Item" : "public/js/item.js",
+	"Sales Invoice" : "public/js/autaxcode_setup.js",
+	"Purchase Invoice" : "public/js/autaxcode_setup.js"
 }
 
 # include js in doctype views
@@ -156,21 +158,23 @@ before_uninstall = "erpnext_australian_localisation.uninstall.before_uninstall"
 # }
 
 doc_events = {
-    # "GL Entry" : {
-    #     "" : ""
-    # },
-    "Sales Invoice" : { 
-        "on_submit" : "erpnext_australian_localisation.overrides.invoices.on_submit" ,
-        "on_cancel" : "erpnext_australian_localisation.overrides.invoices.on_cancel"
-        },
-    "Purchase Invoice" : { 
-        "on_submit" : "erpnext_australian_localisation.overrides.invoices.on_submit", 
-        "on_cancel" : "erpnext_australian_localisation.overrides.invoices.on_cancel"
-        },
-     "Expense Claim" : { 
-        "on_submit" : "erpnext_australian_localisation.overrides.invoices.expense_on_submit",
-        "on_cancel" : "erpnext_australian_localisation.overrides.invoices.on_cancel"
-        }
+	# "GL Entry" : {
+	#     "" : ""
+	# },
+	"Sales Invoice" : { 
+		"on_submit" : "erpnext_australian_localisation.overrides.invoices.on_submit" ,
+		"on_update" : "erpnext_australian_localisation.overrides.invoices.on_update" ,
+		# "on_cancel" : "erpnext_australian_localisation.overrides.invoices.on_cancel"
+	},
+	"Purchase Invoice" : { 
+		"on_submit" : "erpnext_australian_localisation.overrides.invoices.on_submit", 
+		"on_update" : "erpnext_australian_localisation.overrides.invoices.on_update" ,
+	# 	"on_cancel" : "erpnext_australian_localisation.overrides.invoices.on_cancel"
+	},
+	#  "Expense Claim" : { 
+	# 	"on_submit" : "erpnext_australian_localisation.overrides.invoices.expense_on_submit",
+	# 	"on_cancel" : "erpnext_australian_localisation.overrides.invoices.on_cancel"
+	# 	}
 }
 
 # Scheduled Tasks

@@ -1,58 +1,78 @@
 import frappe
-
-from erpnext.controllers.taxes_and_totals import (
-	get_itemised_tax_breakup_data,
-	get_rounded_tax_amount,
-)
+import pandas as pd
 
 
 def on_submit(doc, event):
 
-	print("Print thsfew r skdhferocaserwarasva;s;svlurvalue",frappe.get_list("GL Entry", filters={"voucher_no" : doc.name}))
-
-	bas = frappe.new_doc("BAS Entry")
-	bas.voucher_type = doc.doctype
-	bas.voucher_number = doc.name
-	bas.company = doc.company
-
+	result = []
 	if doc.doctype in ["Sales Invoice"]:
-		tax_template_doctype = "Sales Taxes and Charges Template"
-		account_head = "GST Collected (Payable)"
+		tax_allocation = "Collected Sales"
+		account_type = "income_account"
 	elif doc.doctype in ["Purchase Invoice"]:
-		tax_template_doctype = "Purchase Taxes and Charges Template"
-		account_head = "GST Paid (Receivable)"
+		tax_allocation = "Deductible Purchase"
+		account_type = "expense_account"
 
-	itemised_tax_data = get_itemised_tax_breakup_data(doc)
-	get_rounded_tax_amount(itemised_tax_data, doc.precision("tax_amount", "taxes"))
 
-	tax_template = frappe.db.get_value(
-		tax_template_doctype, doc.taxes_and_charges, "title"
-	)
+	for item in doc.items:
+		bas_labels = frappe.get_list(
+			"AU BAS Label Setup",
+			filters={
+				"tax_management": "Subjected",
+				"tax_allocation": tax_allocation,
+				"tax_code" : item.au_tax_code
+			},
+			fields=["bas_label"]
+		)
+		for bas_label in bas_labels :
+			temp = {
+				'bas_label' : bas_label.bas_label,
+				'account' : item.get(account_type),
+				'tax_code' : item.au_tax_code
+			}
+			if tax_allocation == "Collected Sales" :
+				temp['gst_pay_basis'] = item.amount
+			else :
+				temp['gst_offset_basis'] = item.amount
+			result.append(temp)
 
-	total, tax_amount, amount_0, amount_10 = get_total(itemised_tax_data, account_head)
-	print(total, tax_amount, amount_0, amount_10)
+	for tax in doc.taxes :
+		bas_labels = frappe.get_list(
+			"AU BAS Label Setup",
+			filters={
+				"tax_management": "Tax Account",
+				"tax_allocation": tax_allocation,
+				"tax_code" : tax.au_tax_code
+			},
+			fields=["bas_label"]
+		)
+		for bas_label in bas_labels :
+			temp = {
+				'bas_label' : bas_label.bas_label,
+				'account' : tax.account_head,
+				'tax_code' : tax.au_tax_code,
+				'gst_pay_amount' : tax.tax_amount
+			}
+			if tax_allocation == "Collected Sales" :
+				temp['gst_pay_amount'] = tax.tax_amount
+			else :
+				temp['gst_offset_amount'] = tax.tax_amount
+			result.append(temp)
 
-	if "Sales" in tax_template_doctype:
-		bas.g1 = total
-		bas.g9 = tax_amount
-		if tax_template == "Export Sales - GST Free":
-			bas.g2 = total
-		elif tax_template == "AU Sales - GST Free":
-			bas.g3 = total
-		elif tax_template == "AU Sales - GST":
-			bas.g3 = amount_0
+	result = pd.DataFrame(result)
 
-	elif "Purchase" in tax_template_doctype:
-		bas.g20 = tax_amount
-		if tax_template == "AU Capital Purchase - GST":
-			bas.g10 = total
-		elif tax_template == "AU Non Capital Purchase - GST":
-			bas.g11 = amount_10
-			bas.g14 = amount_0
-		elif tax_template == "Import & GST-Free Purchase":
-			bas.g14 = total
-	bas.save(ignore_permissions = 1)
+	result = result.groupby(['bas_label','account','tax_code']).sum(['gst_pay_basis','gst_pay_amount']).reset_index()
 
+	bas_entries = result.to_dict(orient='records')
+
+	for bas_entry in bas_entries :
+		bas_doc = frappe.new_doc("AU BAS Entry")
+		bas_doc.update({
+			**bas_entry,
+			"date" : doc.posting_date,
+			"voucher_type" : doc.doctype,
+			"voucher_no" : doc.name
+		})
+		bas_doc.save(ignore_permissions = True)
 
 def expense_on_submit(doc, event):
 	bas = frappe.new_doc("BAS Entry")
@@ -70,33 +90,60 @@ def expense_on_submit(doc, event):
 
 	bas.update(temp)
 
-	bas.save(ignore_permissions = 1)
+	bas.save(ignore_permissions=1)
 
 
-def get_total(tax_data, account_head):
-	a_g_0 = 0  # amount for item with gst 0 %
-	a_g_10 = 0  # amount for item with gst 10 %
-	t_g_0 = 0  # tax amount for item with gst 0%
-	t_g_10 = 0  # tax amount for item with gst 10%
+def on_update(doc, event):
 
-	for i in tax_data:
-		if i[account_head]["tax_rate"] == 0:
-			t_g_0 += i[account_head]["tax_amount"]
-			a_g_0 += i["taxable_amount"]
+	print("doctype")
+	if doc.doctype in ["Sales Invoice"]:
+		tax_template_doctype = "Sales Taxes and Charges Template"
+	elif doc.doctype in ["Purchase Invoice"]:
+		tax_template_doctype = "Purchase Taxes and Charges Template"
 
-		elif i[account_head]["tax_rate"] == 10:
-			t_g_10 += i[account_head]["tax_amount"]
-			a_g_10 += i["taxable_amount"]
+	tax_template = frappe.db.get_value(
+		tax_template_doctype, doc.taxes_and_charges, "title"
+	)
 
-	a_g_0 += t_g_0
-	a_g_10 += t_g_10
-	tax_amount = t_g_0 + t_g_10
-	total = a_g_0 + a_g_10
+	for item in doc.items:
+		if item.au_tax_code != "AUSINPTAX" :
+			item_tax_template = frappe.db.get_value(
+				"Item Tax Template", item.item_tax_template, "title"
+			)
+			tax_code = frappe.db.get_value(
+				"AU Tax Determination",
+				{"bp_tax_template": tax_template, "item_tax_template": item_tax_template if item_tax_template else ""},
+				"tax_code",
+			)
+			item.au_tax_code = tax_code
+			item.save()
 
-	return total, tax_amount, a_g_0, a_g_10
+	for tax in doc.taxes:
+		tax_code = frappe.db.get_value(
+			"AU Tax Determination",
+			{"bp_tax_template": tax_template, "item_tax_template": ""},
+			"tax_code",
+		)
+		tax.au_tax_code = tax_code
+		tax.save()
 
-def on_cancel(doc,event):
-	bas = frappe.db.exists("BAS Entry", { "voucher_number" : doc.name})
 
-	if bas :
-		frappe.delete_doc("BAS Entry", bas,  ignore_permissions=True)
+# @frappe.whitelist()
+# def get_au_tax_code(tax_template, item_tax_template, tax_template_doctype):
+# 	if frappe.has_permission(tax_template_doctype, "read") :
+# 		tax_template = frappe.db.get_value(
+# 			tax_template_doctype, tax_template, "title"
+# 		)
+# 		if item_tax_template :
+# 			item_tax_template = frappe.db.get_value(
+# 				"Item Tax Template", item_tax_template, "title"
+# 			)
+
+# 		tax_code = frappe.db.get_value(
+# 			"AU Tax Determination",
+# 			{"bp_tax_template": tax_template, "item_tax_template": item_tax_template},
+# 			"tax_code",
+# 		)
+# 		return tax_code
+# 	else :
+# 		frappe.throw("You don't have enough permission")

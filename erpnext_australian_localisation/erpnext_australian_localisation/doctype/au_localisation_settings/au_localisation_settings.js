@@ -1,12 +1,12 @@
 // Copyright (c) 2025, frappe.dev@arus.co.in and contributors
 // For license information, please see license.txt
 
-frappe.ui.form.on("Australian Localisation Settings", {
+frappe.ui.form.on("AU Localisation Settings", {
 	refresh(frm) {
 		rp = frm.doc.bas_reporting_period
 		for (let i = 0; i < rp.length; i++) {
 			frappe.call({
-				method: "erpnext_australian_localisation.erpnext_australian_localisation.doctype.australian_localisation_settings.australian_localisation_settings.is_draft",
+				method: "erpnext_australian_localisation.erpnext_australian_localisation.doctype.au_localisation_settings.au_localisation_settings.is_draft",
 				args: {
 					"company" : rp[i].company
 				},
@@ -19,11 +19,11 @@ frappe.ui.form.on("Australian Localisation Settings", {
 	after_save(frm) {
 		// sets latest values in frappe.boot for current user
 		// other users will still need to refresh page
-		Object.assign(australian_localisation_settings, frm.doc);
+		Object.assign(au_localisation_settings, frm.doc);
 	},
 });
 
-frappe.tour['Australian Localisation Settings'] = [
+frappe.tour['AU Localisation Settings'] = [
 	{
 		fieldname: "make_tax_category_mandatory",
 		title: "Make Tax Category Mandatory",

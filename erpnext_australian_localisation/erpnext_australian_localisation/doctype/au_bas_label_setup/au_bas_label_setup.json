@@ -1,0 +1,83 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:AU-BASL-{###}",
+ "creation": "2025-07-16 14:08:56.310165",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "bas_label",
+  "tax_management",
+  "tax_code",
+  "column_break_knnq",
+  "bas_label_description",
+  "tax_allocation"
+ ],
+ "fields": [
+  {
+   "fieldname": "bas_label",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "BAS Label",
+   "options": "AU BAS Label"
+  },
+  {
+   "fieldname": "column_break_knnq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "bas_label.bas_label_description",
+   "fieldname": "bas_label_description",
+   "fieldtype": "Data",
+   "label": "BAS Label Description"
+  },
+  {
+   "fieldname": "tax_management",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Tax Management",
+   "options": "Tax Account\nSubjected"
+  },
+  {
+   "fieldname": "tax_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Tax Code",
+   "options": "AU Tax Code"
+  },
+  {
+   "fieldname": "tax_allocation",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Tax Allocation",
+   "options": "Collected Sales\nDeductible Purchase"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-07-16 18:55:05.027218",
+ "modified_by": "Administrator",
+ "module": "ERPNext Australian Localisation",
+ "name": "AU BAS Label Setup",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
