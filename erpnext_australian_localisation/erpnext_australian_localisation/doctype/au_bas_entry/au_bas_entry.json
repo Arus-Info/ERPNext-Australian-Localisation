@@ -9,14 +9,17 @@
   "bas_label",
   "voucher_type",
   "account",
-  "gst_pay_basis",
-  "gst_offset_basis",
   "column_break_orwl",
   "date",
   "voucher_no",
   "tax_code",
+  "section_break_wqil",
+  "gst_pay_basis",
   "gst_pay_amount",
-  "gst_offset_amount"
+  "column_break_ogig",
+  "gst_offset_basis",
+  "gst_offset_amount",
+  "company"
  ],
  "fields": [
   {
@@ -86,13 +89,27 @@
    "fieldname": "gst_offset_amount",
    "fieldtype": "Currency",
    "label": "GST Offset Amount"
+  },
+  {
+   "fieldname": "section_break_wqil",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_ogig",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company"
   }
  ],
  "grid_page_length": 50,
  "in_create": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-07-17 20:25:33.060644",
+ "modified": "2025-07-18 22:25:23.948753",
  "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
  "name": "AU BAS Entry",

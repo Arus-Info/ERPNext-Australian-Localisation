@@ -5,22 +5,35 @@ let reporting_period = ""
 
 frappe.ui.form.on("AU BAS Report", {
 	refresh(frm) {
+		var css = document.createElement(`style`);
+		var styles = `.row-index {display:none;} .form-grid {  overflow-y: scroll; overflow-y: scroll; max-height:200px}`;
+
+		if (css.styleSheet) css.styleSheet.cssText = styles;
+		else css.appendChild(document.createTextNode(styles));
+
+		document.getElementsByTagName("head")[0].appendChild(css);
+
+
 		if (frm.is_new()) {
 		}
 		else {
 			frm.trigger("update_reporting_period")
 			frm.add_custom_button(__("Update BAS Data"), () => {
-				// frappe.call({
-				// 	method: "erpnext_australian_localisation.erpnext_australian_localisation.doctype.bas_report.bas_report.get_gst",
-				// 	args: {
-				// 		company: frm.doc.company,
-				// 		start_date: frm.doc.start_date,
-				// 		end_date: frm.doc.end_date
-				// 	},
-				// 	callback: function (data) {
-				// 		console.log(data.message)
-				// 	}
-				// })
+				frappe.dom.freeze()
+				// frappe.show_alert({ message:__("You'll be notified once the bas report is done"), indicator:'green' }, 5);
+				frappe.call({
+					method: "erpnext_australian_localisation.erpnext_australian_localisation.doctype.au_bas_report.au_bas_report.get_gst",
+					args: {
+						name : frm.doc.name,
+						company: frm.doc.company,
+						start_date: frm.doc.start_date,
+						end_date: frm.doc.end_date
+					},
+					callback: function () {
+						// frappe.show_alert({ message:__("You'll be notified once the bas report is done"), indicator:'green' }, 5);
+						frappe.dom.unfreeze()
+					}
+				})
 			})
 		}
 	},
@@ -32,17 +45,18 @@ frappe.ui.form.on("AU BAS Report", {
 	start_date(frm) {
 		frm.trigger("update_end_date")
 	},
+	
 	update_end_date: async function (frm) {
 		if (frm.doc.start_date && frm.doc.company) {
 			if (!reporting_period) {
-				frappe.throw("Please set reporting period in <a href='/app/australian-localisation-settings/AU Localisation Settings' > ERPNext Australian Settings </a>")
+				frappe.throw("Please set reporting period in <a href='/app/au-localisation-settings/AU Localisation Settings' > ERPNext Australian Settings </a>")
 			}
 			else if (reporting_period) {
 				if (reporting_period === "Monthly") {
 					await frm.set_value("start_date", moment(frm.doc.start_date).startOf("month").format())
 						.then((e) => {
 							if (e === null) {
-								frappe.msgprint("Start date is changed to " + frm.doc.start_date + " to keep it in line with the " + reporting_period + " BAS setup")
+								frappe.msgprint("Start date is changed to " + moment(frm.doc.start_date).format('DD-MM-YY') + " to keep it in line with the " + reporting_period + " BAS setup")
 
 							}
 						})
@@ -58,7 +72,7 @@ frappe.ui.form.on("AU BAS Report", {
 							await frm.set_value("start_date", data.message[0])
 								.then((e) => {
 									if (e === null) {
-										frappe.msgprint("Start date is changed to " + frm.doc.start_date + " to keep it in line with the " + reporting_period + " BAS setup")
+										frappe.msgprint("Start date is changed to " + moment(frm.doc.start_date).format('DD-MM-YY') + " to keep it in line with the " + reporting_period + " BAS setup")
 
 									}
 								})
@@ -75,6 +89,7 @@ frappe.ui.form.on("AU BAS Report", {
 
 	update_reporting_period(frm) {
 		let brp = au_localisation_settings.bas_reporting_period
+		reporting_period = ""
 		for (let i = 0; i < brp.length; i++) {
 			if (brp[i].company === frm.doc.company) {
 				reporting_period = brp[i].reporting_period;

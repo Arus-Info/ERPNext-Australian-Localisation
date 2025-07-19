@@ -26,7 +26,17 @@
   "1b",
   "g3",
   "g11",
-  "amended_from"
+  "amended_from",
+  "section_break_uajs",
+  "1a_details",
+  "1b_details",
+  "g1_details",
+  "g2_details",
+  "g3_details",
+  "g4_details",
+  "g10_details",
+  "g11_details",
+  "g14_details"
  ],
  "fields": [
   {
@@ -154,19 +164,100 @@
   {
    "fieldname": "column_break_ogwt",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_uajs",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "1a_details",
+   "fieldtype": "Table",
+   "label": "1A Details",
+   "options": "AU BAS Report Entry",
+   "read_only": 1
+  },
+  {
+   "fieldname": "g1_details",
+   "fieldtype": "Table",
+   "label": "G1 Details",
+   "options": "AU BAS Report Entry",
+   "read_only": 1
+  },
+  {
+   "fieldname": "1b_details",
+   "fieldtype": "Table",
+   "label": "1B Details",
+   "options": "AU BAS Report Entry",
+   "read_only": 1
+  },
+  {
+   "fieldname": "g2_details",
+   "fieldtype": "Table",
+   "label": "G2 Details",
+   "options": "AU BAS Report Entry",
+   "read_only": 1
+  },
+  {
+   "fieldname": "g3_details",
+   "fieldtype": "Table",
+   "label": "G3 Details",
+   "options": "AU BAS Report Entry",
+   "read_only": 1
+  },
+  {
+   "fieldname": "g4_details",
+   "fieldtype": "Table",
+   "label": "G4 Details",
+   "options": "AU BAS Report Entry",
+   "read_only": 1
+  },
+  {
+   "fieldname": "g10_details",
+   "fieldtype": "Table",
+   "label": "G10 Details",
+   "options": "AU BAS Report Entry",
+   "read_only": 1
+  },
+  {
+   "fieldname": "g11_details",
+   "fieldtype": "Table",
+   "label": "G11 Details",
+   "options": "AU BAS Report Entry",
+   "read_only": 1
+  },
+  {
+   "fieldname": "g14_details",
+   "fieldtype": "Table",
+   "label": "G14 Details",
+   "options": "AU BAS Report Entry",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-07-16 21:28:44.537988",
+ "modified": "2025-07-18 16:19:06.127309",
  "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
  "name": "AU BAS Report",
  "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
+  {
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
   {
    "create": 1,
    "delete": 1,
@@ -175,8 +266,22 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "System Manager",
+   "role": "Accounts User",
    "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Auditor",
+   "share": 1,
+   "submit": 1,
    "write": 1
   }
  ],
