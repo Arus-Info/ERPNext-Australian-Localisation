@@ -16,3 +16,24 @@ def is_draft(company):
 	if bas_report :
 		return True
 	return False
+
+@frappe.whitelist()
+def clear_transaction():
+	if frappe.has_permission("AU BAS Report") :
+		a = frappe.db.sql(
+			"""
+				truncate table `tabAU BAS Entry`
+			"""
+		)
+		b = frappe.db.sql(
+			"""
+				truncate table `tabAU BAS Report`
+			"""
+		)
+		frappe.db.sql(
+			"""
+				truncate table `tabAU BAS Report Entry`
+			"""
+		)
+
+		print(a,b)

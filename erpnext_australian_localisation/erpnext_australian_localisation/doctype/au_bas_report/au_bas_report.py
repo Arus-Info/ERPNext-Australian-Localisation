@@ -54,8 +54,8 @@ def get_gst(name, company, start_date, end_date):
 						"doctype": "AU BAS Report Entry",
 					}
 				},
+				ignore_permissions=True
 			)
-
 			total += (
 				bas_report_entry.gst_pay_basis
 				+ bas_report_entry.gst_pay_amount
@@ -68,8 +68,8 @@ def get_gst(name, company, start_date, end_date):
 		doc.update({
 			bas_label_detail['bas_label'].lower() : total
 		})
-		doc.save()
-
+	doc.net_gst = doc.get('1a') - doc.get('1b')
+	doc.save()
 
 @frappe.whitelist()
 def get_quaterly_start_end_date(start_date):

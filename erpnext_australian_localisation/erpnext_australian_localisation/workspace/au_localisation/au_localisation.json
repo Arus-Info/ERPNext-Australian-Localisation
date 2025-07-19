@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"eXPXR5a9MJ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Au Localisation Settings\",\"col\":3}},{\"id\":\"mGaTPt-44i\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Au Bas Report\",\"col\":3}},{\"id\":\"0UnkUcajmK\",\"type\":\"onboarding\",\"data\":{\"onboarding_name\":\"AU Localisation\",\"col\":12}},{\"id\":\"suIF92wV1R\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Australian Localisation\",\"col\":12}}]",
+ "content": "[{\"id\":\"eXPXR5a9MJ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"AU Localisation Settings\",\"col\":3}},{\"id\":\"mGaTPt-44i\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"AU Bas Report\",\"col\":3}},{\"id\":\"0UnkUcajmK\",\"type\":\"onboarding\",\"data\":{\"onboarding_name\":\"AU Localisation\",\"col\":12}},{\"id\":\"suIF92wV1R\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Australian Localisation\",\"col\":12}}]",
  "creation": "2025-06-19 23:36:17.700703",
  "custom_blocks": [
   {
@@ -18,8 +18,8 @@
  "is_hidden": 0,
  "label": "AU Localisation",
  "links": [],
- "modified": "2025-07-17 23:16:57.344969",
- "modified_by": "jeba.j@arus.co.in",
+ "modified": "2025-07-18 18:58:45.044816",
+ "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
  "name": "AU Localisation",
  "number_cards": [],
@@ -27,20 +27,24 @@
  "parent_page": "",
  "public": 1,
  "quick_lists": [],
- "roles": [],
+ "roles": [
+  {
+   "role": "System Manager"
+  }
+ ],
  "sequence_id": 28.0,
  "shortcuts": [
   {
    "color": "Grey",
    "doc_view": "List",
-   "label": "Au Localisation Settings",
+   "label": "AU Localisation Settings",
    "link_to": "AU Localisation Settings",
    "type": "DocType"
   },
   {
    "color": "Grey",
    "doc_view": "List",
-   "label": "Au Bas Report",
+   "label": "AU Bas Report",
    "link_to": "AU BAS Report",
    "stats_filter": "[]",
    "type": "DocType"
