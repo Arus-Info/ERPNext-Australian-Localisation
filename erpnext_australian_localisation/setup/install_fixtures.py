@@ -1,8 +1,8 @@
 from frappe.desk.page.setup_wizard.setup_wizard import make_records
+import frappe
 
 
 def create_default_records():
-
 	records = []
 	records.extend(get_au_tax_codes())
 	records.extend(get_au_tax_determination())
@@ -332,3 +332,16 @@ def get_au_bas_label_setup():
 		},
 	]
 	return records
+
+ROLES = [
+	{"doctype": "Role", "role_name": "AU Localisation Admin", "name": "AU Localisation Admin"},
+]
+
+
+def create_roles():
+	make_records(ROLES)
+
+def remove_roles():
+	for role in ROLES :
+		if  frappe.db.exists("Role", role['name']):
+			frappe.delete_doc("Role", role['name'])

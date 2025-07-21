@@ -63,7 +63,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-07-16 18:52:33.655027",
+ "modified": "2025-07-21 15:49:27.898263",
  "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
  "name": "AU Tax Determination",
@@ -78,7 +78,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "System Manager",
+   "role": "AU Localisation Admin",
    "share": 1,
    "write": 1
   }

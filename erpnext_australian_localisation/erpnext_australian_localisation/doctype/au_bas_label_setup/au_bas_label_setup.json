@@ -56,7 +56,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-07-16 18:55:05.027218",
+ "modified": "2025-07-21 15:49:44.319778",
  "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
  "name": "AU BAS Label Setup",
@@ -71,7 +71,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "System Manager",
+   "role": "AU Localisation Admin",
    "share": 1,
    "write": 1
   }

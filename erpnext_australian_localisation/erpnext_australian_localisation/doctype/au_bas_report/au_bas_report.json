@@ -87,69 +87,71 @@
    "fieldname": "net_gst",
    "fieldtype": "Currency",
    "label": "Net GST",
-   "read_only_depends_on": "eval:doc.reporting_status !== \"In Review\";"
+   "read_only": 1
   },
   {
    "fieldname": "g1",
    "fieldtype": "Currency",
    "label": "G1",
-   "read_only_depends_on": "eval:doc.reporting_status !== \"In Review\";"
+   "read_only": 1
   },
   {
    "fieldname": "g4",
    "fieldtype": "Currency",
    "label": "G4",
-   "read_only_depends_on": "eval:doc.reporting_status !== \"In Review\";"
+   "read_only": 1
   },
   {
    "fieldname": "g14",
    "fieldtype": "Currency",
    "label": "G14",
-   "read_only_depends_on": "eval:doc.reporting_status !== \"In Review\";"
+   "read_only": 1
   },
   {
    "fieldname": "column_break_ocbf",
-   "fieldtype": "Column Break"
+   "fieldtype": "Column Break",
+   "read_only": 1
   },
   {
    "fieldname": "1a",
    "fieldtype": "Currency",
    "label": "1A",
-   "read_only_depends_on": "eval:doc.reporting_status !== \"In Review\";"
+   "read_only": 1
   },
   {
    "fieldname": "g2",
    "fieldtype": "Currency",
    "label": "G2",
-   "read_only_depends_on": "eval:doc.reporting_status !== \"In Review\";"
+   "read_only": 1
   },
   {
    "fieldname": "g10",
    "fieldtype": "Currency",
    "label": "G10",
-   "read_only_depends_on": "eval:doc.reporting_status !== \"In Review\";"
+   "read_only": 1
   },
   {
    "fieldname": "column_break_vahx",
-   "fieldtype": "Column Break"
+   "fieldtype": "Column Break",
+   "read_only": 1
   },
   {
    "fieldname": "1b",
    "fieldtype": "Currency",
    "label": "1B",
-   "read_only_depends_on": "eval:doc.reporting_status !== \"In Review\";"
+   "read_only": 1
   },
   {
    "fieldname": "g3",
    "fieldtype": "Currency",
    "label": "G3",
-   "read_only_depends_on": "eval:doc.reporting_status !== \"In Review\";"
+   "read_only": 1
   },
   {
    "fieldname": "g11",
    "fieldtype": "Currency",
    "label": "G11",
-   "read_only_depends_on": "eval:doc.reporting_status !== \"In Review\";"
+   "read_only": 1
   },
   {
    "fieldname": "amended_from",
@@ -237,7 +239,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-07-18 16:19:06.127309",
+ "modified": "2025-07-21 20:30:23.574858",
  "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
  "name": "AU BAS Report",

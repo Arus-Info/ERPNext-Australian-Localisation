@@ -12,6 +12,9 @@ app_include_js = "australian_localisation.bundle.js"
 fixtures = [
 	{"dt" : "Custom HTML Block", "filters" : { "name" : "Australian Localisation"}}
 ]
+
+company_data_to_be_ignored = ["Tax Rule"]
+
 # required_apps = []
 
 # Each item in the list will be shown as an app in the apps page
@@ -94,14 +97,14 @@ doctype_js = {
 # ------------
 
 boot_session = "erpnext_australian_localisation.boot.set_bootinfo"
-# before_install = "erpnext_australian_localisation.install.before_install"
+before_install = "erpnext_australian_localisation.install.before_install"
 after_install = "erpnext_australian_localisation.install.after_install"
 
 # Uninstallation
 # ------------
 
 before_uninstall = "erpnext_australian_localisation.uninstall.before_uninstall"
-# after_uninstall = "erpnext_australian_localisation.uninstall.after_uninstall"
+after_uninstall = "erpnext_australian_localisation.uninstall.after_uninstall"
 
 # Integration Setup
 # ------------------
@@ -158,9 +161,6 @@ before_uninstall = "erpnext_australian_localisation.uninstall.before_uninstall"
 # }
 
 doc_events = {
-	# "GL Entry" : {
-	#     "" : ""
-	# },
 	"Sales Invoice" : { 
 		"on_submit" : "erpnext_australian_localisation.overrides.invoices.on_submit" ,
 		"on_update" : "erpnext_australian_localisation.overrides.invoices.on_update" ,
@@ -171,6 +171,10 @@ doc_events = {
 		"on_update" : "erpnext_australian_localisation.overrides.invoices.on_update" ,
 		"on_cancel" : "erpnext_australian_localisation.overrides.invoices.on_cancel"
 	},
+	"Company" : {
+		"after_insert": "erpnext_australian_localisation.overrides.company.after_insert"
+	}
+
 	#  "Expense Claim" : { 
 	# 	"on_submit" : "erpnext_australian_localisation.overrides.invoices.expense_on_submit",
 	# 	"on_cancel" : "erpnext_australian_localisation.overrides.invoices.on_cancel"

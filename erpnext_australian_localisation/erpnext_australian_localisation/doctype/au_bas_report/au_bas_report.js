@@ -5,13 +5,25 @@ let reporting_period = ""
 
 frappe.ui.form.on("AU BAS Report", {
 	refresh(frm) {
-		var css = document.createElement(`style`);
-		var styles = `.row-index {display:none;} .form-grid {  overflow-y: scroll; overflow-y: scroll; max-height:200px}`;
 
-		if (css.styleSheet) css.styleSheet.cssText = styles;
-		else css.appendChild(document.createTextNode(styles));
-
-		document.getElementsByTagName("head")[0].appendChild(css);
+		frm.fields_dict["1a_details"].$wrapper.find('.grid-body')
+			.css({ 'overflow-y': 'scroll', 'max-height': '400px' })
+		frm.fields_dict["1b_details"].$wrapper.find('.grid-body')
+			.css({ 'overflow-y': 'scroll', 'max-height': '400px' })
+		frm.fields_dict["g1_details"].$wrapper.find('.grid-body')
+			.css({ 'overflow-y': 'scroll', 'max-height': '400px' })
+		frm.fields_dict["g2_details"].$wrapper.find('.grid-body')
+			.css({ 'overflow-y': 'scroll', 'max-height': '400px' })
+		frm.fields_dict["g3_details"].$wrapper.find('.grid-body')
+			.css({ 'overflow-y': 'scroll', 'max-height': '400px' })
+		frm.fields_dict["g4_details"].$wrapper.find('.grid-body')
+			.css({ 'overflow-y': 'scroll', 'max-height': '400px' })
+		frm.fields_dict["g10_details"].$wrapper.find('.grid-body')
+			.css({ 'overflow-y': 'scroll', 'max-height': '400px' })
+		frm.fields_dict["g11_details"].$wrapper.find('.grid-body')
+			.css({ 'overflow-y': 'scroll', 'max-height': '400px' })
+		frm.fields_dict["g14_details"].$wrapper.find('.grid-body')
+            .css({ 'overflow-y' : 'scroll', 'max-height' : '400px' })
 
 
 		if (frm.is_new()) {

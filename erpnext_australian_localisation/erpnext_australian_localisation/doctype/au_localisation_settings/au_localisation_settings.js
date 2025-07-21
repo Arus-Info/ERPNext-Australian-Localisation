@@ -17,15 +17,6 @@ frappe.ui.form.on("AU Localisation Settings", {
 				}
 			})
 		}
-
-		frm.add_custom_button("Clear Transaction", () => {
-			frappe.call({
-				method: "erpnext_australian_localisation.erpnext_australian_localisation.doctype.au_localisation_settings.au_localisation_settings.clear_transaction",
-				callback: () => {
-					frappe.msgprint("Transaction Cleared")
-				}
-			})
-		})
 	},
 	before_save(frm) {
 		if (is_company_deleted) {
