@@ -249,6 +249,13 @@ def get_au_bas_label_setup():
 		{
 			"doctype": "AU BAS Label Setup",
 			"bas_label": "G1",
+			"tax_management": "Subjected",
+			"tax_allocation": "Collected Sales",
+			"tax_code": "AUSINPTAX",
+		},
+		{
+			"doctype": "AU BAS Label Setup",
+			"bas_label": "G1",
 			"tax_management": "Tax Account",
 			"tax_allocation": "Collected Sales",
 			"tax_code": "AUSGST",

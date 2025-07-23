@@ -7,23 +7,23 @@ frappe.ui.form.on("AU BAS Report", {
 	refresh(frm) {
 
 		frm.fields_dict["1a_details"].$wrapper.find('.grid-body')
-			.css({ 'overflow-y': 'scroll', 'max-height': '400px' })
+			.css({ 'overflow-y': 'scroll', 'max-height': '200px' })
 		frm.fields_dict["1b_details"].$wrapper.find('.grid-body')
-			.css({ 'overflow-y': 'scroll', 'max-height': '400px' })
+			.css({ 'overflow-y': 'scroll', 'max-height': '200px' })
 		frm.fields_dict["g1_details"].$wrapper.find('.grid-body')
-			.css({ 'overflow-y': 'scroll', 'max-height': '400px' })
+			.css({ 'overflow-y': 'scroll', 'max-height': '200px' })
 		frm.fields_dict["g2_details"].$wrapper.find('.grid-body')
-			.css({ 'overflow-y': 'scroll', 'max-height': '400px' })
+			.css({ 'overflow-y': 'scroll', 'max-height': '200px' })
 		frm.fields_dict["g3_details"].$wrapper.find('.grid-body')
-			.css({ 'overflow-y': 'scroll', 'max-height': '400px' })
+			.css({ 'overflow-y': 'scroll', 'max-height': '200px' })
 		frm.fields_dict["g4_details"].$wrapper.find('.grid-body')
-			.css({ 'overflow-y': 'scroll', 'max-height': '400px' })
+			.css({ 'overflow-y': 'scroll', 'max-height': '200px' })
 		frm.fields_dict["g10_details"].$wrapper.find('.grid-body')
-			.css({ 'overflow-y': 'scroll', 'max-height': '400px' })
+			.css({ 'overflow-y': 'scroll', 'max-height': '200px' })
 		frm.fields_dict["g11_details"].$wrapper.find('.grid-body')
-			.css({ 'overflow-y': 'scroll', 'max-height': '400px' })
+			.css({ 'overflow-y': 'scroll', 'max-height': '200px' })
 		frm.fields_dict["g14_details"].$wrapper.find('.grid-body')
-            .css({ 'overflow-y' : 'scroll', 'max-height' : '400px' })
+            .css({ 'overflow-y' : 'scroll', 'max-height' : '200px' })
 
 
 		if (frm.is_new()) {
@@ -76,7 +76,7 @@ frappe.ui.form.on("AU BAS Report", {
 				}
 				else if (reporting_period === "Quarterly") {
 					frappe.call({
-						method: "erpnext_australian_localisation.erpnext_australian_localisation.doctype.bas_report.bas_report.get_quaterly_start_end_date",
+						method: "erpnext_australian_localisation.erpnext_australian_localisation.doctype.au_bas_report.au_bas_report.get_quaterly_start_end_date",
 						args: {
 							"start_date": frm.doc.start_date
 						},

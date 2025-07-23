@@ -37,7 +37,7 @@ frappe.ui.form.on("AU BAS Reporting Period", {
 		row = locals[cdt][cdn]
 		frappe.db.get_list("AU BAS Report",{
 			// "doctype": "AU BAS Report", 
-			"filters": { "company": row.company, "docstatus": 0 }
+			"filters": { "company": row.company }
 		})
 			.then((data) => {
 				is_company_deleted = 0;

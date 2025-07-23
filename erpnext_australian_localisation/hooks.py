@@ -15,6 +15,9 @@ fixtures = [
 
 company_data_to_be_ignored = ["Tax Rule"]
 
+after_app_install = "erpnext_australian_localisation.install.after_app_install"
+before_app_uninstall = "erpnext_australian_localisation.uninstall.before_app_uninstall"
+
 # required_apps = []
 
 # Each item in the list will be shown as an app in the apps page
@@ -173,12 +176,12 @@ doc_events = {
 	},
 	"Company" : {
 		"after_insert": "erpnext_australian_localisation.overrides.company.after_insert"
-	}
-
-	#  "Expense Claim" : { 
-	# 	"on_submit" : "erpnext_australian_localisation.overrides.invoices.expense_on_submit",
-	# 	"on_cancel" : "erpnext_australian_localisation.overrides.invoices.on_cancel"
-	# 	}
+	},
+	"Expense Claim" : { 
+		"on_submit" : "erpnext_australian_localisation.overrides.expense_claim.on_submit",
+		"on_update" : "erpnext_australian_localisation.overrides.expense_claim.on_update",
+		"on_cancel" : "erpnext_australian_localisation.overrides.invoices.on_cancel"
+		}
 }
 
 # Scheduled Tasks

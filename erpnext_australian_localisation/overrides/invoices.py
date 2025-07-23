@@ -9,10 +9,11 @@ def on_submit(doc, event):
 		if doc.doctype in ["Sales Invoice"]:
 			tax_allocation = "Collected Sales"
 			account_type = "income_account"
+			sum_depends_on = ['gst_pay_basis','gst_pay_amount']
 		elif doc.doctype in ["Purchase Invoice"]:
 			tax_allocation = "Deductible Purchase"
 			account_type = "expense_account"
-
+			sum_depends_on = ['gst_offset_basis','gst_offset_amount']
 
 		for item in doc.items:
 			bas_labels = frappe.get_list(
@@ -59,10 +60,7 @@ def on_submit(doc, event):
 				result.append(temp)
 		if result :
 			result = pd.DataFrame(result)
-			result = result.groupby(['bas_label','account','tax_code']).sum(['gst_pay_basis','gst_pay_amount']).reset_index()
-
-
-
+			result = result.groupby(['bas_label','account','tax_code']).sum(sum_depends_on).reset_index()
 			bas_entries = result.to_dict(orient='records')
 			for bas_entry in bas_entries :
 				bas_doc = frappe.new_doc("AU BAS Entry")

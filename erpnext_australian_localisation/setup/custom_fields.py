@@ -33,4 +33,26 @@ CUSTOM_FIELDS = {
 	]
 }
 
-HRMS_CUSTOM_FIELDS = {}
+HRMS_CUSTOM_FIELDS = {
+	"Expense Claim Detail" : [
+		{
+			"fieldname": "au_tax_code",
+			"label": "AU Tax Code",
+			"fieldtype": "Link",
+			"options": "AU Tax Code",
+			"insert_after": "expense_date",
+			"module": "ERPNext Australian Localisation",
+		}
+	],
+	"Expense Taxes and Charges" : [
+		{
+			"fieldname": "au_tax_code",
+			"label": "AU Tax Code",
+			"fieldtype": "Link",
+			"options": "AU Tax Code",
+			"insert_after": "total",
+			"read_only" : 1,
+			"module": "ERPNext Australian Localisation",
+		}
+	],
+}
