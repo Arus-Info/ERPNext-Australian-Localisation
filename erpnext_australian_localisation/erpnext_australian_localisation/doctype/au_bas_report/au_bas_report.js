@@ -23,16 +23,17 @@ frappe.ui.form.on("AU BAS Report", {
 		frm.fields_dict["g11_details"].$wrapper.find('.grid-body')
 			.css({ 'overflow-y': 'scroll', 'max-height': '200px' })
 		frm.fields_dict["g14_details"].$wrapper.find('.grid-body')
-            .css({ 'overflow-y' : 'scroll', 'max-height' : '200px' })
+            .css({ 'overflow-y': 'scroll', 'max-height': '200px' })
 
 
 		if (frm.is_new()) {
+			frm.set_df_property("reporting_status", "read_only", 1 )
 		}
 		else {
+			frm.set_df_property("reporting_status", "read_only", 0 )
 			frm.trigger("update_reporting_period")
 			frm.add_custom_button(__("Update BAS Data"), () => {
 				frappe.dom.freeze()
-				// frappe.show_alert({ message:__("You'll be notified once the bas report is done"), indicator:'green' }, 5);
 				frappe.call({
 					method: "erpnext_australian_localisation.erpnext_australian_localisation.doctype.au_bas_report.au_bas_report.get_gst",
 					args: {
@@ -42,8 +43,8 @@ frappe.ui.form.on("AU BAS Report", {
 						end_date: frm.doc.end_date
 					},
 					callback: function () {
-						// frappe.show_alert({ message:__("You'll be notified once the bas report is done"), indicator:'green' }, 5);
 						frappe.dom.unfreeze()
+						frappe.msgprint("BAS Report Updated")
 					}
 				})
 			})
@@ -110,3 +111,26 @@ frappe.ui.form.on("AU BAS Report", {
 		}
 	}
 });
+
+
+frappe.tour['AU BAS Report'] = [
+	{
+		fieldname: "company",
+		title: "Company Selection",
+		description: "Select the company for which BAS Report needs to be generated",
+		position: "Right"
+	},
+	{
+		fieldname: "reporting_status",
+		title: "Reporting Status Selection",
+		description: "Reporting status needs to be \"In Review\" while preparing the Report. BAS Report data can be recalculated till the Reporting Status is set to \"Validated\". Once BAS is lodged then BAS Report can be submitted. ",
+		position: "Bottom"
+	},
+	{
+		fieldname: "start_date",
+		title: "Start Date Selection",
+		description: "The BAS Reporting period start date needs to be selected. The system will update the reporting end date based on the frequency (Monthly/ Quarterly) in the AU Localisation Settings page",
+		position: "Right"
+	}
+]
+// bas data can be updated omly in review staut. pls change the stauts baxk toin review for updating the bas data

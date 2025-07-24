@@ -16,7 +16,7 @@ def on_submit(doc, event):
 			sum_depends_on = ['gst_offset_basis','gst_offset_amount']
 
 		for item in doc.items:
-			bas_labels = frappe.get_list(
+			bas_labels = frappe.get_all(
 				"AU BAS Label Setup",
 				filters={
 					"tax_management": "Subjected",
@@ -38,7 +38,7 @@ def on_submit(doc, event):
 				result.append(temp)
 
 		for tax in doc.taxes :
-			bas_labels = frappe.get_list(
+			bas_labels = frappe.get_all(
 				"AU BAS Label Setup",
 				filters={
 					"tax_management": "Tax Account",
@@ -87,7 +87,7 @@ def on_update(doc, event):
 			tax_template_doctype, doc.taxes_and_charges, "title"
 		)
 		for item in doc.items:
-			if item.au_tax_code != "AUSINPTAX" :
+			if not item.input_taxed :
 				if item.item_tax_template:
 					item_tax_template = frappe.db.get_value(
 						"Item Tax Template", item.item_tax_template, "title"
@@ -100,7 +100,16 @@ def on_update(doc, event):
 					"tax_code",
 				)
 				item.au_tax_code = tax_code
-				item.save()
+			else :
+				if doc.doctype == 'Sales Invoice':
+					item.au_tax_code = "AUSINPTAX" 
+					item.item_tax_template = frappe.db.get_value(
+						"Item Tax Template", {"title" : "GST Exempt Sales", "company" : doc.company }, "name")
+				elif doc.doctype == "Purchase Invoice":
+					item.au_tax_code = "AUPINPTAX" 
+					item.item_tax_template = frappe.db.get_value(
+						"Item Tax Template", {"title" : "GST Exempt Purchase", "company" : doc.company }, "name")
+			item.save()
 
 		for tax in doc.taxes:
 			tax_code = frappe.db.get_value(

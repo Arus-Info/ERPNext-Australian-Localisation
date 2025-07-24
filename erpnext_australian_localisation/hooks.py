@@ -55,8 +55,8 @@ before_app_uninstall = "erpnext_australian_localisation.uninstall.before_app_uni
 
 doctype_js = {
 	"Item" : "public/js/item.js",
-	"Sales Invoice" : "public/js/autaxcode_setup.js",
-	"Purchase Invoice" : "public/js/autaxcode_setup.js"
+	"Sales Invoice" : "public/js/setup_input_taxed_sales.js",
+	"Purchase Invoice" : "public/js/setup_input_taxed_sales.js"
 }
 
 # include js in doctype views

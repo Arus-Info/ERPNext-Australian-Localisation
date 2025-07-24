@@ -55,6 +55,11 @@ def get_au_tax_codes():
 			"tax_code": "AUPNCASGT",
 			"tax_description": "Non Capital Purchase GST",
 		},
+		{
+			"doctype": "AU Tax Code",
+			"tax_code": "AUPINPTAX",
+			"tax_description": "Purchase for Input Tax Sales",
+		},
 	]
 	return records
 
@@ -194,6 +199,11 @@ def get_au_bas_labels():
 		},
 		{
 			"doctype": "AU BAS Label",
+			"bas_label": "G13",
+			"bas_label_description": "Purchase for Input Tax Sales",
+		},
+		{
+			"doctype": "AU BAS Label",
 			"bas_label": "G14",
 			"bas_label_description": "Purchase without GST in the price",
 		},
@@ -325,6 +335,13 @@ def get_au_bas_label_setup():
 		},
 		{
 			"doctype": "AU BAS Label Setup",
+			"bas_label": "G13",
+			"tax_management": "Subjected",
+			"tax_allocation": "Collected Sales",
+			"tax_code": "AUPINPTAX",
+		},
+		{
+			"doctype": "AU BAS Label Setup",
 			"bas_label": "G14",
 			"tax_management": "Subjected",
 			"tax_allocation": "Deductible Purchase",
@@ -350,5 +367,5 @@ def create_roles():
 
 def remove_roles():
 	for role in ROLES :
-		if  frappe.db.exists("Role", role['name']):
+		if frappe.db.exists("Role", role['name']):
 			frappe.delete_doc("Role", role['name'])

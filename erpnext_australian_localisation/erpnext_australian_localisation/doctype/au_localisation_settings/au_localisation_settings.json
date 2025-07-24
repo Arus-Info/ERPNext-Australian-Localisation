@@ -26,8 +26,8 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-07-16 14:32:05.461107",
- "modified_by": "Administrator",
+ "modified": "2025-07-24 15:23:35.767844",
+ "modified_by": "jeba.j@arus.co.in",
  "module": "ERPNext Australian Localisation",
  "name": "AU Localisation Settings",
  "owner": "Administrator",
@@ -38,7 +38,7 @@
    "email": 1,
    "print": 1,
    "read": 1,
-   "role": "System Manager",
+   "role": "AU Localisation Admin",
    "share": 1,
    "write": 1
   }

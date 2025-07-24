@@ -1,0 +1,22 @@
+{
+ "action": "Create Entry",
+ "action_label": "BAS Report Creation",
+ "creation": "2025-07-23 21:06:43.442038",
+ "description": "# BAS Report\nBAS Report allows the user to generate the Business Activity Statement (BAS) to report how much ATO owes you / how much you owes ATO for each Month/Quarter. BAS Report also gives the breakup of amounts for each of the BAS Labels (1A, 1B, G1, G2, G3, G4, G10, G11, G14). BAS Report also provides the list of the documents contributing to each of the BAS Labels. This Report can be printed in a PDF format as well.",
+ "docstatus": 0,
+ "doctype": "Onboarding Step",
+ "form_tour": "",
+ "idx": 0,
+ "is_complete": 0,
+ "is_single": 0,
+ "is_skipped": 0,
+ "modified": "2025-07-24 20:28:54.612037",
+ "modified_by": "Administrator",
+ "name": "BAS Report",
+ "owner": "Administrator",
+ "reference_document": "AU BAS Report",
+ "show_form_tour": 1,
+ "show_full_form": 1,
+ "title": "BAS Report",
+ "validate_action": 1
+}

@@ -27,7 +27,7 @@ def on_submit(doc,event):
 	result = []
 	
 	for expense in doc.expenses :
-		bas_labels = frappe.get_list(
+		bas_labels = frappe.get_all(
 			"AU BAS Label Setup",
 			filters={
 				"tax_management": "Subjected",
@@ -47,7 +47,7 @@ def on_submit(doc,event):
 			result.append(temp)
 
 	for tax in doc.taxes :
-		bas_labels = frappe.get_list(
+		bas_labels = frappe.get_all(
 			"AU BAS Label Setup",
 			filters={
 				"tax_management": "Tax Account",

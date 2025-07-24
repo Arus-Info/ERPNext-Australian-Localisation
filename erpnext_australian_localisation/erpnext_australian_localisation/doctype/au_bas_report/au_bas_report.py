@@ -26,7 +26,7 @@ def get_gst(name, company, start_date, end_date):
 
 	doc = frappe.get_doc("AU BAS Report", name)
 
-	bas_labels = frappe.get_list("AU BAS Label", pluck="name")
+	bas_labels = frappe.get_all("AU BAS Label", pluck="name")
 
 	bas_label_details = [{'bas_label' : l, "fieldname" : l.lower() + "_details"} for l in bas_labels]
 

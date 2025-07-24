@@ -1,7 +1,6 @@
 // Copyright (c) 2025, frappe.dev@arus.co.in and contributors
 // For license information, please see license.txt
 
-var is_company_deleted = 0;
 
 frappe.ui.form.on("AU Localisation Settings", {
 	refresh(frm) {
@@ -18,11 +17,7 @@ frappe.ui.form.on("AU Localisation Settings", {
 			})
 		}
 	},
-	before_save(frm) {
-		if (is_company_deleted) {
-			frappe.throw("Can't save please refresh the page");
-		}
-	},
+
 	after_save(frm) {
 		// sets latest values in frappe.boot for current user
 		// other users will still need to refresh page
@@ -33,20 +28,14 @@ frappe.ui.form.on("AU Localisation Settings", {
 
 frappe.ui.form.on("AU BAS Reporting Period", {
 
-	before_bas_reporting_period_remove(frm, cdt, cdn) { 
+	before_bas_reporting_period_remove: async function(frm, cdt, cdn) { 
 		row = locals[cdt][cdn]
-		frappe.db.get_list("AU BAS Report",{
-			// "doctype": "AU BAS Report", 
+		await frappe.db.get_list("AU BAS Report",{
 			"filters": { "company": row.company }
 		})
 			.then((data) => {
-				is_company_deleted = 0;
 				if (data.length) {
-					frappe.show_alert({
-						message: __("Sorry can't delete company."),
-						indicator: 'red'
-					}, 5);
-					is_company_deleted = 1
+					frappe.throw("Sorry can't delete company")
 				}
 			})
 	},
@@ -56,7 +45,13 @@ frappe.tour['AU Localisation Settings'] = [
 	{
 		fieldname: "make_tax_category_mandatory",
 		title: "Make Tax Category Mandatory",
-		description: "If this field is enabled, then Tax Category field in Supplier, Customer and Item (in Tax tab) Master will become mandatory",
+		description: "Tax Category field in Supplier, Customer and Item (in Tax tab) Master will be mandatory to get the relevant AU Tax codes Updated",
 		position: "Right"
+	},
+	{
+		fieldname: "bas_reporting_period",
+		title: "BAS Reporting Period",
+		description: "BAS reports are configured to generate in a Monthly frequency. This can be changed to Quarterly frequency by changing it here",
+		position: "Bottom"
 	}
 ];
