@@ -33,20 +33,25 @@ frappe.ui.form.on("AU BAS Report", {
 			frm.set_df_property("reporting_status", "read_only", 0 )
 			frm.trigger("update_reporting_period")
 			frm.add_custom_button(__("Update BAS Data"), () => {
-				frappe.dom.freeze()
-				frappe.call({
-					method: "erpnext_australian_localisation.erpnext_australian_localisation.doctype.au_bas_report.au_bas_report.get_gst",
-					args: {
-						name : frm.doc.name,
-						company: frm.doc.company,
-						start_date: frm.doc.start_date,
-						end_date: frm.doc.end_date
-					},
-					callback: function () {
-						frappe.dom.unfreeze()
-						frappe.msgprint("BAS Report Updated")
-					}
-				})
+				if (frm.doc.reporting_status === "In Review") {
+					frappe.dom.freeze()
+					frappe.call({
+						method: "erpnext_australian_localisation.erpnext_australian_localisation.doctype.au_bas_report.au_bas_report.get_gst",
+						args: {
+							name : frm.doc.name,
+							company: frm.doc.company,
+							start_date: frm.doc.start_date,
+							end_date: frm.doc.end_date
+						},
+						callback: function () {
+							frappe.dom.unfreeze()
+							frappe.msgprint("BAS Report Updated")
+						}
+					})
+				}
+				else {
+					frappe.throw("BAS data can be updated only \"In Review\" status. Please change the status back to \"In Review\" for updating the BAS data.")
+				}
 			})
 		}
 	},
@@ -133,4 +138,3 @@ frappe.tour['AU BAS Report'] = [
 		position: "Right"
 	}
 ]
-// bas data can be updated omly in review staut. pls change the stauts baxk toin review for updating the bas data

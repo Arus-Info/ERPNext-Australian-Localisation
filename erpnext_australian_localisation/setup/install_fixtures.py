@@ -337,7 +337,7 @@ def get_au_bas_label_setup():
 			"doctype": "AU BAS Label Setup",
 			"bas_label": "G13",
 			"tax_management": "Subjected",
-			"tax_allocation": "Collected Sales",
+			"tax_allocation": "Deductible Purchase",
 			"tax_code": "AUPINPTAX",
 		},
 		{

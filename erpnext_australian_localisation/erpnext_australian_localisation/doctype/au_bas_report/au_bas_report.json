@@ -17,11 +17,12 @@
   "net_gst",
   "g1",
   "g4",
-  "g14",
+  "g13",
   "column_break_ocbf",
   "1a",
   "g2",
   "g10",
+  "g14",
   "column_break_vahx",
   "1b",
   "g3",
@@ -36,6 +37,7 @@
   "g4_details",
   "g10_details",
   "g11_details",
+  "g13_details",
   "g14_details"
  ],
  "fields": [
@@ -233,14 +235,27 @@
    "label": "G14 Details",
    "options": "AU BAS Report Entry",
    "read_only": 1
+  },
+  {
+   "fieldname": "g13",
+   "fieldtype": "Currency",
+   "label": "G13",
+   "read_only": 1
+  },
+  {
+   "fieldname": "g13_details",
+   "fieldtype": "Table",
+   "label": "G13 Details",
+   "options": "AU BAS Report Entry",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-07-24 15:31:30.155648",
- "modified_by": "jeba.j@arus.co.in",
+ "modified": "2025-07-24 22:03:10.020464",
+ "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
  "name": "AU BAS Report",
  "naming_rule": "Expression",
