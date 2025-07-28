@@ -56,7 +56,8 @@ before_app_uninstall = "erpnext_australian_localisation.uninstall.before_app_uni
 doctype_js = {
 	"Item" : "public/js/item.js",
 	"Sales Invoice" : "public/js/setup_input_taxed_sales.js",
-	"Purchase Invoice" : "public/js/setup_input_taxed_sales.js"
+	"Sales Order" : "public/js/setup_input_taxed_sales.js",
+	"Purchase Invoice" : "public/js/setup_input_taxed_sales.js",
 }
 
 # include js in doctype views
@@ -166,12 +167,12 @@ after_uninstall = "erpnext_australian_localisation.uninstall.after_uninstall"
 doc_events = {
 	"Sales Invoice" : { 
 		"on_submit" : "erpnext_australian_localisation.overrides.invoices.on_submit" ,
-		"on_update" : "erpnext_australian_localisation.overrides.invoices.on_update" ,
+		"on_update" : "erpnext_australian_localisation.overrides.sales_invoice.on_update" ,
 		"on_cancel" : "erpnext_australian_localisation.overrides.invoices.on_cancel"
 	},
 	"Purchase Invoice" : { 
 		"on_submit" : "erpnext_australian_localisation.overrides.invoices.on_submit", 
-		"on_update" : "erpnext_australian_localisation.overrides.invoices.on_update" ,
+		"on_update" : "erpnext_australian_localisation.overrides.purchase_invoice.on_update" ,
 		"on_cancel" : "erpnext_australian_localisation.overrides.invoices.on_cancel"
 	},
 	"Company" : {

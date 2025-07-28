@@ -24,13 +24,19 @@ class AUBASReport(Document):
 def get_gst(name, company, start_date, end_date):
 	from frappe.model.mapper import get_mapped_doc
 
+	frappe.publish_realtime('bas_data_generator')
+
 	doc = frappe.get_doc("AU BAS Report", name)
 
 	bas_labels = frappe.get_all("AU BAS Label", pluck="name")
 
 	bas_label_details = [{'bas_label' : l, "fieldname" : l.lower() + "_details"} for l in bas_labels]
-
+	progress = 10
+	frappe.publish_progress(1, title='BAS Label Generating..', description = "getting ready...")
 	for bas_label_detail in bas_label_details :
+		print("In label", bas_label_detail['bas_label'] )
+		frappe.publish_progress(progress, title='BAS Label Generating..', description = bas_label_detail['bas_label'])
+		progress += 10
 		doc.update({
 			bas_label_detail['fieldname'] : []
 		})
@@ -68,7 +74,27 @@ def get_gst(name, company, start_date, end_date):
 		doc.update({
 			bas_label_detail['bas_label'].lower() : total
 		})
-	doc.net_gst = doc.get('1a') - doc.get('1b')
+	
+	doc._1a_only = doc.get('1a')
+	doc._1b_only = doc.get('1b')
+
+	doc.g5 = doc.g2 + doc.g3 + doc.g4
+	doc.g6 = doc.g1 - doc.g5
+	doc.g8 = doc.g6 + doc.g7
+	doc.g9 = doc.g8 / 11
+
+	doc.g12 = doc.g10 + doc.g11
+	doc.g16 = doc.g13 + doc.g14 + doc.g15
+	doc.g17 = doc.g12 - doc.g16
+	doc.g19 = doc.g17 + doc.g18
+	doc.g20 = doc.g19 / 11
+
+	doc.update({
+		"1a" : doc._1a_only+ doc.g7 / 11,
+		"1b" : doc._1b_only + doc.g18 / 11
+	})
+
+	doc.net_gst = abs(doc.get('1a') - doc.get('1b'))
 	doc.save()
 
 @frappe.whitelist()

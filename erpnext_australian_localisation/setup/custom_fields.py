@@ -35,23 +35,12 @@ CUSTOM_FIELDS = {
 			"fieldtype": "Check",
 			"insert_after": "au_tax_description",
 			"module": "ERPNext Australian Localisation",
-		}
-	],
-	"Sales Invoice" : [
+		},
 		{
-			"fieldname": "input_taxed",
-			"label": "Input-taxed Sales",
+			"fieldname": "private_use",
+			"label": " Purchases for private use / not income tax deductible",
 			"fieldtype": "Check",
-			"insert_after": "is_debit_note",
-			"module": "ERPNext Australian Localisation",
-		}
-	],
-	"Purchase Invoice" : [
-		{
-			"fieldname": "input_taxed",
-			"label": "Purchase for Input-taxed Sales",
-			"fieldtype": "Check",
-			"insert_after": "tax_withholding_category",
+			"insert_after": "input_taxed",
 			"module": "ERPNext Australian Localisation",
 		}
 	],
@@ -76,6 +65,15 @@ CUSTOM_FIELDS = {
 			"read_only" : 1,
 			"module": "ERPNext Australian Localisation",
 		}
+	],
+	"Sales Order Item" : [
+		{
+			"fieldname": "input_taxed",
+			"label": "Input-taxed Sales",
+			"fieldtype": "Check",
+			"insert_after": "item_tax_template",
+			"module": "ERPNext Australian Localisation",
+		},
 	]
 }
 

@@ -5,6 +5,8 @@ let reporting_period = ""
 
 frappe.ui.form.on("AU BAS Report", {
 	refresh(frm) {
+		
+		frm.trigger("update_label")
 
 		frm.fields_dict["1a_details"].$wrapper.find('.grid-body')
 			.css({ 'overflow-y': 'scroll', 'max-height': '200px' })
@@ -34,7 +36,7 @@ frappe.ui.form.on("AU BAS Report", {
 			frm.trigger("update_reporting_period")
 			frm.add_custom_button(__("Update BAS Data"), () => {
 				if (frm.doc.reporting_status === "In Review") {
-					frappe.dom.freeze()
+					frappe.realtime.on('bas_data_generator', () => {})
 					frappe.call({
 						method: "erpnext_australian_localisation.erpnext_australian_localisation.doctype.au_bas_report.au_bas_report.get_gst",
 						args: {
@@ -44,8 +46,6 @@ frappe.ui.form.on("AU BAS Report", {
 							end_date: frm.doc.end_date
 						},
 						callback: function () {
-							frappe.dom.unfreeze()
-							frappe.msgprint("BAS Report Updated")
 						}
 					})
 				}
@@ -62,6 +62,43 @@ frappe.ui.form.on("AU BAS Report", {
 
 	start_date(frm) {
 		frm.trigger("update_end_date")
+	},
+
+	g7(frm) {
+		frm.set_value("g8", frm.doc.g6 + frm.doc.g7)
+		frm.set_value("g9", frm.doc.g8 / 11)
+		frm.set_value("1a", frm.doc._1a_only + frm.doc.g7 / 11)
+		frm.set_value("net_gst", Math.abs(frm.doc['1a'] - frm.doc['1b']))
+		frm.trigger("update_label")
+	},
+
+	g18(frm) {
+		frm.set_value("g19", frm.doc.g17 + frm.doc.g18)
+		frm.set_value("g20", frm.doc.g19 / 11)
+		frm.set_value("1b", frm.doc._1b_only + frm.doc.g18 / 11)
+		frm.set_value("net_gst", Math.abs(frm.doc['1a'] - frm.doc['1b']))
+		frm.trigger("update_label")
+	},
+
+	update_label(frm) {
+		if (frm.doc['1b'] > frm.doc['1a']) {
+			frm.set_df_property("net_gst", "label", "GST Refund")	
+		}
+		else {
+			frm.set_df_property("net_gst","label","GST to Pay")
+		}
+		frm.trigger("check_data_correctness")
+	},
+
+	check_data_correctness(frm) {
+		if (frm.doc['1b'] !== frm.doc['g20']) {
+			frm.fields_dict["1b"].$wrapper.find('.control-value')
+				.css({ 'background-color': '#ffb3b3' })
+		}
+		if (frm.doc['1a'] !== frm.doc['g9']) {
+			frm.fields_dict["1a"].$wrapper.find('.control-value')
+			.css({ 'background-color': '#ffb3b3' })
+		}
 	},
 	
 	update_end_date: async function (frm) {
