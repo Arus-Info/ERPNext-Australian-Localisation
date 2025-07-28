@@ -60,6 +60,11 @@ def get_au_tax_codes():
 			"tax_code": "AUPINPTAX",
 			"tax_description": "Purchase for Input Tax Sales",
 		},
+		{
+			"doctype": "AU Tax Code",
+			"tax_code": "AUPPVTUSE",
+			"tax_description": "Purchases for private use / not income tax deductible",
+		},
 	]
 	return records
 
@@ -207,6 +212,11 @@ def get_au_bas_labels():
 			"bas_label": "G14",
 			"bas_label_description": "Purchase without GST in the price",
 		},
+		{
+			"doctype": "AU BAS Label",
+			"bas_label": "G15",
+			"bas_label_description": "Purchases for private use / not income tax deductible",
+		},
 	]
 	return records
 
@@ -329,6 +339,20 @@ def get_au_bas_label_setup():
 		{
 			"doctype": "AU BAS Label Setup",
 			"bas_label": "G11",
+			"tax_management": "Subjected",
+			"tax_allocation": "Deductible Purchase",
+			"tax_code": "AUPINPTAX",
+		},
+		{
+			"doctype": "AU BAS Label Setup",
+			"bas_label": "G11",
+			"tax_management": "Subjected",
+			"tax_allocation": "Deductible Purchase",
+			"tax_code": "AUPPVTUSE",
+		},
+		{
+			"doctype": "AU BAS Label Setup",
+			"bas_label": "G11",
 			"tax_management": "Tax Account",
 			"tax_allocation": "Deductible Purchase",
 			"tax_code": "AUPNCASGT",
@@ -339,6 +363,13 @@ def get_au_bas_label_setup():
 			"tax_management": "Subjected",
 			"tax_allocation": "Deductible Purchase",
 			"tax_code": "AUPINPTAX",
+		},
+		{
+			"doctype": "AU BAS Label Setup",
+			"bas_label": "G13",
+			"tax_management": "Subjected",
+			"tax_allocation": "Deductible Purchase",
+			"tax_code": "AUPPVTUSE",
 		},
 		{
 			"doctype": "AU BAS Label Setup",
@@ -353,6 +384,13 @@ def get_au_bas_label_setup():
 			"tax_management": "Subjected",
 			"tax_allocation": "Deductible Purchase",
 			"tax_code": "AUPNCAFR",
+		},
+		{
+			"doctype": "AU BAS Label Setup",
+			"bas_label": "G15",
+			"tax_management": "Subjected",
+			"tax_allocation": "Deductible Purchase",
+			"tax_code": "AUPPVTUSE",
 		},
 	]
 	return records
