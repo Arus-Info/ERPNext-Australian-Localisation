@@ -58,6 +58,7 @@ doctype_js = {
 	"Sales Invoice" : "public/js/setup_input_taxed_sales.js",
 	"Sales Order" : "public/js/setup_input_taxed_sales.js",
 	"Purchase Invoice" : "public/js/setup_input_taxed_sales.js",
+	"Purchase Order" : "public/js/setup_input_taxed_sales.js",
 }
 
 # include js in doctype views

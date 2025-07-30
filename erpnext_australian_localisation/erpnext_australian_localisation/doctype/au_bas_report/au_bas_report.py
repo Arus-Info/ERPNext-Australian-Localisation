@@ -13,10 +13,12 @@ class AUBASReport(Document):
 			frappe.throw("Only BAS Report at Validated state can be submitted")
 
 	def before_insert(self):
-		this_year = frappe.get_list("AU BAS Report", filters=[["name" ,"like", "BAS-" + self.start_date[:4] + "%"]], fields=["start_date", "end_date"])
+		print("year",  "BAS-" + self.start_date[:4])
+		this_year = frappe.get_list("AU BAS Report", filters=[["name" ,"like", "BAS-" + self.start_date[:4] + "%"],["company", "=", self.company]], fields=["start_date", "end_date"])
+		start_date = datetime.strptime(self.start_date, "%Y-%m-%d").date() 
+		end_date = datetime.strptime(self.end_date, "%Y-%m-%d").date() 
 		for i in range(len(this_year)):
-			date = datetime.strptime(self.start_date, "%Y-%m-%d").date() 
-			if this_year[i].start_date <= date and date<= this_year[i].end_date :
+			if (start_date <= this_year[i].start_date and end_date >= this_year[i].start_date )or (this_year[i].start_date <= start_date and start_date <= this_year[i].end_date) :
 				frappe.throw("BAS Report found for this period")
 
 

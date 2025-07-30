@@ -205,7 +205,7 @@ def get_au_bas_labels():
 		{
 			"doctype": "AU BAS Label",
 			"bas_label": "G13",
-			"bas_label_description": "Purchase for Input Tax Sales",
+			"bas_label_description": "Purchase for Input Taxed Sales",
 		},
 		{
 			"doctype": "AU BAS Label",
@@ -215,7 +215,7 @@ def get_au_bas_labels():
 		{
 			"doctype": "AU BAS Label",
 			"bas_label": "G15",
-			"bas_label_description": "Purchases for private use / not income tax deductible",
+			"bas_label_description": "Purchase for private use / not income tax deductible",
 		},
 	]
 	return records
@@ -363,13 +363,6 @@ def get_au_bas_label_setup():
 			"tax_management": "Subjected",
 			"tax_allocation": "Deductible Purchase",
 			"tax_code": "AUPINPTAX",
-		},
-		{
-			"doctype": "AU BAS Label Setup",
-			"bas_label": "G13",
-			"tax_management": "Subjected",
-			"tax_allocation": "Deductible Purchase",
-			"tax_code": "AUPPVTUSE",
 		},
 		{
 			"doctype": "AU BAS Label Setup",
