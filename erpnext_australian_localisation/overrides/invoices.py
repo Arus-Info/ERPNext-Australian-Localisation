@@ -79,7 +79,7 @@ def on_submit(doc, event):
 def on_cancel(doc, event):
 	bas_entries = frappe.get_list("AU BAS Entry", filters={"voucher_no" : doc.name}, pluck="name")
 	for bas_entry in bas_entries :
-		frappe.delete_doc("AU BAS Entry", bas_entry)
+		frappe.delete_doc("AU BAS Entry", bas_entry, ignore_permissions = True)
 
 # @frappe.whitelist()
 # def get_au_tax_code(tax_template, item_tax_template, tax_template_doctype):

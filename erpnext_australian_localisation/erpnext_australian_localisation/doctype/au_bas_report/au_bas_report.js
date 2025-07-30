@@ -25,34 +25,35 @@ frappe.ui.form.on("AU BAS Report", {
 		frm.fields_dict["g11_details"].$wrapper.find('.grid-body')
 			.css({ 'overflow-y': 'scroll', 'max-height': '200px' })
 		frm.fields_dict["g14_details"].$wrapper.find('.grid-body')
-            .css({ 'overflow-y': 'scroll', 'max-height': '200px' })
-
+			.css({ 'overflow-y': 'scroll', 'max-height': '200px' })
 
 		if (frm.is_new()) {
-			frm.set_df_property("reporting_status", "read_only", 1 )
+			frm.set_df_property("reporting_status", "read_only", 1)
 		}
 		else {
-			frm.set_df_property("reporting_status", "read_only", 0 )
+			frm.set_df_property("reporting_status", "read_only", 0)
 			frm.trigger("update_reporting_period")
-			frm.add_custom_button(__("Update BAS Data"), () => {
-				if (frm.doc.reporting_status === "In Review") {
-					frappe.realtime.on('bas_data_generator', () => {})
-					frappe.call({
-						method: "erpnext_australian_localisation.erpnext_australian_localisation.doctype.au_bas_report.au_bas_report.get_gst",
-						args: {
-							name : frm.doc.name,
-							company: frm.doc.company,
-							start_date: frm.doc.start_date,
-							end_date: frm.doc.end_date
-						},
-						callback: function () {
-						}
-					})
-				}
-				else {
-					frappe.throw("BAS data can be updated only \"In Review\" status. Please change the status back to \"In Review\" for updating the BAS data.")
-				}
-			})
+			if (frm.doc.docstatus == 0) {
+				frm.add_custom_button(__("Update BAS Data"), () => {
+					if (frm.doc.reporting_status === "In Review") {
+						frappe.realtime.on('bas_data_generator', () => { })
+						frappe.call({
+							method: "erpnext_australian_localisation.erpnext_australian_localisation.doctype.au_bas_report.au_bas_report.get_gst",
+							args: {
+								name: frm.doc.name,
+								company: frm.doc.company,
+								start_date: frm.doc.start_date,
+								end_date: frm.doc.end_date
+							},
+							callback: function () {
+							}
+						})
+					}
+					else {
+						frappe.throw("BAS data can be updated only \"In Review\" status. Please change the status back to \"In Review\" for updating the BAS data.")
+					}
+				})
+			}
 		}
 	},
 	company(frm) {
@@ -94,10 +95,27 @@ frappe.ui.form.on("AU BAS Report", {
 		if (frm.doc['1b'] !== frm.doc['g20']) {
 			frm.fields_dict["1b"].$wrapper.find('.control-value')
 				.css({ 'background-color': '#ffb3b3' })
+			frm.fields_dict["g20"].$wrapper.find('.control-value')
+				.css({ 'background-color': '#ffb3b3' })
+			frm.set_df_property("_1b_warning", "options", "<b> Please report the issue of 1B not matching with G20 <a href='https://github.com/Arus-Info/ERPNext-Australian-Localisation/issues/new?title=1B%20not%20matching%20with%20G20'>here</a></b>")
+		} else {
+			frm.fields_dict["1b"].$wrapper.find('.control-value')
+				.css({ 'background-color': '#f8f8f8' })
+			frm.fields_dict["g20"].$wrapper.find('.control-value')
+				.css({ 'background-color': '#f8f8f8' })
 		}
 		if (frm.doc['1a'] !== frm.doc['g9']) {
 			frm.fields_dict["1a"].$wrapper.find('.control-value')
-			.css({ 'background-color': '#ffb3b3' })
+				.css({ 'background-color': '#ffb3b3' })
+			frm.fields_dict["g9"].$wrapper.find('.control-value')
+				.css({ 'background-color': '#ffb3b3' })
+			frm.set_df_property("_1b_warning", "options" ,"<b> Please report the issue of 1A not matching with G9 <a href='https://github.com/Arus-Info/ERPNext-Australian-Localisation/issues/new?title=1A%20not%20matching%20with%20G9'>here</a> </b>")
+		}
+		else {
+			frm.fields_dict["1a"].$wrapper.find('.control-value')
+				.css({ 'background-color': '#f8f8f8' })
+			frm.fields_dict["g9"].$wrapper.find('.control-value')
+				.css({ 'background-color': '#f8f8f8' })
 		}
 	},
 	

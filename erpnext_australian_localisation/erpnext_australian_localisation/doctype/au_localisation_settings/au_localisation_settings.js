@@ -18,6 +18,17 @@ frappe.ui.form.on("AU Localisation Settings", {
 		}
 	},
 
+	make_tax_category_mandatory(frm) {
+		if (! frm.doc.make_tax_category_mandatory) {
+			frappe.confirm('Please make a note that Unticking this option may lead to mismatch in BAS Report generation. Do you confirm to make Tax Category Optional ?',
+				() => {},
+				() => {
+					frm.set_value("make_tax_category_mandatory", 1)
+				}
+			)
+		}
+	},
+
 	after_save(frm) {
 		// sets latest values in frappe.boot for current user
 		// other users will still need to refresh page

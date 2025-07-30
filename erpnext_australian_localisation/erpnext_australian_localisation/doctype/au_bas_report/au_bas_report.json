@@ -15,9 +15,11 @@
   "section_break_fwyr",
   "column_break_ogwt",
   "1a",
+  "_1a_warning",
   "_1a_only",
   "column_break_ocbf",
   "1b",
+  "_1b_warning",
   "_1b_only",
   "column_break_vahx",
   "net_gst",
@@ -419,13 +421,23 @@
    "fieldtype": "Currency",
    "hidden": 1,
    "label": "1B only"
+  },
+  {
+   "fieldname": "_1a_warning",
+   "fieldtype": "HTML",
+   "label": "1A Warning"
+  },
+  {
+   "fieldname": "_1b_warning",
+   "fieldtype": "HTML",
+   "label": "1B Warning"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-07-28 17:05:13.084247",
+ "modified": "2025-07-29 20:11:41.528103",
  "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
  "name": "AU BAS Report",

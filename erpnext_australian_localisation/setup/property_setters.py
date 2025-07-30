@@ -23,4 +23,10 @@ PROPERTIES = [
 		"property": "allow_in_quick_entry",
 		"value": "1",
 	},
+	{
+		"doctype": "AU BAS Report",
+		"property": "default_print_format",
+		"property_type" : "Data",
+		"value": "AU BAS Report Format",
+	}
 ]

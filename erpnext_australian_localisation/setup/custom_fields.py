@@ -38,7 +38,7 @@ CUSTOM_FIELDS = {
 		},
 		{
 			"fieldname": "private_use",
-			"label": " Purchases for private use / not income tax deductible",
+			"label": " Purchase for private use / not income tax deductible",
 			"fieldtype": "Check",
 			"insert_after": "input_taxed",
 			"module": "ERPNext Australian Localisation",
@@ -74,7 +74,23 @@ CUSTOM_FIELDS = {
 			"insert_after": "item_tax_template",
 			"module": "ERPNext Australian Localisation",
 		},
-	]
+	],
+	"Purchase Order Item" : [
+		{
+			"fieldname": "input_taxed",
+			"label": "Purchase for Input-taxed Sales",
+			"fieldtype": "Check",
+			"insert_after": "item_tax_template",
+			"module": "ERPNext Australian Localisation",
+		},
+		{
+			"fieldname": "private_use",
+			"label": " Purchase for private use / not income tax deductible",
+			"fieldtype": "Check",
+			"insert_after": "input_taxed",
+			"module": "ERPNext Australian Localisation",
+		}
+	],
 }
 
 HRMS_CUSTOM_FIELDS = {
