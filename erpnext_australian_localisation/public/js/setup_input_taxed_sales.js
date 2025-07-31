@@ -5,7 +5,7 @@ const CHILD_DOCTYPE = DOCTYPE + " Item"
 frappe.ui.form.on(CHILD_DOCTYPE, {
 
 	input_taxed(frm, cdt, cdn) {
-		if (cdt.includes("Sales")) {
+		if (cdt.includes("Sales") || cdt.includes("Delivery Note")) {
 			update_sales_item_tax_template(frm,cdt,cdn)
 		}
 		if (cdt.includes("Purchase")) {

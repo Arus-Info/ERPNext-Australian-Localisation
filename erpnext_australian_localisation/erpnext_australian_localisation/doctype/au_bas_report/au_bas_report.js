@@ -5,7 +5,7 @@ let reporting_period = ""
 
 frappe.ui.form.on("AU BAS Report", {
 	refresh(frm) {
-		
+
 		frm.trigger("update_label")
 
 		frm.fields_dict["1a_details"].$wrapper.find('.grid-body')
@@ -97,25 +97,27 @@ frappe.ui.form.on("AU BAS Report", {
 				.css({ 'background-color': '#ffb3b3' })
 			frm.fields_dict["g20"].$wrapper.find('.control-value')
 				.css({ 'background-color': '#ffb3b3' })
-			frm.set_df_property("_1b_warning", "options", "<b> Please report the issue of 1B not matching with G20 <a href='https://github.com/Arus-Info/ERPNext-Australian-Localisation/issues/new?title=1B%20not%20matching%20with%20G20'>here</a></b>")
+			frm.set_df_property("_1b_warning", "options", "<b> Please report the issue of 1B not matching with G20 <a href='https://github.com/Arus-Info/ERPNext-Australian-Localisation/issues/new?title=1B%20not%20matching%20with%20G20' target='blank'>here</a></b>")
 		} else {
 			frm.fields_dict["1b"].$wrapper.find('.control-value')
 				.css({ 'background-color': '#f8f8f8' })
 			frm.fields_dict["g20"].$wrapper.find('.control-value')
 				.css({ 'background-color': '#f8f8f8' })
+			frm.set_df_property("_1b_warning", "options" ,"")
 		}
 		if (frm.doc['1a'] !== frm.doc['g9']) {
 			frm.fields_dict["1a"].$wrapper.find('.control-value')
 				.css({ 'background-color': '#ffb3b3' })
 			frm.fields_dict["g9"].$wrapper.find('.control-value')
 				.css({ 'background-color': '#ffb3b3' })
-			frm.set_df_property("_1b_warning", "options" ,"<b> Please report the issue of 1A not matching with G9 <a href='https://github.com/Arus-Info/ERPNext-Australian-Localisation/issues/new?title=1A%20not%20matching%20with%20G9'>here</a> </b>")
+			frm.set_df_property("_1a_warning", "options" ,"<b> Please report the issue of 1A not matching with G9 <a href='https://github.com/Arus-Info/ERPNext-Australian-Localisation/issues/new?title=1A%20not%20matching%20with%20G9 ' target='blank' >here</a> </b>")
 		}
 		else {
 			frm.fields_dict["1a"].$wrapper.find('.control-value')
 				.css({ 'background-color': '#f8f8f8' })
 			frm.fields_dict["g9"].$wrapper.find('.control-value')
 				.css({ 'background-color': '#f8f8f8' })
+			frm.set_df_property("_1a_warning", "options" ,"")
 		}
 	},
 	
