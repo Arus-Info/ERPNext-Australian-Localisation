@@ -66,7 +66,7 @@ CUSTOM_FIELDS = {
 			"module": "ERPNext Australian Localisation",
 		}
 	],
-	"Sales Order Item" : [
+	("Sales Order Item" , "Delivery Note Item"): [
 		{
 			"fieldname": "input_taxed",
 			"label": "Input-taxed Sales",
@@ -75,7 +75,7 @@ CUSTOM_FIELDS = {
 			"module": "ERPNext Australian Localisation",
 		},
 	],
-	"Purchase Order Item" : [
+	( "Purchase Receipt Item", "Purchase Order Item") : [
 		{
 			"fieldname": "input_taxed",
 			"label": "Purchase for Input-taxed Sales",
