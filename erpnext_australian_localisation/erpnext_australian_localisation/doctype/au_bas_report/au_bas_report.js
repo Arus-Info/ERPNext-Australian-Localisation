@@ -103,7 +103,7 @@ frappe.ui.form.on("AU BAS Report", {
 				.css({ 'background-color': '#f8f8f8' })
 			frm.fields_dict["g20"].$wrapper.find('.control-value')
 				.css({ 'background-color': '#f8f8f8' })
-			frm.set_df_property("_1b_warning", "options" ,"")
+			frm.set_df_property("_1b_warning", "options" ," ")
 		}
 		if (frm.doc['1a'] !== frm.doc['g9']) {
 			frm.fields_dict["1a"].$wrapper.find('.control-value')
@@ -117,7 +117,7 @@ frappe.ui.form.on("AU BAS Report", {
 				.css({ 'background-color': '#f8f8f8' })
 			frm.fields_dict["g9"].$wrapper.find('.control-value')
 				.css({ 'background-color': '#f8f8f8' })
-			frm.set_df_property("_1a_warning", "options" ,"")
+			frm.set_df_property("_1a_warning", "options" ," ")
 		}
 	},
 	
