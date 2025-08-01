@@ -53,13 +53,13 @@
    "default": "0",
    "fieldname": "gst_pay_basis",
    "fieldtype": "Currency",
-   "label": "GST Pay Basis"
+   "label": "GST to Pay - Basis"
   },
   {
    "default": "0",
    "fieldname": "gst_offset_basis",
    "fieldtype": "Currency",
-   "label": "GST Offset Basis"
+   "label": "GST to Offset - Basis"
   },
   {
    "fieldname": "column_break_orwl",
@@ -82,13 +82,13 @@
    "default": "0",
    "fieldname": "gst_pay_amount",
    "fieldtype": "Currency",
-   "label": "GST Pay Amount"
+   "label": "GST to Pay - Amount"
   },
   {
    "default": "0",
    "fieldname": "gst_offset_amount",
    "fieldtype": "Currency",
-   "label": "GST Offset Amount"
+   "label": "GST to Offset - Amount"
   },
   {
    "fieldname": "section_break_wqil",
@@ -109,7 +109,7 @@
  "in_create": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-07-18 22:25:23.948753",
+ "modified": "2025-08-01 16:51:54.512383",
  "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
  "name": "AU BAS Entry",
