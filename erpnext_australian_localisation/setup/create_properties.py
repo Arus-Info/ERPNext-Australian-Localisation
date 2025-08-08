@@ -12,8 +12,8 @@ def create_custom_field():
 		create_hrms_custom_fields()
 
 
-def create_property_setter():
-	for property_setter in PROPERTIES:
+def create_property_setter(properties):
+	for property_setter in properties:
 		frappe.make_property_setter(
 			property_setter,
 			validate_fields_for_doctype=False,
@@ -22,7 +22,7 @@ def create_property_setter():
 
 def initial_setup():
 	create_custom_field()
-	create_property_setter()
+	create_property_setter(PROPERTIES)
 
 def create_hrms_custom_fields():
 	create_custom_fields(HRMS_CUSTOM_FIELDS, update = 1)
