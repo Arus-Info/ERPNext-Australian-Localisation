@@ -16,7 +16,7 @@ def on_submit(doc, event):
 			sum_depends_on = ['gst_offset_basis','gst_offset_amount']
 
 		for item in doc.items:
-			if item.amount :
+			if item.base_amount :
 				bas_labels = frappe.get_all(
 					"AU BAS Label Setup",
 					filters={
@@ -33,13 +33,13 @@ def on_submit(doc, event):
 						'tax_code' : item.au_tax_code
 					}
 					if tax_allocation == "Collected Sales" :
-						temp['gst_pay_basis'] = item.amount
+						temp['gst_pay_basis'] = item.base_amount
 					else :
-						temp['gst_offset_basis'] = item.amount
+						temp['gst_offset_basis'] = item.base_amount
 					result.append(temp)
 
 		for tax in doc.taxes :
-			if tax.tax_amount :
+			if tax.base_tax_amount :
 				bas_labels = frappe.get_all(
 					"AU BAS Label Setup",
 					filters={
@@ -56,9 +56,9 @@ def on_submit(doc, event):
 						'tax_code' : tax.au_tax_code
 					}
 					if tax_allocation == "Collected Sales" :
-						temp['gst_pay_amount'] = tax.tax_amount
+						temp['gst_pay_amount'] = tax.base_tax_amount
 					else :
-						temp['gst_offset_amount'] = tax.tax_amount
+						temp['gst_offset_amount'] = tax.base_tax_amount
 					result.append(temp)
 		if result :
 			result = pd.DataFrame(result)
