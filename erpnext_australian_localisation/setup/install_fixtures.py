@@ -396,7 +396,11 @@ ROLES = [
 def create_roles():
 	make_records(ROLES)
 
-def remove_roles():
-	for role in ROLES :
-		if frappe.db.exists("Role", role['name']):
-			frappe.delete_doc("Role", role['name'])
+# def remove_roles():
+# 	for role in ROLES :
+# 		if frappe.db.exists("Role", role['name']):
+# 			has_role_list = frappe.get_list("Has Role", filters={"role": role['name']})
+# 			for has_role in has_role_list:
+# 				frappe.delete_doc("Has Role", has_role.name)
+# 			frappe.delete_doc("Role", role['name'])
+# 	frappe.db.commit()

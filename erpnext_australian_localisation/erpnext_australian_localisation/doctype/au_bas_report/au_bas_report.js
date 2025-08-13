@@ -6,6 +6,14 @@ let reporting_period = ""
 frappe.ui.form.on("AU BAS Report", {
 	refresh(frm) {
 
+		frm.set_query("company", function () {
+			return {
+				filters: {
+					country : "Australia"
+				}
+			}
+		})
+
 		frm.trigger("update_label")
 
 		frm.fields_dict["1a_details"].$wrapper.find('.grid-body')
