@@ -404,3 +404,4 @@ def create_roles():
 # 				frappe.delete_doc("Has Role", has_role.name)
 # 			frappe.delete_doc("Role", role['name'])
 # 	frappe.db.commit()
+

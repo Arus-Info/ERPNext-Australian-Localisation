@@ -5,7 +5,6 @@ let reporting_period = ""
 
 frappe.ui.form.on("AU BAS Report", {
 	refresh(frm) {
-
 		frm.set_query("company", function () {
 			return {
 				filters: {

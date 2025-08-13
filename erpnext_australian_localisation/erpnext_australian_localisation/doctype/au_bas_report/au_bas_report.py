@@ -13,10 +13,8 @@ class AUBASReport(Document):
 			frappe.throw("Only BAS Report at Validated state can be submitted")
 
 	def before_insert(self):
-
 		this_year = frappe.get_list("AU BAS Report", filters=[["name" ,"like", "BAS-" + self.start_date[:4] + "%"],["company", "=", self.company]], fields=["start_date", "end_date"])
 		start_date = datetime.strptime(self.start_date, "%Y-%m-%d").date() 
-
 		end_date = datetime.strptime(self.end_date, "%Y-%m-%d").date() 
 		for i in range(len(this_year)):
 			if (start_date <= this_year[i].start_date and end_date >= this_year[i].start_date )or (this_year[i].start_date <= start_date and start_date <= this_year[i].end_date) :
@@ -37,7 +35,6 @@ def get_gst(name, company, start_date, end_date):
 	progress = 10
 	frappe.publish_progress(1, title='BAS Label Generating..', description = "getting ready...")
 	for bas_label_detail in bas_label_details :
-
 		frappe.publish_progress(progress, title='BAS Label Generating..', description = bas_label_detail['bas_label'])
 		progress += 10
 		doc.update({
@@ -71,9 +68,7 @@ def get_gst(name, company, start_date, end_date):
 				+ bas_report_entry.gst_offset_basis
 				+ bas_report_entry.gst_offset_amount
 			)
-
 			doc.append(bas_label_detail["fieldname"], bas_report_entry)
-
 		doc.update({
 			bas_label_detail['bas_label'].lower() : total
 		})
