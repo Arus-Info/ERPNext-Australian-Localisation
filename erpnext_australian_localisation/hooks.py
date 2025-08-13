@@ -111,7 +111,7 @@ after_install = "erpnext_australian_localisation.install.after_install"
 # ------------
 
 before_uninstall = "erpnext_australian_localisation.uninstall.before_uninstall"
-after_uninstall = "erpnext_australian_localisation.uninstall.after_uninstall"
+# after_uninstall = "erpnext_australian_localisation.uninstall.after_uninstall"
 
 # Integration Setup
 # ------------------
@@ -208,6 +208,17 @@ doc_events = {
 # 		"erpnext_australian_localisation.tasks.monthly"
 # 	],
 # }
+
+scheduler_events = {
+	"monthly": [
+		"erpnext_australian_localisation.tasks.bas_report.create_bas_report"
+	],
+	"cron": {
+		"40 16 * * *": [
+			"erpnext_australian_localisation.tasks.bas_report.create_bas_report"
+		]
+	}
+}
 
 # Testing
 # -------

@@ -14,8 +14,10 @@ class AUBASReport(Document):
 
 	def before_insert(self):
 		print("year",  "BAS-" + self.start_date[:4])
+		print("self.start_date", self.start_date, type(self.start_date))
 		this_year = frappe.get_list("AU BAS Report", filters=[["name" ,"like", "BAS-" + self.start_date[:4] + "%"],["company", "=", self.company]], fields=["start_date", "end_date"])
 		start_date = datetime.strptime(self.start_date, "%Y-%m-%d").date() 
+
 		end_date = datetime.strptime(self.end_date, "%Y-%m-%d").date() 
 		for i in range(len(this_year)):
 			if (start_date <= this_year[i].start_date and end_date >= this_year[i].start_date )or (this_year[i].start_date <= start_date and start_date <= this_year[i].end_date) :
