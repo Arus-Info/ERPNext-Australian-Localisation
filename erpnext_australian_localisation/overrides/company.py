@@ -18,9 +18,10 @@ def initial_company_setup(company = None):
 
 		au_localisation_settings.append("bas_reporting_period", child)
 
-	au_localisation_settings.save()
-	create_bas_report()
+		au_localisation_settings.save()
+		create_bas_report(c)
 
 
 def after_insert(doc,event):
-	initial_company_setup(doc.name)
+	if doc.country == "Australia" :
+		initial_company_setup(doc.name)
