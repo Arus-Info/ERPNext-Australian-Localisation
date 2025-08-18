@@ -3,7 +3,9 @@
 This app will install the Australian localisation functionalities in ERPNext. This app works in line with the Australian Chart of Accounts. This app will assist the Australian companies to get the GST postings based on the Supplier and Customer type (Local / International / Capital Goods / Non Capital Goods). This app will generate the BAS report with the amounts to be reported in each of the BAS Label. 
 
 ### Prerequisites
+
 ERPNext v15.74.0 or above
+
 ### Installation
 
 The AU Localisation app for ERPNext can be installed using the [bench](https://github.com/frappe/bench) CLI:
