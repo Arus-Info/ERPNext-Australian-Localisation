@@ -41,10 +41,12 @@ def delete_property_setter():
 
 		frappe.db.delete("Property Setter", property_setter)
 
+
 def remove_setup():
 	delete_custom_field(CUSTOM_FIELDS)
 	delete_custom_field(CUSTOM_FIELDS_FOR_BANK_FILE)
 	delete_property_setter()
+
 
 def delete_hrms_custom_fields():
 	delete_custom_field(HRMS_CUSTOM_FIELDS)
