@@ -116,3 +116,78 @@ HRMS_CUSTOM_FIELDS = {
 		}
 	],
 }
+
+CUSTOM_FIELDS_FOR_BANK_FILE = {
+	"Supplier": [
+		{
+			"fieldname": "bank_account_no",
+			"label": "Bank Account Number",
+			"fieldtype": "Data",
+			"length": 9,
+			"insert_after": "branch_code",
+			"module": "ERPNext Australian Localisation",
+		},
+		{
+			"fieldname": "branch_code",
+			"label": "BSB",
+			"fieldtype": "Data",
+			"length": 7,
+			"insert_after": "default_bank_account",
+			"module": "ERPNext Australian Localisation",
+		},
+	],
+	"Bank": [
+		{
+			"fieldname": "fi_abbr",
+			"label": "Financial Institution Abbreviation",
+			"fieldtype": "Data",
+			"length": 3,
+			"insert_after": "swift_number",
+			"module": "ERPNext Australian Localisation",
+		},
+	],
+	"Bank Account": [
+		{
+			"fieldname": "section_break_payment_batch",
+			"label": "Payment Batch Info",
+			"fieldtype": "Section Break",
+			"insert_after": "mask",
+			"module": "ERPNext Australian Localisation",
+		},
+		{
+			"fieldname": "apca_number",
+			"label": "APCA Number",
+			"fieldtype": "Data",
+			"length": 6,
+			"insert_after": "section_break_payment_batch",
+			"module": "ERPNext Australian Localisation",
+		},
+		{
+			"fieldname": "currency",
+			"label": "Currency",
+			"fieldtype": "Link",
+			"options": "Currency",
+			"insert_after": "apca_number",
+			"module": "ERPNext Australian Localisation",
+		},
+		{
+			"fieldname": "file_format",
+			"label": "File Format",
+			"fieldtype": "Select",
+			"options": "ABA",
+			"default": "ABA",
+			"insert_after": "currency",
+			"module": "ERPNext Australian Localisation",
+		},
+	],
+	"Payment Entry": [
+		{
+			"fieldname": "lodgement_reference",
+			"label": "Lodgement Reference",
+			"fieldtype": "Data",
+			"length": 18,
+			"insert_after": "section_break_14",
+			"module": "ERPNext Australian Localisation",
+		},
+	],
+}

@@ -59,6 +59,8 @@ doctype_js = {
 	"Purchase Invoice": "public/js/setup_input_taxed_sales.js",
 	"Purchase Order": "public/js/setup_input_taxed_sales.js",
 	"Purchase Receipt": "public/js/setup_input_taxed_sales.js",
+	"Supplier": "public/js/validate_bsb_number.js",
+	"Bank Account": "public/js/validate_bsb_number.js",
 }
 
 # include js in doctype views
@@ -181,6 +183,10 @@ doc_events = {
 		"on_submit": "erpnext_australian_localisation.overrides.expense_claim.on_submit",
 		"on_update": "erpnext_australian_localisation.overrides.expense_claim.on_update",
 		"on_cancel": "erpnext_australian_localisation.overrides.invoices.on_cancel",
+	},
+	"Payment Entry": {
+		"on_submit": "erpnext_australian_localisation.overrides.payment_entry.on_submit",
+		"on_update": "erpnext_australian_localisation.overrides.payment_entry.on_update",
 	},
 }
 

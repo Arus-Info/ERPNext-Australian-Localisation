@@ -5,7 +5,7 @@ frappe.ui.form.on("Item", {
 				if (frm.doc.taxes[i].tax_category) {
 					continue;
 				} else {
-					frappe.throw(__("Tax Catgory Mandatory"));
+					frappe.throw("Tax Catgory Mandatory");
 				}
 			}
 		}

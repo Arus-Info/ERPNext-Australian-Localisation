@@ -1,6 +1,6 @@
 const DOCTYPE = window.cur_frm.doctype;
 
-frappe.ui.form.on(DOCTYPE + " Item", {
+frappe.ui.form.on(CHILD_DOCTYPE, {
 	input_taxed(frm, cdt, cdn) {
 		if (cdt.includes("Sales") || cdt.includes("Delivery Note")) {
 			update_sales_item_tax_template(frm, cdt, cdn);
