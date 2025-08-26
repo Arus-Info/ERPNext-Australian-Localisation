@@ -1,25 +1,22 @@
-const DOCTYPE = cur_frm.doctype
+const DOCTYPE = window.cur_frm.doctype;
 
-const CHILD_DOCTYPE = DOCTYPE + " Item"
-
-frappe.ui.form.on(CHILD_DOCTYPE, {
-
+frappe.ui.form.on(DOCTYPE + " Item", {
 	input_taxed(frm, cdt, cdn) {
 		if (cdt.includes("Sales") || cdt.includes("Delivery Note")) {
-			update_sales_item_tax_template(frm, cdt, cdn)
+			update_sales_item_tax_template(frm, cdt, cdn);
 		}
 		if (cdt.includes("Purchase")) {
-			update_purchase_item_tax_template(frm, cdt, cdn)
+			update_purchase_item_tax_template(frm, cdt, cdn);
 		}
 	},
 
 	private_use(frm, cdt, cdn) {
-		update_purchase_item_tax_template(frm, cdt, cdn)
+		update_purchase_item_tax_template(frm, cdt, cdn);
 	},
-})
+});
 
 function get_item_tax_template(frm, cdt, cdn) {
-	let item = locals[cdt][cdn]
+	let item = locals[cdt][cdn];
 	if (item.item_code && item.rate) {
 		frappe.call({
 			method: "erpnext.stock.get_item_details.get_item_tax_template",
@@ -33,49 +30,52 @@ function get_item_tax_template(frm, cdt, cdn) {
 					posting_date: frm.doc.posting_date,
 					bill_date: frm.doc.bill_date,
 					transaction_date: frm.doc.transaction_date,
-				}
+				},
 			},
 			callback: function (r) {
 				const item_tax_template = r.message;
-				frappe.model.set_value(cdt, cdn, 'item_tax_template', item_tax_template);
-			}
+				frappe.model.set_value(cdt, cdn, "item_tax_template", item_tax_template);
+			},
 		});
 	}
 }
 
 function update_sales_item_tax_template(frm, cdt, cdn) {
-	var row = locals[cdt][cdn]
+	var row = locals[cdt][cdn];
 	if (!row.input_taxed) {
-		get_item_tax_template(frm, cdt, cdn)
-	}
-	else {
-		frappe.db.get_list("Item Tax Template", {
-			filters: { "title": "GST Exempt Sales", "company": frm.doc.company },
-			pluck: "name"
-		})
-			.then((data) => {
-				frappe.model.set_value(cdt, cdn, "item_tax_template", data[0])
+		get_item_tax_template(frm, cdt, cdn);
+	} else {
+		frappe.db
+			.get_list("Item Tax Template", {
+				filters: { title: "GST Exempt Sales", company: frm.doc.company },
+				pluck: "name",
 			})
+			.then((data) => {
+				frappe.model.set_value(cdt, cdn, "item_tax_template", data[0]);
+			});
 	}
 }
 
 function update_purchase_item_tax_template(frm, cdt, cdn) {
-	let row = locals[cdt][cdn]
+	let row = locals[cdt][cdn];
 	if (row.input_taxed && row.private_use) {
-		frappe.model.set_value(cdt, cdn, "input_taxed", 0)
-		frappe.model.set_value(cdt, cdn, "private_use", 0)
-		frappe.throw("A " + CHILD_DOCTYPE + " cannot be classified as both 'Purchases for private use / not income tax deductible' and 'Purchase for Input-taxed Sales.")
-	}
-	else if (!row.input_taxed && !row.private_use) {
-		get_item_tax_template(frm, cdt, cdn)
-	}
-	else {
-		frappe.db.get_list("Item Tax Template", {
-			filters: { "title": "GST Exempt Purchase", "company": frm.doc.company },
-			pluck: "name"
-		})
-			.then((data) => {
-				frappe.model.set_value(cdt, cdn, "item_tax_template", data[0])
+		frappe.model.set_value(cdt, cdn, "input_taxed", 0);
+		frappe.model.set_value(cdt, cdn, "private_use", 0);
+		frappe.throw(
+			"A " +
+				cdt +
+				" cannot be classified as both 'Purchases for private use / not income tax deductible' and 'Purchase for Input-taxed Sales."
+		);
+	} else if (!row.input_taxed && !row.private_use) {
+		get_item_tax_template(frm, cdt, cdn);
+	} else {
+		frappe.db
+			.get_list("Item Tax Template", {
+				filters: { title: "GST Exempt Purchase", company: frm.doc.company },
+				pluck: "name",
 			})
+			.then((data) => {
+				frappe.model.set_value(cdt, cdn, "item_tax_template", data[0]);
+			});
 	}
 }

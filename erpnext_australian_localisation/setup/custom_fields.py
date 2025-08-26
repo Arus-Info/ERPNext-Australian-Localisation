@@ -17,9 +17,9 @@ CUSTOM_FIELDS = {
 			"read_only": 1,
 			"insert_after": "au_tax_code",
 			"module": "ERPNext Australian Localisation",
-		}
+		},
 	],
-	"Sales Invoice Item" : [
+	"Sales Invoice Item": [
 		{
 			"fieldname": "input_taxed",
 			"label": "Input-taxed Sales",
@@ -28,7 +28,7 @@ CUSTOM_FIELDS = {
 			"module": "ERPNext Australian Localisation",
 		}
 	],
-	"Purchase Invoice Item" : [
+	"Purchase Invoice Item": [
 		{
 			"fieldname": "input_taxed",
 			"label": "Purchase for Input-taxed Sales",
@@ -42,7 +42,7 @@ CUSTOM_FIELDS = {
 			"fieldtype": "Check",
 			"insert_after": "input_taxed",
 			"module": "ERPNext Australian Localisation",
-		}
+		},
 	],
 	"Sales Taxes and Charges": [
 		{
@@ -51,22 +51,22 @@ CUSTOM_FIELDS = {
 			"fieldtype": "Link",
 			"options": "AU Tax Code",
 			"insert_after": "account_head",
-			"read_only" : 1,
+			"read_only": 1,
 			"module": "ERPNext Australian Localisation",
 		}
 	],
-	"Purchase Taxes and Charges" : [
+	"Purchase Taxes and Charges": [
 		{
 			"fieldname": "au_tax_code",
 			"label": "AU Tax Code",
 			"fieldtype": "Link",
 			"options": "AU Tax Code",
 			"insert_after": "is_tax_withholding_account",
-			"read_only" : 1,
+			"read_only": 1,
 			"module": "ERPNext Australian Localisation",
 		}
 	],
-	("Sales Order Item" , "Delivery Note Item"): [
+	("Sales Order Item", "Delivery Note Item"): [
 		{
 			"fieldname": "input_taxed",
 			"label": "Input-taxed Sales",
@@ -75,7 +75,7 @@ CUSTOM_FIELDS = {
 			"module": "ERPNext Australian Localisation",
 		},
 	],
-	( "Purchase Receipt Item", "Purchase Order Item") : [
+	("Purchase Receipt Item", "Purchase Order Item"): [
 		{
 			"fieldname": "input_taxed",
 			"label": "Purchase for Input-taxed Sales",
@@ -89,12 +89,12 @@ CUSTOM_FIELDS = {
 			"fieldtype": "Check",
 			"insert_after": "input_taxed",
 			"module": "ERPNext Australian Localisation",
-		}
+		},
 	],
 }
 
 HRMS_CUSTOM_FIELDS = {
-	"Expense Claim Detail" : [
+	"Expense Claim Detail": [
 		{
 			"fieldname": "au_tax_code",
 			"label": "AU Tax Code",
@@ -104,14 +104,14 @@ HRMS_CUSTOM_FIELDS = {
 			"module": "ERPNext Australian Localisation",
 		}
 	],
-	"Expense Taxes and Charges" : [
+	"Expense Taxes and Charges": [
 		{
 			"fieldname": "au_tax_code",
 			"label": "AU Tax Code",
 			"fieldtype": "Link",
 			"options": "AU Tax Code",
 			"insert_after": "total",
-			"read_only" : 1,
+			"read_only": 1,
 			"module": "ERPNext Australian Localisation",
 		}
 	],
@@ -178,7 +178,7 @@ CUSTOM_FIELDS_FOR_BANK_FILE = {
 			"default": "ABA",
 			"insert_after": "currency",
 			"module": "ERPNext Australian Localisation",
-		}
+		},
 	],
 	"Payment Entry": [
 		{
@@ -189,5 +189,5 @@ CUSTOM_FIELDS_FOR_BANK_FILE = {
 			"insert_after": "section_break_14",
 			"module": "ERPNext Australian Localisation",
 		},
-	]
+	],
 }

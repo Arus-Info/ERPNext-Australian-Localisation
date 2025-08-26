@@ -26,7 +26,7 @@ PROPERTIES = [
 	{
 		"doctype": "AU BAS Report",
 		"property": "default_print_format",
-		"property_type" : "Data",
+		"property_type": "Data",
 		"value": "AU BAS Report Format",
-	}
+	},
 ]
