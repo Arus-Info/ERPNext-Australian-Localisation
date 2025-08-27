@@ -1,7 +1,4 @@
-from erpnext_australian_localisation.setup.delete_properties import (
-	delete_hrms_custom_fields,
-	remove_setup,
-)
+from erpnext_australian_localisation.setup.delete_properties import delete_hrms_custom_fields, remove_setup
 
 
 def before_uninstall():

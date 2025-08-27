@@ -1,0 +1,134 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:PB-{YY}{MM}{DD}-{##}",
+ "creation": "2025-08-20 14:42:00.003625",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_nk5g",
+  "company",
+  "posting_date",
+  "bank_file_url",
+  "column_break_psqj",
+  "bank_account",
+  "currency",
+  "file_format",
+  "amended_from",
+  "section_break_fofa",
+  "payment_created",
+  "paid_invoices"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_nk5g",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Payment Batch",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "Posting Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_psqj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_fofa",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "payment_created",
+   "fieldtype": "Table",
+   "label": "Payment Created",
+   "options": "Payment Batch Item"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "bank_account",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Bank Account",
+   "options": "Bank Account",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "bank_account.file_format",
+   "fieldname": "file_format",
+   "fieldtype": "Select",
+   "label": "File Format",
+   "options": "ABA",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fetch_from": "bank_account.currency",
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "paid_invoices",
+   "fieldtype": "Table",
+   "label": "Paid Invoices",
+   "options": "Payment Batch Invoice"
+  },
+  {
+   "fieldname": "bank_file_url",
+   "fieldtype": "Data",
+   "label": "Bank File URL",
+   "read_only": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-08-25 14:31:38.840773",
+ "modified_by": "Administrator",
+ "module": "ERPNext Australian Localisation",
+ "name": "Payment Batch",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
