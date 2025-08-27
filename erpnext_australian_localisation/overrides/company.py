@@ -9,7 +9,7 @@ def initial_company_setup(company=None):
 	else:
 		company_list = frappe.get_list("Company", filters={"country": "Australia"}, pluck="name")
 
-	au_localisation_settings = frappe.get_doc("AU Localisation Settings")
+	au_localisation_settings = frappe.get_cached_doc("AU Localisation Settings")
 
 	for c in company_list:
 		child = frappe.new_doc("AU BAS Reporting Period")

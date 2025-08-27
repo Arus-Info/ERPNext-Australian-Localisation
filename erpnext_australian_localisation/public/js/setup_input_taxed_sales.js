@@ -62,9 +62,9 @@ function update_purchase_item_tax_template(frm, cdt, cdn) {
 		frappe.model.set_value(cdt, cdn, "input_taxed", 0);
 		frappe.model.set_value(cdt, cdn, "private_use", 0);
 		frappe.throw(
-			"A " +
-				cdt +
-				" cannot be classified as both 'Purchases for private use / not income tax deductible' and 'Purchase for Input-taxed Sales."
+			__(
+				`A  ${cdt} cannot be classified as both 'Purchases for private use / not income tax deductible' and 'Purchase for Input-taxed Sales.`
+			)
 		);
 	} else if (!row.input_taxed && !row.private_use) {
 		get_item_tax_template(frm, cdt, cdn);

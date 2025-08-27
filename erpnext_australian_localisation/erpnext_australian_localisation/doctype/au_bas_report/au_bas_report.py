@@ -4,13 +4,14 @@
 from datetime import datetime
 
 import frappe
+from frappe import _
 from frappe.model.document import Document
 
 
 class AUBASReport(Document):
 	def before_submit(self):
 		if self.reporting_status != "Validated":
-			frappe.throw("Only BAS Report at Validated state can be submitted")
+			frappe.throw(_("Only BAS Report at Validated state can be submitted"))
 
 	def before_insert(self):
 		this_year = frappe.get_list(
@@ -27,7 +28,7 @@ class AUBASReport(Document):
 			if (start_date <= this_year[i].start_date and end_date >= this_year[i].start_date) or (
 				this_year[i].start_date <= start_date and start_date <= this_year[i].end_date
 			):
-				frappe.throw("BAS Report found for this period")
+				frappe.throw(_("BAS Report found for this period"))
 
 
 @frappe.whitelist()
