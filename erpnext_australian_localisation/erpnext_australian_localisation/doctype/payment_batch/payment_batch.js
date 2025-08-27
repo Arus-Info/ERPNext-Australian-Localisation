@@ -45,7 +45,8 @@ frappe.ui.form.on("Payment Batch", {
 					callback: (url) => {
 						frappe.msgprint(
 							__(
-								`Bank File Generated. Click <a href=${url.message}>here</a> to download the file.`
+								"Bank File Generated. Click <a href={0}>here</a> to download the file.",
+								[url.message]
 							)
 						);
 					},

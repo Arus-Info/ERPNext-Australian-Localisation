@@ -4,7 +4,7 @@ function validate_bank_details(frm) {
 			let branch_code = frm.doc.branch_code.replace(/-/g, "");
 			if (!/^\d+$/.test(branch_code)) {
 				console.log(branch_code);
-				frappe.throw(__("Only numbers are allowed. "));
+				frappe.throw(__("Only numbers are allowed."));
 			}
 			if (branch_code.length > 6) {
 				frappe.msgprint(__("Removing extra digits. BSB number only has 6 digits"));

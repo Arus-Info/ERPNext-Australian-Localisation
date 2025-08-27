@@ -171,10 +171,11 @@ frappe.ui.form.on("AU BAS Report", {
 							if (e === null) {
 								frappe.msgprint(
 									__(
-										`Start date is changed to
-										${moment(frm.doc.start_date).format(
-											"DD-MM-YY"
-										)} to keep it in line with the ${reporting_period} + BAS setup`
+										"Start date is changed to {0} to keep it in line with the {1} BAS setup",
+										[
+											moment(frm.doc.start_date).format("DD-MM-YY"),
+											reporting_period,
+										]
 									)
 								);
 							}
@@ -191,10 +192,11 @@ frappe.ui.form.on("AU BAS Report", {
 								if (e === null) {
 									frappe.msgprint(
 										__(
-											`Start date is changed to
-										${moment(frm.doc.start_date).format(
-											"DD-MM-YY"
-										)} to keep it in line with the ${reporting_period} + BAS setup`
+											"Start date is changed to {0} to keep it in line with the {1} BAS setup",
+											[
+												moment(frm.doc.start_date).format("DD-MM-YY"),
+												reporting_period,
+											]
 										)
 									);
 								}
