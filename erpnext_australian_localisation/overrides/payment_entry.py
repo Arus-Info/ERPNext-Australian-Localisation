@@ -22,7 +22,7 @@ def on_update(doc, event):
 			invoices = frappe.get_list(
 				"Payment Batch Invoice",
 				parent_doctype="Payment Batch",
-				filters={"payment_entry": doc.name},
+				filters={"payment_entry": doc.name, "docstatus": 0},
 				fields=["name", "parent"],
 			)
 			if invoices:
