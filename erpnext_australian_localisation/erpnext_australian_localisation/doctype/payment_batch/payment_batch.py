@@ -65,10 +65,10 @@ def get_bank_account(doctype, txt, searchfield, start, page_len, filters):
 @frappe.validate_and_sanitize_search_inputs
 def get_payment_entry(doctype, txt, searchfield, start, page_len, filters):
 	return frappe.db.sql(
-		""" 
+		"""
 		select name, party, paid_amount from `tabPayment Entry` where docstatus=0 and party_type ='Supplier'
-		EXCEPT 
-		select payment_entry, supplier, amount from `tabPayment Batch Item`  
+		EXCEPT
+		select payment_entry, supplier, amount from `tabPayment Batch Item`
 		""",
 		as_dict=True,
 	)
