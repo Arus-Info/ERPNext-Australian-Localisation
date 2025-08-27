@@ -4,6 +4,7 @@
 from datetime import datetime
 
 import frappe
+from frappe import _
 from frappe.model.document import Document
 from frappe.model.mapper import get_mapped_doc
 
@@ -13,9 +14,6 @@ from erpnext_australian_localisation.erpnext_australian_localisation.doctype.pay
 
 
 class PaymentBatch(Document):
-	def before_submit(self):
-		self.posting_date = datetime.today()
-
 	def on_submit(self):
 		for row in self.payment_created:
 			payment_entry = frappe.get_doc("Payment Entry", row.payment_entry)
@@ -76,20 +74,28 @@ def get_payment_entry(doctype, txt, searchfield, start, page_len, filters):
 
 @frappe.whitelist()
 def update_payment_batch(source_name, target_doc=None, filters=None):
-	row = frappe.new_doc("Payment Batch Item")
-	row.update(
-		frappe.db.get_value(
-			"Payment Entry",
-			source_name,
-			["party as supplier", "paid_amount as amount", "name as payment_entry"],
-			as_dict=True,
-		)
+	supplier = frappe.db.get_value(
+		"Payment Entry",
+		source_name,
+		["party as supplier", "paid_amount as amount", "name as payment_entry"],
+		as_dict=True,
 	)
 
-	doc = create_payment_batch_invoices(source_name, target_doc)
-	doc.append("payment_created", row)
+	account_details = frappe.db.get_value("Supplier", supplier.supplier, ["bank_account_no", "bsb"])
+	if not account_details[0] and not account_details[1]:
+		frappe.msgprint(
+			_("Can't add Payment Entry {0}. Bank details not available for {1}").format(
+				source_name, supplier.supplier
+			)
+		)
+	else:
+		row = frappe.new_doc("Payment Batch Item")
+		row.update(supplier)
 
-	return doc
+		target_doc = create_payment_batch_invoices(source_name, target_doc)
+		target_doc.append("payment_created", row)
+
+	return target_doc
 
 
 def create_payment_batch_invoices(source_name, target_doc=None):
