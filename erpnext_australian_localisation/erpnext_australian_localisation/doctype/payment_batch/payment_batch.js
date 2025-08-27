@@ -37,7 +37,7 @@ frappe.ui.form.on("Payment Batch", {
 		);
 
 		frm.add_custom_button(
-			"Generate Bank File",
+			__("Generate Bank File"),
 			function () {
 				frappe.call({
 					doc: frm.doc,
@@ -56,7 +56,9 @@ frappe.ui.form.on("Payment Batch", {
 		);
 
 		frm.add_custom_button(
-			`<a style='padding-left: 8px' href=${frm.doc.bank_file_url}>Downloading Bank File</a>`,
+			__("<a style='padding-left: 8px' href={0}>Downloading Bank File</a>", [
+				frm.doc.bank_file_url,
+			]),
 			() => null,
 			"Bank File"
 		);
