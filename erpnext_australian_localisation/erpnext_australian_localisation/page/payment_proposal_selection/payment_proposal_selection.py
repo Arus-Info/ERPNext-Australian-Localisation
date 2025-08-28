@@ -4,7 +4,10 @@ import frappe
 
 
 @frappe.whitelist()
-def get_outstanding_invoices(company):
+def get_outstanding_invoices(filters):
+	filters = json.loads(filters)
+	print(filters)
+	print(type(filters))
 	data = frappe.db.sql(
 		"""
 		SELECT
@@ -16,16 +19,9 @@ def get_outstanding_invoices(company):
 			company = %(company)s
 		GROUP BY supplier
 		""",
-		{"company": company},
+		filters,
 		as_dict=True,
 	)
-	# outstanding_invoices = frappe.get_list(
-	# 	"Purchase Invoice",
-	# 	fields=["name)", "supplier", "rounded_total", "outstanding_amount"],
-	# 	filters=[["status", "in", ["Partly Paid", "Unpaid", "Overdue"]]],
-	# 	group_by="supplier",
-	# )
-
 	return data
 
 
