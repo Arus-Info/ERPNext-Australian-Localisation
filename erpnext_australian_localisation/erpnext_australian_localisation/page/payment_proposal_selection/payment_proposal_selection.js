@@ -63,7 +63,7 @@ class PaymentProposalSelection {
 				if (this.page.fields_dict.company.value) {
 					this.get_invoices();
 				} else {
-					frappe.throw("Please Select the company");
+					frappe.throw(__("Please Select the company"));
 				}
 			},
 		});
