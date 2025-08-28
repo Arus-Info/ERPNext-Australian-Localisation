@@ -81,7 +81,7 @@ def update_payment_batch(source_name, target_doc=None, filters=None):
 		as_dict=True,
 	)
 
-	account_details = frappe.db.get_value("Supplier", supplier.supplier, ["bank_account_no", "bsb"])
+	account_details = frappe.db.get_value("Supplier", supplier.supplier, ["bank_account_no", "branch_code"])
 	if not account_details[0] and not account_details[1]:
 		frappe.msgprint(
 			_("Can't add Payment Entry {0}. Bank details not available for {1}").format(
