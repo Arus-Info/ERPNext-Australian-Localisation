@@ -37,10 +37,10 @@ def generate_aba_file(payment_batch):
 			as_dict=True,
 		)
 		supplier_account_details = frappe.db.get_value(
-			"Supplier", payment.party, ["bank_account_no", "bsb", "supplier_name"], as_dict=True
+			"Supplier", payment.party, ["bank_account_no", "branch_code", "supplier_name"], as_dict=True
 		)
 		content += "1"
-		content += supplier_account_details.bsb[0:7].ljust(7)
+		content += supplier_account_details.branch_code[0:7].ljust(7)
 		content += supplier_account_details.bank_account_no[0:9].rjust(9)
 		content += " "
 		content += "50"
