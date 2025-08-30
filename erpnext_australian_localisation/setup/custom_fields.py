@@ -137,6 +137,15 @@ CUSTOM_FIELDS_FOR_BANK_FILE = {
 			"insert_after": "branch_code",
 			"module": "ERPNext Australian Localisation",
 		},
+		{
+			"fieldname": "lodgement_reference",
+			"label": "Lodgement Reference",
+			"fieldtype": "Data",
+			"length": 18,
+			"depends_on": "eval: doc.country === 'Australia'",
+			"insert_after": "bank_account_no",
+			"module": "ERPNext Australian Localisation",
+		},
 	],
 	"Bank": [
 		{
@@ -169,6 +178,7 @@ CUSTOM_FIELDS_FOR_BANK_FILE = {
 			"label": "Currency",
 			"fieldtype": "Link",
 			"options": "Currency",
+			"fetch_from": "account.account_currency",
 			"insert_after": "apca_number",
 			"module": "ERPNext Australian Localisation",
 		},
@@ -179,16 +189,6 @@ CUSTOM_FIELDS_FOR_BANK_FILE = {
 			"options": "ABA",
 			"default": "ABA",
 			"insert_after": "currency",
-			"module": "ERPNext Australian Localisation",
-		},
-	],
-	"Payment Entry": [
-		{
-			"fieldname": "lodgement_reference",
-			"label": "Lodgement Reference",
-			"fieldtype": "Data",
-			"length": 18,
-			"insert_after": "section_break_14",
 			"module": "ERPNext Australian Localisation",
 		},
 	],

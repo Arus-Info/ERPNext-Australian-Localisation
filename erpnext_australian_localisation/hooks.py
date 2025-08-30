@@ -177,7 +177,10 @@ doc_events = {
 	"Purchase Invoice": {
 		"on_submit": "erpnext_australian_localisation.overrides.invoices.on_submit",
 		"on_update": "erpnext_australian_localisation.overrides.purchase_invoice.on_update",
-		"on_cancel": "erpnext_australian_localisation.overrides.invoices.on_cancel",
+		"on_cancel": [
+			"erpnext_australian_localisation.overrides.invoices.on_cancel",
+			"erpnext_australian_localisation.overrides.purchase_invoice.on_cancel",
+		],
 	},
 	"Company": {"after_insert": "erpnext_australian_localisation.overrides.company.after_insert"},
 	"Expense Claim": {
