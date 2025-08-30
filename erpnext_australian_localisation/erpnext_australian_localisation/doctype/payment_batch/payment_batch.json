@@ -16,6 +16,7 @@
   "file_format",
   "amended_from",
   "section_break_fofa",
+  "total_paid_amount",
   "payment_created",
   "paid_invoices"
  ],
@@ -61,7 +62,8 @@
    "in_list_view": 1,
    "label": "Company",
    "options": "Company",
-   "reqd": 1
+   "reqd": 1,
+   "set_only_once": 1
   },
   {
    "fieldname": "bank_account",
@@ -97,8 +99,15 @@
   },
   {
    "fieldname": "bank_file_url",
-   "fieldtype": "Data",
+   "fieldtype": "Attach",
    "label": "Bank File URL",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "total_paid_amount",
+   "fieldtype": "Currency",
+   "label": "Total Paid Amount",
    "read_only": 1
   }
  ],
@@ -106,7 +115,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-08-25 14:31:38.840773",
+ "modified": "2025-08-31 04:49:35.113993",
  "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
  "name": "Payment Batch",

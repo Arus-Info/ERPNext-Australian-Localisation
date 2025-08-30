@@ -31,11 +31,20 @@ class PaymentBatch(Document):
 		file = frappe.db.exists("File", {"file_name": file_name})
 		if file:
 			frappe.delete_doc("File", file)
+			self.bank_file_url = ""
+			self.save()
+			frappe.db.commit()
 
 		file = frappe.get_doc({"doctype": "File", "is_private": 1, "file_name": file_name})
 
 		if self.file_format == "ABA":
-			file.content = generate_aba_file(self)
+			file.update(
+				{
+					"content": generate_aba_file(self),
+					"attached_to_doctype": "Payment Batch",
+					"attached_to_name": self.name,
+				}
+			)
 			file.save()
 			self.bank_file_url = file.file_url
 			self.save()
@@ -50,10 +59,12 @@ def get_bank_account(doctype, txt, searchfield, start, page_len, filters):
 	return frappe.get_list(
 		"Bank Account",
 		filters=[
+			["company", "=", filters["company"]],
 			["bank", "in", bank_with_fi_abbr],
 			["branch_code", "!=", ""],
 			["bank_account_no", "!=", ""],
 			["apca_number", "!=", ""],
+			["currency", "=", "AUD"],
 		],
 		as_list=True,
 	)
@@ -64,16 +75,17 @@ def get_bank_account(doctype, txt, searchfield, start, page_len, filters):
 def get_payment_entry(doctype, txt, searchfield, start, page_len, filters):
 	return frappe.db.sql(
 		"""
-		select name, party, paid_amount from `tabPayment Entry` where docstatus=0 and party_type ='Supplier'
+		select name, party, paid_amount from `tabPayment Entry` where docstatus=0 and party_type ='Supplier' and company=%(company)s
 		EXCEPT
 		select payment_entry, supplier, amount from `tabPayment Batch Item`
 		""",
+		{"company": filters["company"]},
 		as_dict=True,
 	)
 
 
 @frappe.whitelist()
-def update_payment_batch(source_name, target_doc=None, filters=None):
+def update_payment_batch(source_name, target_doc=None):
 	supplier = frappe.db.get_value(
 		"Payment Entry",
 		source_name,
@@ -82,18 +94,20 @@ def update_payment_batch(source_name, target_doc=None, filters=None):
 	)
 
 	account_details = frappe.db.get_value("Supplier", supplier.supplier, ["bank_account_no", "branch_code"])
-	if not account_details[0] and not account_details[1]:
-		frappe.msgprint(
-			_("Can't add Payment Entry {0}. Bank details not available for {1}").format(
-				source_name, supplier.supplier
-			)
-		)
-	else:
+	if account_details[0] and account_details[1]:
 		row = frappe.new_doc("Payment Batch Item")
 		row.update(supplier)
 
 		target_doc = create_payment_batch_invoices(source_name, target_doc)
 		target_doc.append("payment_created", row)
+		target_doc = update_total_paid_amount(target_doc)
+
+	else:
+		frappe.msgprint(
+			_("Can't add Payment Entry {0}. Bank details not available for {1}").format(
+				source_name, supplier.supplier
+			)
+		)
 
 	return target_doc
 
@@ -130,3 +144,32 @@ def create_payment_batch_invoices(source_name, target_doc=None):
 		doc.append("paid_invoices", row)
 
 	return doc
+
+
+def update_total_paid_amount(payment_batch):
+	total_paid_amount = 0
+	for i in payment_batch.payment_created:
+		total_paid_amount += i.amount
+	payment_batch.total_paid_amount = total_paid_amount
+
+	return payment_batch
+
+
+def update_on_payment_entry_updation(payment_entry, paid_amount):
+	invoices = frappe.get_list(
+		"Payment Batch Invoice",
+		parent_doctype="Payment Batch",
+		filters={"payment_entry": payment_entry, "docstatus": 0},
+		fields=["name", "parent"],
+	)
+	if invoices:
+		for i in invoices:
+			frappe.delete_doc("Payment Batch Invoice", i.name)
+
+		if paid_amount:
+			target_doc = frappe.get_doc("Payment Batch", invoices[0].parent)
+			payment_batch = create_payment_batch_invoices(payment_entry, target_doc)
+			payment_batch.save()
+
+			update_total_paid_amount(payment_batch)
+			payment_batch.save()
