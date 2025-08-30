@@ -33,7 +33,8 @@ class PaymentBatch(Document):
 			frappe.delete_doc("File", file)
 			self.bank_file_url = ""
 			self.save()
-			frappe.db.commit()
+			# need to delete the previous file
+			frappe.db.commit()  # nosemgrep
 
 		file = frappe.get_doc({"doctype": "File", "is_private": 1, "file_name": file_name})
 
