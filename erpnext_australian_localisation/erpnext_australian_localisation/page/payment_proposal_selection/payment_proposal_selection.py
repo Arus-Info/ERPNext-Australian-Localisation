@@ -18,12 +18,22 @@ def get_outstanding_invoices(filters):
 		filters["condition_based_on_due_date"] += f" and pi.due_date <= '{filters['to_due_date']}'"
 
 	query = f"""
+		WITH
+		supplier AS
+		(
+			SELECT
+				name as supplier,
+				lodgement_reference,
+				case when (NULLIF(bank_account_no,'') IS NOT NULL and NULLIF(branch_code,'') IS NOT NULL) then 1 else 0 end as is_included
+			FROM tabSupplier
+		)
+
 		SELECT
 			pi.supplier_name,
 			pi.supplier,
 			s.lodgement_reference,
-			SUM(case when (NULLIF(s.bank_account_no,'') IS NOT NULL and NULLIF(s.branch_code,'') IS NOT NULL) then outstanding_amount else 0 end) as total_outstanding,
-			case when (NULLIF(s.bank_account_no,'') IS NOT NULL and NULLIF(s.branch_code,'') IS NOT NULL) then 1 else 0 end as is_included,
+			SUM(case when s.is_included then pi.outstanding_amount else 0 end) as total_outstanding,
+			s.is_included,
 			JSON_ARRAYAGG(
 				JSON_OBJECT(
 					"purchase_invoice", pi.name,
@@ -32,18 +42,18 @@ def get_outstanding_invoices(filters):
 					"invoice_currency", pi.currency,
 					"rounded_total", pi.base_rounded_total,
 					"outstanding_amount", pi.outstanding_amount,
-					"allocated_amount", case when (NULLIF(s.bank_account_no,'') IS NOT NULL and NULLIF(s.branch_code,'') IS NOT NULL) then pi.outstanding_amount else 0 end
+					"allocated_amount", case when s.is_included then pi.outstanding_amount else 0 end
 				)
 			) as purchase_invoice
 		FROM `tabPurchase Invoice` as pi
-		LEFT JOIN tabSupplier as s
-			ON s.name = pi.supplier
+		LEFT JOIN supplier as s
+			ON s.supplier = pi.supplier
 		WHERE
-			status in ('Partly Paid', 'Unpaid', 'Overdue') and
-			company ='{filters["company"]}'
+			pi.status in ('Partly Paid', 'Unpaid', 'Overdue') and
+			pi.company ='{filters["company"]}'
 			and pi.owner like '{filters["created_by"]}%'
 			{filters["condition_based_on_due_date"]}
-		GROUP BY supplier
+		GROUP BY pi.supplier
 		"""
 
 	data = frappe.db.sql(query, as_dict=True)

@@ -33,24 +33,6 @@ frappe.ui.form.on("Bank Account", {
 			country = "";
 		}
 	},
-
-	// branch_code(frm) {
-	// 	if (country === "Australia") {
-	// 		validate_branch_code(frm); // eslint-disable-line no-undef
-	// 	}
-	// },
-
-	// bank_account_no(frm) {
-	// 	if (country === "Australia") {
-	// 		validate_account_no(frm); // eslint-disable-line no-undef
-	// 	}
-	// },
-
-	// apca_number(frm) {
-	// 	if (country === "Australia") {
-	// 		validate_apca_number(frm);
-	// 	}
-	// },
 });
 
 function validate_apca_number(frm) {
