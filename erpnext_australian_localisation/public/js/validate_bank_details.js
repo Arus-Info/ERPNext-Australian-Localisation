@@ -5,12 +5,11 @@ function validate_branch_code(frm) {
 			frappe.throw(__("Only numbers are allowed in Branch code."));
 		}
 		if (branch_code.length > 6) {
-			frappe.msgprint(__("Removing extra digits. BSB number only has 6 digits"));
+			frappe.throw(__("Removing extra digits. BSB number only has 6 digits"));
 		} else if (branch_code.length < 6) {
 			frappe.throw(__("Invalid BSB number. BSB must have 6-digits."));
 		}
 		frm.set_value("branch_code", branch_code.slice(0, 3) + "-" + branch_code.slice(3, 6));
-		// frm.set_value("country", "Algeria");
 	}
 }
 

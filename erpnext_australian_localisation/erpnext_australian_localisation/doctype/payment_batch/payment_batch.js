@@ -63,7 +63,7 @@ frappe.ui.form.on("Payment Batch", {
 
 		if (frm.doc.bank_file_url) {
 			frm.add_custom_button(
-				__("<a style='padding-left: 8px' href={0}>Downloading Bank File</a>", [
+				__("<a style='padding-left: 8px' href={0}>Download Bank File</a>", [
 					frm.doc.bank_file_url,
 				]),
 				() => null,

@@ -6,7 +6,6 @@ from datetime import datetime
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from frappe.model.mapper import get_mapped_doc
 
 from erpnext_australian_localisation.erpnext_australian_localisation.doctype.payment_batch.aba_file_generator import (
 	generate_aba_file,
@@ -39,13 +38,7 @@ class PaymentBatch(Document):
 		file = frappe.get_doc({"doctype": "File", "is_private": 1, "file_name": file_name})
 
 		if self.file_format == "ABA":
-			file.update(
-				{
-					"content": generate_aba_file(self),
-					"attached_to_doctype": "Payment Batch",
-					"attached_to_name": self.name,
-				}
-			)
+			file.content = generate_aba_file(self)
 			file.save()
 			self.bank_file_url = file.file_url
 			self.save()
@@ -114,6 +107,8 @@ def update_payment_batch(source_name, target_doc=None):
 
 
 def create_payment_batch_invoices(source_name, target_doc=None):
+	from frappe.model.mapper import get_mapped_doc
+
 	doc = get_mapped_doc(
 		"Payment Entry",
 		source_name,

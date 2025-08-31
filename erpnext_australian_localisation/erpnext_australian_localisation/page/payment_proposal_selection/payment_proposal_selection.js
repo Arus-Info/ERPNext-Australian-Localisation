@@ -5,6 +5,10 @@ frappe.pages["payment-proposal-selection"].on_page_load = function (wrapper) {
 		single_column: true,
 	});
 
+	page.set_secondary_action(__("Reset Filters"), () => {
+		window.location.reload();
+	});
+
 	$(`<div class='payment-proposal-selection' style="padding-top: 15px"></div>`).appendTo(
 		page.main
 	);
@@ -19,21 +23,26 @@ frappe.pages["payment-proposal-selection"].refresh = function (wrapper) {
 				fieldtype: "Link",
 				options: "Company",
 				reqd: 1,
+				filters: { default_currency: "AUD" },
+			},
+			{
+				label: __("Filters"),
+				fieldtype: "Section Break",
 			},
 			{
 				fieldname: "created_by",
-				label: __("Created By User"),
+				label: __("Invoice Created By User"),
 				fieldtype: "Link",
 				options: "User",
 			},
 			{
 				fieldname: "from_due_date",
-				label: __("From Due Date"),
+				label: __("Invoice Due Date After"),
 				fieldtype: "Date",
 			},
 			{
 				fieldname: "to_due_date",
-				label: __("To Due Date"),
+				label: __("Invoice Due Date Before"),
 				fieldtype: "Date",
 			},
 		],
@@ -72,7 +81,7 @@ class PaymentProposalSelection {
 		});
 		this.page.add_field({
 			fieldname: "created_by",
-			label: __("Created By User"),
+			label: __("Invoice Created By User"),
 			fieldtype: "Link",
 			options: "User",
 			read_only: 1,
@@ -80,21 +89,21 @@ class PaymentProposalSelection {
 		});
 		this.page.add_field({
 			fieldname: "from_due_date",
-			label: __("From Due Date"),
+			label: __("Invoice Due Date After"),
 			fieldtype: "Date",
 			read_only: 1,
 			default: this.filters.from_due_date,
 		});
 		this.page.add_field({
 			fieldname: "to_due_date",
-			label: __("To Due Date"),
+			label: __("Invoice Due Date Before"),
 			fieldtype: "Date",
 			read_only: 1,
 			default: this.filters.to_due_date,
 		});
 
-		this.page.set_primary_action(__("Reset"), () => {
-			window.location.reload();
+		this.page.set_primary_action(__("Create Payment Batch"), () => {
+			this.create_payment_batch();
 		});
 
 		this.get_invoices();
@@ -102,6 +111,7 @@ class PaymentProposalSelection {
 
 	async get_invoices() {
 		let total_paid_amount = 0;
+		let total_number_of_invoices_to_be_paid = 0;
 		await frappe.call({
 			method: "erpnext_australian_localisation.erpnext_australian_localisation.page.payment_proposal_selection.payment_proposal_selection.get_outstanding_invoices",
 			args: {
@@ -115,14 +125,18 @@ class PaymentProposalSelection {
 			callback: (data) => {
 				data = data.message;
 				for (let d of data) {
+					d.purchase_invoice = JSON.parse(d.purchase_invoice);
 					this.supplier_list.push({ supplier: d.supplier, is_included: d.is_included });
 					total_paid_amount += d.total_outstanding;
+					if (d.is_included) {
+						total_number_of_invoices_to_be_paid += d.purchase_invoice.length;
+					}
 					this.create_fields(d);
 				}
 			},
 		});
 
-		this.fields.push(
+		this.fields.unshift(
 			{ fieldtype: "Section Break" },
 			{
 				label: __("Total Amount to be Paid"),
@@ -133,11 +147,11 @@ class PaymentProposalSelection {
 			},
 			{ fieldtype: "Column Break" },
 			{
-				label: __("Create Payment Batch"),
-				fieldtype: "Button",
-				click: () => {
-					this.create_payment_batch();
-				},
+				label: __("Total Number of Invoices to be Paid"),
+				fieldname: "total_number_of_invoices_to_be_paid",
+				fieldtype: "Data",
+				read_only: 1,
+				default: total_number_of_invoices_to_be_paid.toString(),
 			}
 		);
 
@@ -151,8 +165,6 @@ class PaymentProposalSelection {
 	}
 
 	create_fields(data) {
-		let purchase_invoices = JSON.parse(data.purchase_invoice);
-
 		this.fields.push(
 			{
 				fieldtype: "Section Break",
@@ -176,7 +188,7 @@ class PaymentProposalSelection {
 				cannot_add_rows: true,
 				cannot_delete_rows: true,
 				cannot_delete_all_rows: true,
-				data: purchase_invoices,
+				data: data.purchase_invoice,
 				in_place_edit: true,
 				fields: this.get_table_fields(data.supplier, data.is_included),
 			},
@@ -190,7 +202,31 @@ class PaymentProposalSelection {
 			},
 			{ fieldtype: "Column Break" },
 			{
-				label: __("Total Paid to {0}", [data.supplier]),
+				label: __("No of Invoices Selected"),
+				fieldname: "no_of_invoices_selected_" + data.supplier,
+				fieldtype: "Data",
+				read_only: 1,
+				default: data.is_included ? data.purchase_invoice.length : "0",
+				onchange: () => {
+					let total_number_of_invoices_to_be_paid = 0;
+					for (let d of this.supplier_list) {
+						let no_of_invoices_selected = Number(
+							this.field_group.fields_dict[
+								"no_of_invoices_selected_" + d.supplier
+							].get_value()
+						);
+						if (no_of_invoices_selected) {
+							total_number_of_invoices_to_be_paid += no_of_invoices_selected;
+						}
+					}
+					this.field_group.fields_dict["total_number_of_invoices_to_be_paid"].set_value(
+						total_number_of_invoices_to_be_paid.toString()
+					);
+				},
+			},
+			{ fieldtype: "Column Break" },
+			{
+				label: __("Amount to be Paid for {0}", [data.supplier]),
 				fieldname: "paid_to_supplier_" + data.supplier,
 				fieldtype: "Currency",
 				read_only: 1,
@@ -250,6 +286,7 @@ class PaymentProposalSelection {
 				fieldname: "rounded_total",
 				fieldtype: "Currency",
 				in_list_view: 1,
+				columns: 1,
 				label: __("Ledger Amount"),
 				read_only: 1,
 			},
@@ -257,6 +294,7 @@ class PaymentProposalSelection {
 				fieldname: "outstanding_amount",
 				fieldtype: "Currency",
 				in_list_view: 1,
+				columns: 1,
 				label: __("Outstanding Amount"),
 				read_only: 1,
 			},
@@ -301,13 +339,17 @@ class PaymentProposalSelection {
 	}
 
 	update_total_paid_to_supplier(supplier) {
-		let invoices = this.field_group.fields_dict["invoices_" + supplier].get_value();
+		let invoices =
+			this.field_group.fields_dict["invoices_" + supplier].grid.get_selected_children();
 		let paid_amount_for_supplier = 0;
 		for (let i of invoices) {
 			paid_amount_for_supplier += i.allocated_amount;
 		}
 		this.field_group.fields_dict["paid_to_supplier_" + supplier].set_value(
 			paid_amount_for_supplier
+		);
+		this.field_group.fields_dict["no_of_invoices_selected_" + supplier].set_value(
+			invoices.length.toString()
 		);
 	}
 
@@ -453,10 +495,20 @@ class PaymentProposalSelection {
 					reqd: 1,
 				},
 				{
-					label: __("Total Paid Amount"),
+					label: __("Amount to be Paid"),
 					fieldname: "total_paid_amount",
 					fieldtype: "Currency",
 					default: this.field_group.fields_dict["total_paid_amount"].get_value(),
+					read_only: 1,
+				},
+				{
+					label: __("Number of Invoices to be Paid"),
+					fieldname: "total_number_of_invoices_to_be_paid",
+					fieldtype: "Data",
+					default:
+						this.field_group.fields_dict[
+							"total_number_of_invoices_to_be_paid"
+						].get_value(),
 					read_only: 1,
 				},
 			],
@@ -472,6 +524,7 @@ class PaymentProposalSelection {
 						callback(data) {
 							Dialog.hide();
 							frappe.set_route("payment-batch", data.message);
+							window.location.reload();
 						},
 					});
 				}
