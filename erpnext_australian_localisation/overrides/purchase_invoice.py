@@ -52,11 +52,8 @@ def on_update(doc, event):
 
 def on_cancel(doc, event):
 	payment_entry = frappe.db.get_value(
-		"Payment Batch Invoice",
-		{"purchase_invoice": doc.name},
-		["payment_entry", "payment_entry.paid_amount"],
-		as_dict=True,
+		"Payment Batch Invoice", {"purchase_invoice": doc.name}, "payment_entry"
 	)
 
-	if payment_entry.payment_entry:
-		update_on_payment_entry_updation(**payment_entry)
+	if payment_entry:
+		update_on_payment_entry_updation(payment_entry)

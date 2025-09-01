@@ -151,7 +151,7 @@ def update_total_paid_amount(payment_batch):
 	return payment_batch
 
 
-def update_on_payment_entry_updation(payment_entry, paid_amount):
+def update_on_payment_entry_updation(payment_entry):
 	invoices = frappe.get_list(
 		"Payment Batch Invoice",
 		parent_doctype="Payment Batch",
@@ -162,10 +162,9 @@ def update_on_payment_entry_updation(payment_entry, paid_amount):
 		for i in invoices:
 			frappe.delete_doc("Payment Batch Invoice", i.name)
 
-		if paid_amount:
-			target_doc = frappe.get_doc("Payment Batch", invoices[0].parent)
-			payment_batch = create_payment_batch_invoices(payment_entry, target_doc)
-			payment_batch.save()
+		target_doc = frappe.get_doc("Payment Batch", invoices[0].parent)
+		payment_batch = create_payment_batch_invoices(payment_entry, target_doc)
+		payment_batch.save()
 
-			update_total_paid_amount(payment_batch)
-			payment_batch.save()
+		update_total_paid_amount(payment_batch)
+		payment_batch.save()

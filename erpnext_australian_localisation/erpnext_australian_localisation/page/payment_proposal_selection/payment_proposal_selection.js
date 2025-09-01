@@ -125,11 +125,15 @@ class PaymentProposalSelection {
 			callback: (data) => {
 				data = data.message;
 				for (let d of data) {
-					d.purchase_invoice = JSON.parse(d.purchase_invoice);
+					d.purchase_invoices = JSON.parse(d.purchase_invoices);
+					d.purchase_invoices = d.purchase_invoices.filter(
+						(item) => item.purchase_invoice
+					);
+					d.reference_invoices = JSON.parse(d.reference_invoices);
 					this.supplier_list.push({ supplier: d.supplier, is_included: d.is_included });
 					total_paid_amount += d.total_outstanding;
 					if (d.is_included) {
-						total_number_of_invoices_to_be_paid += d.purchase_invoice.length;
+						total_number_of_invoices_to_be_paid += d.purchase_invoices.length;
 					}
 					this.create_fields(d);
 				}
@@ -165,6 +169,11 @@ class PaymentProposalSelection {
 	}
 
 	create_fields(data) {
+		let { invoice_to_be_paid, invoices_in_payment_entry } = this.get_table_fields(
+			data.supplier,
+			data.is_included
+		);
+
 		this.fields.push(
 			{
 				fieldtype: "Section Break",
@@ -178,7 +187,7 @@ class PaymentProposalSelection {
 				options: data.is_included
 					? ""
 					: __(
-							"<p style='color: #ff1a1a'>Please update bank details in the supplier</p>"
+							"<p style='color: #ff1a1a'>Please update bank details in the Supplier.</p>"
 					  ),
 			},
 			{
@@ -188,9 +197,30 @@ class PaymentProposalSelection {
 				cannot_add_rows: true,
 				cannot_delete_rows: true,
 				cannot_delete_all_rows: true,
-				data: data.purchase_invoice,
+				data: data.purchase_invoices,
 				in_place_edit: true,
-				fields: this.get_table_fields(data.supplier, data.is_included),
+				fields: invoice_to_be_paid,
+			},
+			{
+				label: __("Supplier Warning"),
+				fieldname: "references_warning_" + data.supplier,
+				fieldtype: "HTML",
+				options: data.reference_invoices
+					? __(
+							"<p style='color: #ff1a1a'>Below Purchase Invoices are not loaded for payment because of the unposted Payment Entry in the system.</p>"
+					  )
+					: "",
+			},
+			{
+				label: __("References"),
+				fieldname: "references_" + data.supplier,
+				fieldtype: "Table",
+				cannot_add_rows: true,
+				cannot_delete_rows: true,
+				cannot_delete_all_rows: true,
+				data: data.reference_invoices,
+				in_place_edit: true,
+				fields: invoices_in_payment_entry,
 			},
 			{ fieldtype: "Section Break" },
 			{
@@ -206,7 +236,7 @@ class PaymentProposalSelection {
 				fieldname: "no_of_invoices_selected_" + data.supplier,
 				fieldtype: "Data",
 				read_only: 1,
-				default: data.is_included ? data.purchase_invoice.length : "0",
+				default: data.is_included ? data.purchase_invoices.length : "0",
 				onchange: () => {
 					let total_number_of_invoices_to_be_paid = 0;
 					for (let d of this.supplier_list) {
@@ -226,7 +256,7 @@ class PaymentProposalSelection {
 			},
 			{ fieldtype: "Column Break" },
 			{
-				label: __("Amount to be Paid for {0}", [data.supplier]),
+				label: __("Amount to be Paid for {0}", [data.supplier_name]),
 				fieldname: "paid_to_supplier_" + data.supplier,
 				fieldtype: "Currency",
 				read_only: 1,
@@ -249,7 +279,7 @@ class PaymentProposalSelection {
 	}
 
 	get_table_fields(supplier, is_included) {
-		return [
+		let invoice_to_be_paid = [
 			{
 				fieldname: "purchase_invoice",
 				fieldtype: "Link",
@@ -336,6 +366,51 @@ class PaymentProposalSelection {
 				},
 			},
 		];
+
+		let invoices_in_payment_entry = [
+			{
+				fieldname: "purchase_invoice",
+				fieldtype: "Link",
+				options: "Purchase Invoice",
+				in_list_view: 1,
+				label: __("Purchase Invoice"),
+				read_only: 1,
+			},
+			{
+				fieldname: "rounded_total",
+				fieldtype: "Currency",
+				in_list_view: 1,
+				label: __("Grand Total"),
+				read_only: 1,
+			},
+			{
+				fieldname: "outstanding_amount",
+				fieldtype: "Currency",
+				in_list_view: 1,
+				label: __("Outstanding Amount"),
+				read_only: 1,
+			},
+			{
+				fieldname: "payment_entry",
+				fieldtype: "Link",
+				options: "Payment Entry",
+				in_list_view: 1,
+				label: __("Payment Entry"),
+				read_only: 1,
+			},
+			{
+				fieldname: "allocated_amount",
+				fieldtype: "Currency",
+				in_list_view: 1,
+				label: __("Allocated Amount"),
+				read_only: 1,
+			},
+		];
+
+		return {
+			invoice_to_be_paid: invoice_to_be_paid,
+			invoices_in_payment_entry: invoices_in_payment_entry,
+		};
 	}
 
 	update_total_paid_to_supplier(supplier) {
@@ -355,15 +430,18 @@ class PaymentProposalSelection {
 
 	add_events() {
 		for (let s of this.supplier_list) {
-			let invoices_supplier = this.field_group.fields_dict["invoices_" + s.supplier];
+			let references = this.field_group.fields_dict["references_" + s.supplier];
+			references.grid.toggle_checkboxes(0);
+			references.$wrapper
+				.find(".grid-body")
+				.css({ "overflow-y": "scroll", "max-height": "200px" });
 
+			let invoices_supplier = this.field_group.fields_dict["invoices_" + s.supplier];
 			invoices_supplier.$wrapper
 				.find(".grid-body")
 				.css({ "overflow-y": "scroll", "max-height": "200px" });
 
 			if (s.is_included) {
-				invoices_supplier.check_all_rows();
-
 				let invoices = invoices_supplier.grid.data;
 
 				invoices_supplier.grid.wrapper.on("change", ".grid-row-check:first", (event) => {
@@ -396,6 +474,7 @@ class PaymentProposalSelection {
 						}
 					);
 				}
+				invoices_supplier.check_all_rows();
 			} else {
 				invoices_supplier.grid.toggle_checkboxes(0);
 			}
