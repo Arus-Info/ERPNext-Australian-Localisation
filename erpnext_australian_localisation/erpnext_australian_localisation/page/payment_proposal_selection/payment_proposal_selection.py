@@ -26,6 +26,28 @@ def get_outstanding_invoices(filters):
 				lodgement_reference,
 				case when (NULLIF(bank_account_no,'') IS NOT NULL and NULLIF(branch_code,'') IS NOT NULL) then 1 else 0 end as is_included
 			FROM tabSupplier
+		),
+
+		payment_reference_entry AS
+		(
+			SELECT
+				per.reference_name,
+				pe.party,
+				JSON_ARRAYAGG(
+					JSON_OBJECT(
+						"purchase_invoice", per.reference_name,
+						"rounded_total", per.total_amount,
+						"outstanding_amount", per.outstanding_amount,
+						"payment_entry", per.parent,
+						"allocated_amount", per.allocated_amount
+					)
+				) as reference_invoices
+			FROM `tabPayment Entry Reference` as per
+			LEFT JOIN `tabPayment Entry` as pe
+			ON
+				pe.name = per.parent
+			WHERE per.docstatus = 0 and per.reference_doctype = 'Purchase Invoice'
+			GROUP BY pe.party
 		)
 
 		SELECT
@@ -35,22 +57,33 @@ def get_outstanding_invoices(filters):
 			SUM(case when s.is_included then pi.outstanding_amount else 0 end) as total_outstanding,
 			s.is_included,
 			JSON_ARRAYAGG(
-				JSON_OBJECT(
-					"purchase_invoice", pi.name,
-					"due_date", pi.due_date,
-					"invoice_amount", pi.rounded_total,
-					"invoice_currency", pi.currency,
-					"rounded_total", pi.base_rounded_total,
-					"outstanding_amount", pi.outstanding_amount,
-					"allocated_amount", case when s.is_included then pi.outstanding_amount else 0 end
-				)
-			) as purchase_invoice
+				case
+				when per.reference_name IS NULL
+				then
+					JSON_OBJECT(
+						"purchase_invoice", pi.name,
+						"due_date", pi.due_date,
+						"invoice_amount", pi.rounded_total,
+						"invoice_currency", pi.currency,
+						"rounded_total", pi.base_rounded_total,
+						"outstanding_amount", pi.outstanding_amount
+					)
+				else JSON_OBJECT()
+				end)
+			as purchase_invoices,
+			reference_invoices
 		FROM `tabPurchase Invoice` as pi
+		LEFT JOIN `tabPayment Entry Reference` as per
+		ON
+			per.reference_name = pi.name and per.docstatus = 0
 		LEFT JOIN supplier as s
 			ON s.supplier = pi.supplier
+		LEFT JOIN payment_reference_entry
+			ON payment_reference_entry.party = s.supplier
 		WHERE
-			pi.status in ('Partly Paid', 'Unpaid', 'Overdue') and
-			pi.company ='{filters["company"]}'
+			pi.docstatus = 1
+			and pi.outstanding_amount > 0
+			and pi.company ='{filters["company"]}'
 			and pi.owner like '{filters["created_by"]}%'
 			{filters["condition_based_on_due_date"]}
 		GROUP BY pi.supplier

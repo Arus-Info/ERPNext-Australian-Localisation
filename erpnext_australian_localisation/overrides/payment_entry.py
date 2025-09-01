@@ -12,9 +12,4 @@ def on_submit(doc, event):
 
 
 def on_update(doc, event):
-	try:
-		if not doc.is_child_table_same("references"):
-			update_on_payment_entry_updation(doc.name, doc.paid_amount)
-
-	except AttributeError as e:
-		print(e)
+	update_on_payment_entry_updation(doc.name)
