@@ -1,0 +1,22 @@
+{
+ "action": "Go to Page",
+ "action_label": "Payment Batch",
+ "creation": "2025-09-01 20:37:04.362247",
+ "description": "# Payment Batch (ABA File)\n\nThe payment run process in any business can be executed using the Payment Proposal functionality, which is released as a part of AU Localisation. This functionality will allow the users to pick and choose the Purchase Invoices to be paid for the current payment run. The Payment Proposal functionality can be accessed using the <a href=\"/app/payment-proposal\"><b>link</b></a>.\n\nThe Payment Batch will be generated from the Payment Proposal functionality. If needed more payments can be added or removed from the Payment Batch. The ABA file will be generated from the Payment Batch using the BSB Account Number of the Supplier.",
+ "docstatus": 0,
+ "doctype": "Onboarding Step",
+ "idx": 0,
+ "is_complete": 0,
+ "is_single": 0,
+ "is_skipped": 0,
+ "modified": "2025-09-01 22:15:39.865548",
+ "modified_by": "Administrator",
+ "name": "Payment Batch (ABA File)",
+ "owner": "Administrator",
+ "path": "List/payment-batch",
+ "reference_document": "Payment Batch",
+ "show_form_tour": 0,
+ "show_full_form": 0,
+ "title": "Payment Batch (ABA File)",
+ "validate_action": 1
+}

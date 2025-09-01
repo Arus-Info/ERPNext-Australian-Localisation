@@ -1,7 +1,7 @@
-frappe.pages["payment-proposal-selection"].on_page_load = function (wrapper) {
+frappe.pages["payment-proposal"].on_page_load = function (wrapper) {
 	var page = frappe.ui.make_app_page({
 		parent: wrapper,
-		title: __("Payment Proposal Selection"),
+		title: __("Payment Proposal"),
 		single_column: true,
 	});
 
@@ -9,12 +9,10 @@ frappe.pages["payment-proposal-selection"].on_page_load = function (wrapper) {
 		window.location.reload();
 	});
 
-	$(`<div class='payment-proposal-selection' style="padding-top: 15px"></div>`).appendTo(
-		page.main
-	);
+	$(`<div class='payment-proposal' style="padding-top: 15px"></div>`).appendTo(page.main);
 };
 
-frappe.pages["payment-proposal-selection"].refresh = function (wrapper) {
+frappe.pages["payment-proposal"].refresh = function (wrapper) {
 	const filter_dialog = new frappe.ui.Dialog({
 		fields: [
 			{
@@ -46,9 +44,9 @@ frappe.pages["payment-proposal-selection"].refresh = function (wrapper) {
 				fieldtype: "Date",
 			},
 		],
-		primary_action_label: __("Continue with Payment Proposal Solution"),
+		primary_action_label: __("Continue with Payment Proposal"),
 		primary_action(values) {
-			new PaymentProposalSelection(wrapper, values);
+			new PaymentProposal(wrapper, values);
 			filter_dialog.hide();
 		},
 	});
@@ -56,11 +54,11 @@ frappe.pages["payment-proposal-selection"].refresh = function (wrapper) {
 	filter_dialog.show();
 };
 
-class PaymentProposalSelection {
+class PaymentProposal {
 	constructor(wrapper, filters) {
 		this.wrapper = wrapper;
 		this.page = wrapper.page;
-		this.body = $(wrapper).find(`.payment-proposal-selection`);
+		this.body = $(wrapper).find(`.payment-proposal`);
 		this.filters = filters;
 
 		this.get_filters();
@@ -113,7 +111,7 @@ class PaymentProposalSelection {
 		let total_paid_amount = 0;
 		let total_number_of_invoices_to_be_paid = 0;
 		await frappe.call({
-			method: "erpnext_australian_localisation.erpnext_australian_localisation.page.payment_proposal_selection.payment_proposal_selection.get_outstanding_invoices",
+			method: "erpnext_australian_localisation.erpnext_australian_localisation.page.payment_proposal.payment_proposal.get_outstanding_invoices",
 			args: {
 				filters: {
 					company: this.filters.company,
@@ -173,12 +171,16 @@ class PaymentProposalSelection {
 			data.supplier,
 			data.is_included
 		);
-
-		this.fields.push(
+		let supplier_fields = [
+			{ fieldtype: "Section Break" },
+			{
+				fieldtype: "HTML",
+				options: "<hr/>",
+			},
 			{
 				fieldtype: "Section Break",
 				fieldname: "Section_" + data.supplier,
-				label: __("Invoices for {0}", [data.supplier_name]),
+				label: __("Invoices for Supplier - {0}", [data.supplier_name]),
 			},
 			{
 				label: __("Supplier Warning"),
@@ -200,27 +202,6 @@ class PaymentProposalSelection {
 				data: data.purchase_invoices,
 				in_place_edit: true,
 				fields: invoice_to_be_paid,
-			},
-			{
-				label: __("Supplier Warning"),
-				fieldname: "references_warning_" + data.supplier,
-				fieldtype: "HTML",
-				options: data.reference_invoices
-					? __(
-							"<p style='color: #ff1a1a'>Below Purchase Invoices are not loaded for payment because of the unposted Payment Entry in the system.</p>"
-					  )
-					: "",
-			},
-			{
-				label: __("References"),
-				fieldname: "references_" + data.supplier,
-				fieldtype: "Table",
-				cannot_add_rows: true,
-				cannot_delete_rows: true,
-				cannot_delete_all_rows: true,
-				data: data.reference_invoices,
-				in_place_edit: true,
-				fields: invoices_in_payment_entry,
 			},
 			{ fieldtype: "Section Break" },
 			{
@@ -256,7 +237,7 @@ class PaymentProposalSelection {
 			},
 			{ fieldtype: "Column Break" },
 			{
-				label: __("Amount to be Paid for {0}", [data.supplier_name]),
+				label: __("Amount to be Paid for Supplier - {0}", [data.supplier_name]),
 				fieldname: "paid_to_supplier_" + data.supplier,
 				fieldtype: "Currency",
 				read_only: 1,
@@ -274,8 +255,34 @@ class PaymentProposalSelection {
 					}
 					this.field_group.fields_dict["total_paid_amount"].set_value(total_paid_amount);
 				},
-			}
-		);
+			},
+		];
+		if (data.reference_invoices) {
+			supplier_fields.splice(
+				5,
+				0,
+				{
+					label: __("Supplier Warning"),
+					fieldname: "references_warning_" + data.supplier,
+					fieldtype: "HTML",
+					options: __(
+						"<p class='bold'> {0} Below Purchase Invoices for the supplier {1} are not loaded in this Payment Batch as they are not Submitted.</p>",
+						[frappe.utils.icon("lock", "md"), data.supplier_name]
+					),
+				},
+				{
+					fieldname: "references_" + data.supplier,
+					fieldtype: "Table",
+					cannot_add_rows: true,
+					cannot_delete_rows: true,
+					cannot_delete_all_rows: true,
+					data: data.reference_invoices,
+					in_place_edit: true,
+					fields: invoices_in_payment_entry,
+				}
+			);
+		}
+		this.fields.push(...supplier_fields);
 	}
 
 	get_table_fields(supplier, is_included) {
@@ -395,7 +402,7 @@ class PaymentProposalSelection {
 				fieldtype: "Link",
 				options: "Payment Entry",
 				in_list_view: 1,
-				label: __("Payment Entry"),
+				label: __("Payment Entry not Submitted"),
 				read_only: 1,
 			},
 			{
@@ -431,10 +438,12 @@ class PaymentProposalSelection {
 	add_events() {
 		for (let s of this.supplier_list) {
 			let references = this.field_group.fields_dict["references_" + s.supplier];
-			references.grid.toggle_checkboxes(0);
-			references.$wrapper
-				.find(".grid-body")
-				.css({ "overflow-y": "scroll", "max-height": "200px" });
+			if (references) {
+				references.grid.toggle_checkboxes(0);
+				references.$wrapper
+					.find(".grid-body")
+					.css({ "overflow-y": "scroll", "max-height": "200px" });
+			}
 
 			let invoices_supplier = this.field_group.fields_dict["invoices_" + s.supplier];
 			invoices_supplier.$wrapper
@@ -595,7 +604,7 @@ class PaymentProposalSelection {
 			primary_action: (values) => {
 				if (supplier_invoices.length) {
 					frappe.call({
-						method: "erpnext_australian_localisation.erpnext_australian_localisation.page.payment_proposal_selection.payment_proposal_selection.create_payment_batch",
+						method: "erpnext_australian_localisation.erpnext_australian_localisation.page.payment_proposal.payment_proposal.create_payment_batch",
 						args: {
 							supplier_invoices: supplier_invoices,
 							data: values,
