@@ -13,7 +13,7 @@
  "documentation_url": "https://frappeapps.io",
  "idx": 0,
  "is_complete": 0,
- "modified": "2025-08-14 14:57:55.949037",
+ "modified": "2025-09-01 22:15:58.779976",
  "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
  "name": "AU Localisation",
@@ -24,6 +24,9 @@
   },
   {
    "step": "BAS Report"
+  },
+  {
+   "step": "Payment Batch (ABA File)"
   }
  ],
  "subtitle": "BAS report, ABA payment file, BAI2 Bank Statement import and more",

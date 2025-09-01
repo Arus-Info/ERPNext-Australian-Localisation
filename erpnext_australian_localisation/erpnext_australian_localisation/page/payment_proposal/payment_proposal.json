@@ -3,17 +3,24 @@
  "creation": "2025-08-21 19:21:28.629970",
  "docstatus": 0,
  "doctype": "Page",
- "idx": 0,
- "modified": "2025-08-21 19:23:45.571352",
+ "idx": 1,
+ "modified": "2025-09-01 22:08:51.669888",
  "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
- "name": "payment-proposal-selection",
+ "name": "payment-proposal",
  "owner": "Administrator",
- "page_name": "payment-proposal-selection",
- "roles": [],
+ "page_name": "payment-proposal",
+ "roles": [
+  {
+   "role": "Accounts Manager"
+  },
+  {
+   "role": "Accounts User"
+  }
+ ],
  "script": null,
  "standard": "Yes",
  "style": null,
  "system_page": 0,
- "title": "Payment Proposal Selection"
+ "title": "Payment Proposal"
 }

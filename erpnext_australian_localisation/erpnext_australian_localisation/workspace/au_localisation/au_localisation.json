@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"0UnkUcajmK\",\"type\":\"onboarding\",\"data\":{\"onboarding_name\":\"AU Localisation\",\"col\":12}},{\"id\":\"eXPXR5a9MJ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"AU Localisation Settings\",\"col\":3}},{\"id\":\"mGaTPt-44i\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"BAS Report\",\"col\":3}},{\"id\":\"suIF92wV1R\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Australian Localisation\",\"col\":12}}]",
+ "content": "[{\"id\":\"0UnkUcajmK\",\"type\":\"onboarding\",\"data\":{\"onboarding_name\":\"AU Localisation\",\"col\":12}},{\"id\":\"eXPXR5a9MJ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"AU Localisation Settings\",\"col\":3}},{\"id\":\"mGaTPt-44i\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"BAS Report\",\"col\":3}},{\"id\":\"gIjL8RdUUq\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Payment Proposal\",\"col\":3}},{\"id\":\"Dyf9i6a4WD\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Payment Batch (ABA File)\",\"col\":3}},{\"id\":\"suIF92wV1R\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Australian Localisation\",\"col\":12}}]",
  "creation": "2025-06-19 23:36:17.700703",
  "custom_blocks": [
   {
@@ -18,7 +18,7 @@
  "is_hidden": 0,
  "label": "AU Localisation",
  "links": [],
- "modified": "2025-08-12 22:59:26.573120",
+ "modified": "2025-09-01 22:17:12.814544",
  "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
  "name": "AU Localisation",
@@ -34,6 +34,21 @@
  ],
  "sequence_id": 28.0,
  "shortcuts": [
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Payment Batch (ABA File)",
+   "link_to": "Payment Batch",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Payment Proposal",
+   "link_to": "payment-proposal",
+   "type": "Page"
+  },
   {
    "color": "Grey",
    "doc_view": "List",

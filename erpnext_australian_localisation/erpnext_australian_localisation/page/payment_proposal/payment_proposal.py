@@ -46,7 +46,10 @@ def get_outstanding_invoices(filters):
 			LEFT JOIN `tabPayment Entry` as pe
 			ON
 				pe.name = per.parent
-			WHERE per.docstatus = 0 and per.reference_doctype = 'Purchase Invoice'
+			WHERE
+				per.docstatus = 0
+				and per.reference_doctype = 'Purchase Invoice'
+				and pe.company = '{filters["company"]}'
 			GROUP BY pe.party
 		)
 
