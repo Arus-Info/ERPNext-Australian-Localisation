@@ -1,6 +1,10 @@
 ## ERPNext Australian Localisation :
 
-This app will install the Australian localisation functionalities in ERPNext. This app works in line with the Australian Chart of Accounts. This app will assist the Australian companies to get the GST postings based on the Supplier and Customer type (Local / International / Capital Goods / Non Capital Goods). This app will generate the BAS report with the amounts to be reported in each of the BAS Label. 
+The ERPNext Australian Localisation app will install the necessary localisation functionalities for Australian business in ERPNext. This app works in line with the Australian Chart of Accounts. The features of this app are as follows: 
+1. Assist the Australian companies to get the GST postings based on the Supplier and Customer type (Local / International / Capital Goods / Non Capital Goods). 
+2. Generate the BAS report with the amounts to be reported in each of the BAS Label (1A, 1B, G1 to G9 and G10 to G20). 
+3. Payment Proposal functionality to match the Payment Run for local suppliers.
+4. Generate ABA (Specified by Australian Banking Association) file used to process electronic transactions for supplier payments through the internet banking system of Australian banks.
 
 ### Prerequisites
 
