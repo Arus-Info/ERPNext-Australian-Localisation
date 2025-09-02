@@ -88,12 +88,16 @@ Payment Proposal Functionality: This functionality is equivalent to Payment Run 
 <br><br>
 <img width="1349" height="897" alt="image" src="https://github.com/user-attachments/assets/1590fd44-c7d1-4bd8-9b73-67fa784cd9ee" />
 <br><br>
-Alternate option of creating a Payment Batch without using Payment Proposal functionality: Using this functionality, the Payment Batch is manually created and the Purchase Invoices can be pulled based on the requirement.
+Alternate option of creating a Payment Batch without using Payment Proposal functionality: Using this functionality, the Payment Batch is manually created and the Payments which are in Draft status can be pulled into the Payment Batch for ABA file generation.
 <br><br>
 <img width="1375" height="344" alt="image" src="https://github.com/user-attachments/assets/a7aad0be-aaf3-40b2-bf32-0645c5cfbc84" />
 <br><br>
 <img width="1346" height="849" alt="image" src="https://github.com/user-attachments/assets/7de041ca-9a98-4894-ae55-dce4ba51e005" />
-
+<br><br>
+ABA File generation functionality from the Payment Batch screen:
+<br><br>
+<img width="1461" height="840" alt="image" src="https://github.com/user-attachments/assets/ba0eab43-769d-4389-8863-e232b7449474" />
+<br><br>
 
 
 ### License
