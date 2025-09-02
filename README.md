@@ -35,7 +35,9 @@ bench install-app erpnext_australian_localisation
 * Adjustments for Sales and Purchase to report in G7 and G18 BAS Labels
 * The final 1A and 1B label amounts will be reported to arrive at the amount business needs to pay the ATO or the amount ATO will refund the business
 * BAS reports can be generated Monthly / Quarterly
-* BAS reports (detailed information with transactional document number) can be printed in PDF format 
+* BAS reports (detailed information with transactional document number) can be printed in PDF format
+* Payment Proposal (Batch) generation for Supplier Payment
+* ABA File generation for the Payment Batch which can be used to upload into the online banking system for bulk payments for the suppliers
 
 ### Screenshots
 
