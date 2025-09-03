@@ -15,72 +15,123 @@ def on_submit(doc, event):
 			sum_depends_on = ["gst_offset_basis", "gst_offset_amount"]
 
 		for item in doc.items:
-			if item.base_amount:
-				bas_labels = frappe.get_all(
-					"AU BAS Label Setup",
-					filters={
-						"tax_management": "Subjected",
-						"tax_allocation": tax_allocation,
-						"tax_code": item.au_tax_code,
-					},
-					fields=["bas_label"],
+			result.extend(
+				generate_bas_labels_for_items(
+					tax_allocation,
+					item.au_tax_code,
+					item.get(account_type),
+					item.base_amount,
+					sum_depends_on[0],
 				)
-				for bas_label in bas_labels:
-					temp = {
-						"bas_label": bas_label.bas_label,
-						"account": item.get(account_type),
-						"tax_code": item.au_tax_code,
-					}
-					if tax_allocation == "Collected Sales":
-						temp["gst_pay_basis"] = item.base_amount
-					else:
-						temp["gst_offset_basis"] = item.base_amount
-					result.append(temp)
+			)
 
 		for tax in doc.taxes:
-			if tax.base_tax_amount:
-				bas_labels = frappe.get_all(
-					"AU BAS Label Setup",
-					filters={
-						"tax_management": "Tax Account",
-						"tax_allocation": tax_allocation,
-						"tax_code": tax.au_tax_code,
-					},
-					fields=["bas_label"],
-				)
-				for bas_label in bas_labels:
-					temp = {
-						"bas_label": bas_label.bas_label,
-						"account": tax.account_head,
-						"tax_code": tax.au_tax_code,
-					}
-					if tax_allocation == "Collected Sales":
-						temp["gst_pay_amount"] = tax.base_tax_amount
-					else:
-						temp["gst_offset_amount"] = tax.base_tax_amount
-					result.append(temp)
-		if result:
-			result = pd.DataFrame(result)
-			result = result.groupby(["bas_label", "account", "tax_code"]).sum(sum_depends_on).reset_index()
-			bas_entries = result.to_dict(orient="records")
-			for bas_entry in bas_entries:
-				bas_doc = frappe.new_doc("AU BAS Entry")
-				bas_doc.update(
-					{
-						**bas_entry,
-						"date": doc.posting_date,
-						"voucher_type": doc.doctype,
-						"voucher_no": doc.name,
-						"company": doc.company,
-					}
-				)
-				bas_doc.save(ignore_permissions=True)
+			temp = generate_bas_labels_for_tax(
+				tax_allocation, tax.account_head, tax.au_tax_code, tax.base_tax_amount, sum_depends_on[1]
+			)
+			result.extend(temp)
+
+		create_au_bas_entries(doc.doctype, doc.name, doc.company, doc.posting_date, result, sum_depends_on)
 
 
 def on_cancel(doc, event):
 	bas_entries = frappe.get_list("AU BAS Entry", filters={"voucher_no": doc.name}, pluck="name")
 	for bas_entry in bas_entries:
 		frappe.delete_doc("AU BAS Entry", bas_entry, ignore_permissions=True)
+
+
+def generate_bas_labels_for_items(tax_allocation, au_tax_code, account, amount, amount_label):
+	res = []
+	if amount:
+		bas_labels = frappe.get_all(
+			"AU BAS Label Setup",
+			filters={
+				"tax_management": "Subjected",
+				"tax_allocation": tax_allocation,
+				"tax_code": au_tax_code,
+			},
+			fields=["bas_label"],
+		)
+		for bas_label in bas_labels:
+			temp = {
+				"bas_label": bas_label.bas_label,
+				"account": account,
+				"tax_code": au_tax_code,
+				amount_label: amount,
+			}
+			res.append(temp)
+	return res
+
+
+def generate_bas_labels_for_tax(tax_allocation, account_head, au_tax_code, tax_amount, tax_amount_label):
+	res = []
+	if tax_amount:
+		bas_labels = frappe.get_all(
+			"AU BAS Label Setup",
+			filters={
+				"tax_management": "Tax Account",
+				"tax_allocation": tax_allocation,
+				"tax_code": au_tax_code,
+			},
+			fields=["bas_label"],
+		)
+		for bas_label in bas_labels:
+			temp = {
+				"bas_label": bas_label.bas_label,
+				"account": account_head,
+				"tax_code": au_tax_code,
+				tax_amount_label: tax_amount,
+			}
+			res.append(temp)
+
+	return res
+
+
+def create_au_bas_entries(doctype, docname, company, posting_date, result, sum_depends_on):
+	if result:
+		result = pd.DataFrame(result)
+		result = result.groupby(["bas_label", "account", "tax_code"]).sum(sum_depends_on).reset_index()
+		bas_entries = result.to_dict(orient="records")
+		for bas_entry in bas_entries:
+			bas_doc = frappe.new_doc("AU BAS Entry")
+			bas_doc.update(
+				{
+					**bas_entry,
+					"date": posting_date,
+					"voucher_type": doctype,
+					"voucher_no": docname,
+					"company": company,
+				}
+			)
+			bas_doc.save(ignore_permissions=True)
+
+
+def update_tax_code_for_item(item, tax_template):
+	if item.item_tax_template:
+		item_tax_template = frappe.db.get_value("Item Tax Template", item.item_tax_template, "title")
+	else:
+		item_tax_template = ""
+	tax_code = frappe.db.get_value(
+		"AU Tax Determination",
+		{
+			"bp_tax_template": tax_template,
+			"item_tax_template": item_tax_template,
+		},
+		"tax_code",
+	)
+	item.au_tax_code = tax_code
+	item.save()
+
+
+def update_tax_code_for_taxes(taxes, tax_template):
+	for tax in taxes:
+		tax_code = frappe.db.get_value(
+			"AU Tax Determination",
+			{"bp_tax_template": tax_template, "item_tax_template": ""},
+			"tax_code",
+		)
+		tax.au_tax_code = tax_code
+		tax.save()
 
 
 # @frappe.whitelist()

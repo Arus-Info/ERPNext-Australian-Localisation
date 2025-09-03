@@ -3,43 +3,59 @@
 
 frappe.ui.form.on("Payment Batch", {
 	refresh(frm) {
-		$('[data-fieldname="payment_created"]').find(".grid-add-row").hide();
-		$('[data-fieldname="paid_invoices"]').find(".grid-add-row").hide();
 		$('[data-fieldname="paid_invoices"]').find(".grid-remove-rows").hide();
-		frm.get_field("payment_created").grid.cannot_add_rows = true;
-		frm.get_field("paid_invoices").grid.cannot_add_rows = true;
+		frm.$wrapper.find(".grid-add-row").hide();
 
 		frm.set_query("bank_account", () => {
 			return {
-				filters: {
-					company: frm.doc.company,
-				},
-				query: "erpnext_australian_localisation.erpnext_australian_localisation.doctype.payment_batch.payment_batch.get_bank_account",
+				filters: [
+					["company", "=", frm.doc.company],
+					["fi_abbr", "!=", ""],
+					["branch_code", "!=", ""],
+					["bank_account_no", "!=", ""],
+					["apca_number", "!=", ""],
+					["currency", "=", "AUD"],
+				],
 			};
 		});
 
-		frm.add_custom_button(
-			__("Payment Entry"),
-			function () {
-				erpnext.utils.map_current_doc({
-					method: "erpnext_australian_localisation.erpnext_australian_localisation.doctype.payment_batch.payment_batch.update_payment_batch",
-					source_doctype: "Payment Entry",
-					target: frm,
-					setters: {
-						party: "",
-						paid_amount: 0,
-					},
-					get_query_filters: {
-						docstatus: 0,
-						company: frm.doc.company,
-					},
-					get_query_method:
-						"erpnext_australian_localisation.erpnext_australian_localisation.doctype.payment_batch.payment_batch.get_payment_entry",
-				});
-			},
-			__("Get Items From")
-		);
+		if (frm.doc.docstatus === 0) {
+			frm.add_custom_button(
+				__("Payment Entry"),
+				function () {
+					erpnext.utils.map_current_doc({
+						method: "erpnext_australian_localisation.erpnext_australian_localisation.doctype.payment_batch.payment_batch.update_payment_batch",
+						source_doctype: "Payment Entry",
+						date_field: "posting_date",
+						target: frm,
+						setters: [
+							{
+								fieldname: "party",
+								label: __("Supplier"),
+								fieldtype: "Data",
+							},
+							{
+								fieldname: "base_paid_amount",
+								label: __("Amount"),
+								fieldtype: "Currency",
+								hidden: 1,
+							},
+						],
+						get_query_filters: {
+							docstatus: 0,
+							company: frm.doc.company,
+						},
+						get_query_method:
+							"erpnext_australian_localisation.erpnext_australian_localisation.doctype.payment_batch.payment_batch.get_payment_entry",
+					});
 
+					setTimeout(() => {
+						$(".filter-area").hide();
+					}, 500);
+				},
+				__("Get Items From")
+			);
+		}
 		if (frm.doc.payment_created.length) {
 			frm.add_custom_button(
 				__("Generate Bank File"),

@@ -1,7 +1,12 @@
 from datetime import date
 
 import frappe
-import pandas as pd
+
+from erpnext_australian_localisation.overrides.invoices import (
+	create_au_bas_entries,
+	generate_bas_labels_for_items,
+	generate_bas_labels_for_tax,
+)
 
 
 def on_update(doc, event):
@@ -30,65 +35,28 @@ def on_update(doc, event):
 def on_submit(doc, event):
 	result = []
 
+	sum_depends_on = ["gst_offset_basis", "gst_offset_amount"]
+
 	for expense in doc.expenses:
-		bas_labels = frappe.get_all(
-			"AU BAS Label Setup",
-			filters={
-				"tax_management": "Subjected",
-				"tax_allocation": "Deductible Purchase",
-				"tax_code": expense.au_tax_code,
-			},
-			fields=["bas_label"],
+		account = frappe.db.get_value(
+			"Expense Claim Account",
+			{"parent": expense.expense_type, "company": doc.company},
+			"default_account",
 		)
-		for bas_label in bas_labels:
-			account = frappe.db.get_value(
-				"Expense Claim Account",
-				{"parent": expense.expense_type, "company": doc.company},
-				"default_account",
+		result.extend(
+			generate_bas_labels_for_items(
+				"Deductible Purchase",
+				expense.au_tax_code,
+				account,
+				expense.sanctioned_amount,
+				sum_depends_on[0],
 			)
-			temp = {
-				"bas_label": bas_label.bas_label,
-				"account": account,
-				"tax_code": expense.au_tax_code,
-				"gst_offset_basis": expense.sanctioned_amount,
-			}
-			result.append(temp)
+		)
 
 	for tax in doc.taxes:
-		bas_labels = frappe.get_all(
-			"AU BAS Label Setup",
-			filters={
-				"tax_management": "Tax Account",
-				"tax_allocation": "Deductible Purchase",
-				"tax_code": tax.au_tax_code,
-			},
-			fields=["bas_label"],
+		temp = generate_bas_labels_for_tax(
+			"Deductible Purchase", tax.account_head, tax.au_tax_code, tax.tax_amount, sum_depends_on[1]
 		)
-		for bas_label in bas_labels:
-			temp = {
-				"bas_label": bas_label.bas_label,
-				"account": tax.account_head,
-				"tax_code": tax.au_tax_code,
-				"gst_offset_amount": tax.tax_amount,
-			}
-			result.append(temp)
-	if result:
-		result = pd.DataFrame(result)
-		result = (
-			result.groupby(["bas_label", "account", "tax_code"])
-			.sum(["gst_offset_basis", "gst_offset_amount"])
-			.reset_index()
-		)
-		bas_entries = result.to_dict(orient="records")
-		for bas_entry in bas_entries:
-			bas_doc = frappe.new_doc("AU BAS Entry")
-			bas_doc.update(
-				{
-					**bas_entry,
-					"date": date.today(),
-					"voucher_type": doc.doctype,
-					"voucher_no": doc.name,
-					"company": doc.company,
-				}
-			)
-			bas_doc.save(ignore_permissions=True)
+		result.extend(temp)
+
+	create_au_bas_entries(doc.doctype, doc.name, doc.company, doc.posting_date, result, sum_depends_on)

@@ -48,32 +48,25 @@ class PaymentBatch(Document):
 
 @frappe.whitelist()
 @frappe.validate_and_sanitize_search_inputs
-def get_bank_account(doctype, txt, searchfield, start, page_len, filters):
-	bank_with_fi_abbr = frappe.get_list("Bank", filters=[["fi_abbr", "!=", ""]], pluck="name")
-	return frappe.get_list(
-		"Bank Account",
-		filters=[
-			["company", "=", filters["company"]],
-			["bank", "in", bank_with_fi_abbr],
-			["branch_code", "!=", ""],
-			["bank_account_no", "!=", ""],
-			["apca_number", "!=", ""],
-			["currency", "=", "AUD"],
-		],
-		as_list=True,
-	)
-
-
-@frappe.whitelist()
-@frappe.validate_and_sanitize_search_inputs
 def get_payment_entry(doctype, txt, searchfield, start, page_len, filters):
+	print(filters)
+	if filters.get("party"):
+		filters["party"] += "%"
+	else:
+		filters["party"] = "%"
+
+	print("searchfields", searchfield, "text", txt, "filtes", filters, "start", start)
 	return frappe.db.sql(
 		"""
-		select name, party, paid_amount from `tabPayment Entry` where docstatus=0 and party_type ='Supplier' and company=%(company)s
+		select
+			name, party, base_paid_amount
+		from `tabPayment Entry`
+		where docstatus=0 and party_type ='Supplier' and company=%(company)s and party like %(party)s
+
 		EXCEPT
 		select payment_entry, supplier, amount from `tabPayment Batch Item`
 		""",
-		{"company": filters["company"]},
+		filters,
 		as_dict=True,
 	)
 
@@ -83,7 +76,7 @@ def update_payment_batch(source_name, target_doc=None):
 	supplier = frappe.db.get_value(
 		"Payment Entry",
 		source_name,
-		["party as supplier", "paid_amount as amount", "name as payment_entry"],
+		["party as supplier", "base_paid_amount as amount", "name as payment_entry"],
 		as_dict=True,
 	)
 

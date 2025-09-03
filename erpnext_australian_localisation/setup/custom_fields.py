@@ -147,16 +147,6 @@ CUSTOM_FIELDS_FOR_BANK_FILE = {
 			"module": "ERPNext Australian Localisation",
 		},
 	],
-	"Bank": [
-		{
-			"fieldname": "fi_abbr",
-			"label": "Financial Institution Abbreviation",
-			"fieldtype": "Data",
-			"length": 3,
-			"insert_after": "swift_number",
-			"module": "ERPNext Australian Localisation",
-		},
-	],
 	"Bank Account": [
 		{
 			"fieldname": "section_break_payment_batch",
@@ -166,11 +156,19 @@ CUSTOM_FIELDS_FOR_BANK_FILE = {
 			"module": "ERPNext Australian Localisation",
 		},
 		{
+			"fieldname": "fi_abbr",
+			"label": "Financial Institution Abbreviation",
+			"fieldtype": "Data",
+			"length": 3,
+			"insert_after": "section_break_payment_batch",
+			"module": "ERPNext Australian Localisation",
+		},
+		{
 			"fieldname": "apca_number",
 			"label": "APCA Number",
 			"fieldtype": "Data",
 			"length": 6,
-			"insert_after": "section_break_payment_batch",
+			"insert_after": "fi_abbr",
 			"module": "ERPNext Australian Localisation",
 		},
 		{

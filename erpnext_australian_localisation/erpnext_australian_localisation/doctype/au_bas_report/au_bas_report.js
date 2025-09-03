@@ -13,35 +13,8 @@ frappe.ui.form.on("AU BAS Report", {
 			};
 		});
 
+		frm.$wrapper.find(".grid-body").css({ "overflow-y": "scroll", "max-height": "200px" });
 		frm.trigger("update_label");
-
-		frm.fields_dict["1a_details"].$wrapper
-			.find(".grid-body")
-			.css({ "overflow-y": "scroll", "max-height": "200px" });
-		frm.fields_dict["1b_details"].$wrapper
-			.find(".grid-body")
-			.css({ "overflow-y": "scroll", "max-height": "200px" });
-		frm.fields_dict["g1_details"].$wrapper
-			.find(".grid-body")
-			.css({ "overflow-y": "scroll", "max-height": "200px" });
-		frm.fields_dict["g2_details"].$wrapper
-			.find(".grid-body")
-			.css({ "overflow-y": "scroll", "max-height": "200px" });
-		frm.fields_dict["g3_details"].$wrapper
-			.find(".grid-body")
-			.css({ "overflow-y": "scroll", "max-height": "200px" });
-		frm.fields_dict["g4_details"].$wrapper
-			.find(".grid-body")
-			.css({ "overflow-y": "scroll", "max-height": "200px" });
-		frm.fields_dict["g10_details"].$wrapper
-			.find(".grid-body")
-			.css({ "overflow-y": "scroll", "max-height": "200px" });
-		frm.fields_dict["g11_details"].$wrapper
-			.find(".grid-body")
-			.css({ "overflow-y": "scroll", "max-height": "200px" });
-		frm.fields_dict["g14_details"].$wrapper
-			.find(".grid-body")
-			.css({ "overflow-y": "scroll", "max-height": "200px" });
 
 		if (frm.is_new()) {
 			frm.set_df_property("reporting_status", "read_only", 1);
