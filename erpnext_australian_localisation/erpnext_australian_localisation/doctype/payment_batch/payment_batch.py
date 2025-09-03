@@ -49,13 +49,11 @@ class PaymentBatch(Document):
 @frappe.whitelist()
 @frappe.validate_and_sanitize_search_inputs
 def get_payment_entry(doctype, txt, searchfield, start, page_len, filters):
-	print(filters)
 	if filters.get("party"):
 		filters["party"] += "%"
 	else:
 		filters["party"] = "%"
 
-	print("searchfields", searchfield, "text", txt, "filtes", filters, "start", start)
 	return frappe.db.sql(
 		"""
 		select
