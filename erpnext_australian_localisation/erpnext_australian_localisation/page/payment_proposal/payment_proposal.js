@@ -35,12 +35,12 @@ frappe.pages["payment-proposal"].refresh = function (wrapper) {
 			},
 			{
 				fieldname: "from_due_date",
-				label: __("Invoice Due Date After"),
+				label: __("Invoice Due Date On or After"),
 				fieldtype: "Date",
 			},
 			{
 				fieldname: "to_due_date",
-				label: __("Invoice Due Date Before"),
+				label: __("Invoice Due Date On or Before"),
 				fieldtype: "Date",
 			},
 		],
@@ -205,7 +205,7 @@ class PaymentProposal {
 			},
 			{ fieldtype: "Section Break" },
 			{
-				label: __("Reference No"),
+				label: __("Reference / Lodgement No"),
 				fieldname: "reference_no_" + data.supplier,
 				fieldtype: "Data",
 				reqd: data.is_included,
@@ -551,7 +551,14 @@ class PaymentProposal {
 					fieldtype: "Link",
 					options: "Bank Account",
 					reqd: 1,
-					filters: { company: this.filters.company, currency: "AUD" },
+					filters: {
+						company: this.filters.company,
+						fi_abbr: ["!=", ""],
+						branch_code: ["!=", ""],
+						bank_account_no: ["!=", ""],
+						apca_number: ["!=", ""],
+						currency: "AUD",
+					},
 					default: bank_account.name,
 				},
 				{

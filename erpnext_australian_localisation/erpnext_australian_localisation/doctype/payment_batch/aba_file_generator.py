@@ -9,7 +9,7 @@ def generate_aba_file(payment_batch):
 	bank_account = frappe.db.get_value(
 		"Bank Account",
 		payment_batch.bank_account,
-		["company", "apca_number", "bank_account_no", "branch_code", "bank.fi_abbr"],
+		["company", "apca_number", "bank_account_no", "branch_code", "fi_abbr"],
 		as_dict=True,
 	)
 	posting_date = datetime.strptime(payment_batch.posting_date, "%Y-%m-%d")

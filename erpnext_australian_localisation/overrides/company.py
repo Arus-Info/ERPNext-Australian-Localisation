@@ -1,7 +1,5 @@
 import frappe
 
-from erpnext_australian_localisation.tasks.bas_report import create_bas_report
-
 
 def initial_company_setup(company=None):
 	if company:
@@ -18,7 +16,6 @@ def initial_company_setup(company=None):
 		au_localisation_settings.append("bas_reporting_period", child)
 
 		au_localisation_settings.save()
-		create_bas_report(c)
 
 
 def after_insert(doc, event):
