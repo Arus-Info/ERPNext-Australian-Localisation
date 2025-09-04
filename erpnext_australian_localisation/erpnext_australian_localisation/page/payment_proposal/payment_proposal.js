@@ -128,6 +128,9 @@ class PaymentProposal {
 						(item) => item.purchase_invoice
 					);
 					d.reference_invoices = JSON.parse(d.reference_invoices);
+					d.reference_invoices = d.reference_invoices.filter(
+						(item) => item.purchase_invoice
+					);
 					this.supplier_list.push({ supplier: d.supplier, is_included: d.is_included });
 					total_paid_amount += d.total_outstanding;
 					if (d.is_included) {
@@ -529,7 +532,7 @@ class PaymentProposal {
 					company: this.page.fields_dict.company.value,
 					currency: "AUD",
 				},
-				["name", "account"]
+				"name"
 			)
 			.then((data) => {
 				bank_account = data.message;
@@ -560,20 +563,6 @@ class PaymentProposal {
 						currency: "AUD",
 					},
 					default: bank_account.name,
-				},
-				{
-					label: __("Account Paid From"),
-					fieldname: "paid_from",
-					fieldtype: "Link",
-					options: "Account",
-					reqd: 1,
-					filters: {
-						company: this.filters.company,
-						account_type: "Bank",
-						is_group: 0,
-						account_currency: "AUD",
-					},
-					default: bank_account.account,
 				},
 				{
 					label: __("Posting Date"),

@@ -1,6 +1,7 @@
 import json
 
 import frappe
+from frappe import _
 
 from erpnext_australian_localisation.erpnext_australian_localisation.doctype.payment_batch.payment_batch import (
 	update_payment_batch,
@@ -26,31 +27,7 @@ def get_outstanding_invoices(filters):
 				lodgement_reference,
 				case when (NULLIF(bank_account_no,'') IS NOT NULL and NULLIF(branch_code,'') IS NOT NULL) then 1 else 0 end as is_included
 			FROM tabSupplier
-		),
-
-		payment_reference_entry AS
-		(
-			SELECT
-				per.reference_name,
-				pe.party,
-				JSON_ARRAYAGG(
-					JSON_OBJECT(
-						"purchase_invoice", per.reference_name,
-						"rounded_total", per.total_amount,
-						"outstanding_amount", per.outstanding_amount,
-						"payment_entry", per.parent,
-						"allocated_amount", per.allocated_amount
-					)
-				) as reference_invoices
-			FROM `tabPayment Entry Reference` as per
-			LEFT JOIN `tabPayment Entry` as pe
-			ON
-				pe.name = per.parent
-			WHERE
-				per.docstatus = 0
-				and per.reference_doctype = 'Purchase Invoice'
-				and pe.company = '{filters["company"]}'
-			GROUP BY pe.party
+			WHERE is_allowed_in_pp = 1
 		)
 
 		SELECT
@@ -60,9 +37,8 @@ def get_outstanding_invoices(filters):
 			SUM(case when s.is_included then pi.outstanding_amount else 0 end) as total_outstanding,
 			s.is_included,
 			JSON_ARRAYAGG(
-				case
-				when per.reference_name IS NULL
-				then
+				if(
+					per.reference_name IS NULL,
 					JSON_OBJECT(
 						"purchase_invoice", pi.name,
 						"due_date", pi.due_date,
@@ -70,26 +46,33 @@ def get_outstanding_invoices(filters):
 						"invoice_currency", pi.currency,
 						"rounded_total", pi.base_rounded_total,
 						"outstanding_amount", pi.outstanding_amount
-					)
-				else JSON_OBJECT()
-				end)
-			as purchase_invoices,
-			reference_invoices
-		FROM `tabPurchase Invoice` as pi
-		LEFT JOIN `tabPayment Entry Reference` as per
-		ON
-			per.reference_name = pi.name and per.docstatus = 0
-		LEFT JOIN supplier as s
+					),
+					JSON_OBJECT())
+			) as purchase_invoices,
+			JSON_ARRAYAGG(
+				if(
+					per.reference_name IS NOT NULL,
+					JSON_OBJECT(
+						"purchase_invoice", per.reference_name,
+						"rounded_total", per.total_amount,
+						"outstanding_amount", per.outstanding_amount,
+						"payment_entry", per.parent,
+						"allocated_amount", per.allocated_amount
+					),
+					JSON_OBJECT())
+			) as reference_invoices
+		FROM supplier as s
+		LEFT JOIN `tabPurchase Invoice` as pi
 			ON s.supplier = pi.supplier
-		LEFT JOIN payment_reference_entry
-			ON payment_reference_entry.party = s.supplier
+		LEFT JOIN `tabPayment Entry Reference` as per
+			ON per.reference_name = pi.name and per.docstatus = 0
 		WHERE
 			pi.docstatus = 1
 			and pi.outstanding_amount > 0
 			and pi.company ='{filters["company"]}'
 			and pi.owner like '{filters["created_by"]}%'
 			{filters["condition_based_on_due_date"]}
-		GROUP BY pi.supplier
+		GROUP BY s.supplier
 		"""
 
 	data = frappe.db.sql(query, as_dict=True)
@@ -101,6 +84,10 @@ def get_outstanding_invoices(filters):
 def create_payment_batch(supplier_invoices, data):
 	supplier_invoices = json.loads(supplier_invoices)
 	data = json.loads(data)
+
+	data["paid_from"] = frappe.db.get_value("Bank Account", data["bank_account"], "account")
+	if not data["paid_from"]:
+		frappe.throw(_("Bank Account {0} is not associated with any account.").format(data["bank_account"]))
 
 	payment_batch = frappe.new_doc("Payment Batch")
 	payment_batch.update(data)
