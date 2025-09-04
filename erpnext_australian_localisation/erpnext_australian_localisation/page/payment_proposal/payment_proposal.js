@@ -536,7 +536,6 @@ class PaymentProposal {
 			)
 			.then((data) => {
 				bank_account = data.message;
-				console.log(bank_account);
 			});
 		const Dialog = new frappe.ui.Dialog({
 			title: __("Payment Batch Creation"),
