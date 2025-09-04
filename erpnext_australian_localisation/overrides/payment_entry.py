@@ -7,21 +7,13 @@ from erpnext_australian_localisation.erpnext_australian_localisation.doctype.pay
 
 
 def on_submit(doc, event):
-	payment_batch = frappe.db.exists("Payment Batch Item", {"payment_entry": doc.name, "docstatus": 0})
+	payment_batch = frappe.db.get_value(
+		"Payment Batch Item", {"payment_entry": doc.name, "docstatus": 0}, "parent"
+	)
 	if payment_batch:
 		frappe.throw(
 			_(
 				"Cannot submit because Payment Entry is linked with Payment Batch <a href='/app/payment-batch/{0}'>{0}</a>."
-			).format(payment_batch)
-		)
-
-
-def on_cancel(doc, event):
-	payment_batch = frappe.db.exists("Payment Batch Item", {"payment_entry": doc.name})
-	if payment_batch:
-		frappe.throw(
-			_(
-				"Cannot cancel because Payment Entry is linked with Payment Batch <a href='/app/payment-batch/{0}'>{0}</a>."
 			).format(payment_batch)
 		)
 
