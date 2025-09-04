@@ -1,6 +1,7 @@
 # Copyright (c) 2025, frappe.dev@arus.co.in and contributors
 # For license information, please see license.txt
 
+import json
 from datetime import datetime
 
 import frappe
@@ -159,3 +160,23 @@ def update_on_payment_entry_updation(payment_entry):
 
 		update_total_paid_amount(payment_batch)
 		payment_batch.save()
+
+
+@frappe.whitelist()
+def create_payment_batch_again(doc):
+	doc = json.loads(doc)
+
+	pb = frappe.new_doc("Payment Batch")
+	pb.update(
+		{"bank_account": doc["bank_account"], "company": doc["company"], "posting_date": doc["posting_date"]}
+	)
+
+	for payment in doc["payment_created"]:
+		old_pe = frappe.get_doc("Payment Entry", payment["payment_entry"])
+		pe = frappe.copy_doc(old_pe)
+		pe.amended_from = payment["payment_entry"]
+		pe.save()
+		update_payment_batch(pe.name, pb)
+
+	pb.save()
+	return pb.name

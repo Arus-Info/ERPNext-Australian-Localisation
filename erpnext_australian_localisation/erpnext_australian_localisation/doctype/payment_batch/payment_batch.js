@@ -52,7 +52,7 @@ frappe.ui.form.on("Payment Batch", {
 
 					setTimeout(() => {
 						$(".filter-area").hide();
-					}, 500);
+					}, 1000);
 				},
 				__("Get Items From")
 			);
@@ -86,6 +86,20 @@ frappe.ui.form.on("Payment Batch", {
 				() => null,
 				"Bank File"
 			);
+		}
+
+		if (frm.doc.docstatus === 2) {
+			frm.add_custom_button(__("Rework Batch"), () => {
+				frappe.call({
+					method: "erpnext_australian_localisation.erpnext_australian_localisation.doctype.payment_batch.payment_batch.create_payment_batch_again",
+					args: {
+						doc: frm.doc,
+					},
+					callback: (data) => {
+						frappe.set_route("payment-batch", data.message);
+					},
+				});
+			});
 		}
 	},
 
