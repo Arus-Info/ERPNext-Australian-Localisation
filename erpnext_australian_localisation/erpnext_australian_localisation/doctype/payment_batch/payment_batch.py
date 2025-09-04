@@ -59,7 +59,7 @@ def get_payment_entry(doctype, txt, searchfield, start, page_len, filters):
 		select
 			name, party, base_paid_amount
 		from `tabPayment Entry`
-		where docstatus=0 and party_type ='Supplier' and company=%(company)s and party like %(party)s
+		where docstatus=0 and party_type ='Supplier' and company=%(company)s and party like %(party)s and bank_account=%(bank_account)s
 
 		EXCEPT
 		select payment_entry, supplier, amount from `tabPayment Batch Item`

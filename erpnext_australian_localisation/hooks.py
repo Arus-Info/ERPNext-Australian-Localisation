@@ -191,6 +191,7 @@ doc_events = {
 	"Payment Entry": {
 		"on_submit": "erpnext_australian_localisation.overrides.payment_entry.on_submit",
 		"on_update": "erpnext_australian_localisation.overrides.payment_entry.on_update",
+		"on_cancel": "erpnext_australian_localisation.overrides.payment_entry.on_cancel",
 	},
 }
 

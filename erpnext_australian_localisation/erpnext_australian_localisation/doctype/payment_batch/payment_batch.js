@@ -19,7 +19,7 @@ frappe.ui.form.on("Payment Batch", {
 			};
 		});
 
-		if (frm.doc.docstatus === 0) {
+		if (!frm.is_new() && frm.doc.docstatus === 0) {
 			frm.add_custom_button(
 				__("Payment Entry"),
 				function () {
@@ -44,6 +44,7 @@ frappe.ui.form.on("Payment Batch", {
 						get_query_filters: {
 							docstatus: 0,
 							company: frm.doc.company,
+							bank_account: frm.doc.bank_account,
 						},
 						get_query_method:
 							"erpnext_australian_localisation.erpnext_australian_localisation.doctype.payment_batch.payment_batch.get_payment_entry",
