@@ -51,8 +51,9 @@ frappe.ui.form.on("Payment Batch", {
 					});
 
 					setTimeout(() => {
+						$("[data-fieldname='search_term']").hide();
 						$(".filter-area").hide();
-					}, 1000);
+					}, 700);
 				},
 				__("Get Items From")
 			);
