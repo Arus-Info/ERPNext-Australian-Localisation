@@ -269,7 +269,7 @@ class PaymentProposal {
 					fieldname: "references_warning_" + data.supplier,
 					fieldtype: "HTML",
 					options: __(
-						"<p class='bold'> {0} Below Purchase Invoices for the supplier {1} are not loaded in this Payment Batch as they are not Submitted.</p>",
+						"<p class='bold'> {0} Below Purchase Invoices for the supplier {1} are not loaded in this Payment Batch because they are available in Payment Entry which is not submitted.</p>",
 						[frappe.utils.icon("lock", "md"), data.supplier_name]
 					),
 				},
