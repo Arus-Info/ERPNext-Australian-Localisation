@@ -36,8 +36,5 @@ def initial_company_setup(company: str | None = None) -> None:
 
 
 def after_insert(doc, event: str) -> None:
-	"""
-	Hook: After inserting a Company, auto-create BAS setup if it's in Australia.
-	"""
 	if doc.country == "Australia":
 		initial_company_setup(doc.name)
