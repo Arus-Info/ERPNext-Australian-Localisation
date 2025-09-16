@@ -4,8 +4,7 @@ import frappe
 
 from erpnext_australian_localisation.overrides.invoices import (
 	create_au_bas_entries,
-	generate_bas_labels_for_items,
-	generate_bas_labels_for_tax,
+	generate_bas_labels,
 )
 
 
@@ -44,7 +43,8 @@ def on_submit(doc, event):
 			"default_account",
 		)
 		result.extend(
-			generate_bas_labels_for_items(
+			generate_bas_labels(
+				"Subjected",
 				"Deductible Purchase",
 				expense.au_tax_code,
 				account,
@@ -54,9 +54,15 @@ def on_submit(doc, event):
 		)
 
 	for tax in doc.taxes:
-		temp = generate_bas_labels_for_tax(
-			"Deductible Purchase", tax.account_head, tax.au_tax_code, tax.tax_amount, sum_depends_on[1]
+		result.extend(
+			generate_bas_labels(
+				"Tax Account",
+				"Deductible Purchase",
+				tax.account_head,
+				tax.au_tax_code,
+				tax.tax_amount,
+				sum_depends_on[1],
+			)
 		)
-		result.extend(temp)
 
 	create_au_bas_entries(doc.doctype, doc.name, doc.company, doc.posting_date, result, sum_depends_on)

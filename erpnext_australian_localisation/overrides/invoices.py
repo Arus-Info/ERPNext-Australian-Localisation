@@ -9,14 +9,24 @@ def on_submit(doc, event):
 			tax_allocation = "Collected Sales"
 			account_type = "income_account"
 			sum_depends_on = ["gst_pay_basis", "gst_pay_amount"]
+			tax_template_doctype = "Sales Taxes and Charges Template"
 		elif doc.doctype in ["Purchase Invoice"]:
 			tax_allocation = "Deductible Purchase"
 			account_type = "expense_account"
 			sum_depends_on = ["gst_offset_basis", "gst_offset_amount"]
+			tax_template_doctype = "Purchase Taxes and Charges Template"
+
+		tax_template = frappe.db.get_value(tax_template_doctype, doc.taxes_and_charges, "title")
+
+		if doc.doctype == "Sales Invoice":
+			update_tax_code_for_sales_invoice_item(doc.items, tax_template)
+		elif doc.doctype == "Purchase Invoice":
+			update_tax_code_for_purchase_invoice_item(doc.items, tax_template)
 
 		for item in doc.items:
 			result.extend(
-				generate_bas_labels_for_items(
+				generate_bas_labels(
+					"Subjected",
 					tax_allocation,
 					item.au_tax_code,
 					item.get(account_type),
@@ -26,27 +36,29 @@ def on_submit(doc, event):
 			)
 
 		for tax in doc.taxes:
-			temp = generate_bas_labels_for_tax(
-				tax_allocation, tax.account_head, tax.au_tax_code, tax.base_tax_amount, sum_depends_on[1]
+			update_tax_code_for_tax(tax, tax_template)
+			result.extend(
+				generate_bas_labels(
+					"Tax Account",
+					tax_allocation,
+					tax.account_head,
+					tax.au_tax_code,
+					tax.base_tax_amount,
+					sum_depends_on[1],
+				)
 			)
-			result.extend(temp)
 
 		create_au_bas_entries(doc.doctype, doc.name, doc.company, doc.posting_date, result, sum_depends_on)
 
 
-def on_cancel(doc, event):
-	bas_entries = frappe.get_list("AU BAS Entry", filters={"voucher_no": doc.name}, pluck="name")
-	for bas_entry in bas_entries:
-		frappe.delete_doc("AU BAS Entry", bas_entry, ignore_permissions=True)
-
-
-def generate_bas_labels_for_items(tax_allocation, au_tax_code, account, amount, amount_label):
+# Generate BAS Labels for the given tax_allocation, au_tax_code and account
+def generate_bas_labels(tax_management, tax_allocation, au_tax_code, account, amount, amount_label):
 	res = []
 	if amount:
 		bas_labels = frappe.get_all(
 			"AU BAS Label Setup",
 			filters={
-				"tax_management": "Subjected",
+				"tax_management": tax_management,
 				"tax_allocation": tax_allocation,
 				"tax_code": au_tax_code,
 			},
@@ -63,31 +75,11 @@ def generate_bas_labels_for_items(tax_allocation, au_tax_code, account, amount, 
 	return res
 
 
-def generate_bas_labels_for_tax(tax_allocation, account_head, au_tax_code, tax_amount, tax_amount_label):
-	res = []
-	if tax_amount:
-		bas_labels = frappe.get_all(
-			"AU BAS Label Setup",
-			filters={
-				"tax_management": "Tax Account",
-				"tax_allocation": tax_allocation,
-				"tax_code": au_tax_code,
-			},
-			fields=["bas_label"],
-		)
-		for bas_label in bas_labels:
-			temp = {
-				"bas_label": bas_label.bas_label,
-				"account": account_head,
-				"tax_code": au_tax_code,
-				tax_amount_label: tax_amount,
-			}
-			res.append(temp)
-
-	return res
-
-
 def create_au_bas_entries(doctype, docname, company, posting_date, result, sum_depends_on):
+	"""
+	Group all the BAS Labels depending on the account and au_tax_code.
+	Then create AU BAS Entries
+	"""
 	if result:
 		result = pd.DataFrame(result)
 		result = result.groupby(["bas_label", "account", "tax_code"]).sum(sum_depends_on).reset_index()
@@ -106,11 +98,36 @@ def create_au_bas_entries(doctype, docname, company, posting_date, result, sum_d
 			bas_doc.save(ignore_permissions=True)
 
 
+# update au_tax_code for Sales Invoice Items
+def update_tax_code_for_sales_invoice_item(items, tax_template):
+	for item in items:
+		if item.input_taxed:
+			print("Here we are with check box")
+			item.au_tax_code = "AUSINPTAX"
+			print(item.au_tax_code, "in check")
+		else:
+			update_tax_code_for_item(item, tax_template)
+			print(item.au_tax_code, "unchecked ")
+		print(item.au_tax_code)
+
+
+# update au_tax_code for Purchase Invoice Items
+def update_tax_code_for_purchase_invoice_item(items, tax_template):
+	for item in items:
+		if item.input_taxed:
+			item.au_tax_code = "AUPINPTAX"
+		elif item.private_use:
+			item.au_tax_code = "AUPPVTUSE"
+		else:
+			update_tax_code_for_item(item, tax_template)
+
+
 def update_tax_code_for_item(item, tax_template):
 	if item.item_tax_template:
 		item_tax_template = frappe.db.get_value("Item Tax Template", item.item_tax_template, "title")
 	else:
 		item_tax_template = ""
+
 	tax_code = frappe.db.get_value(
 		"AU Tax Determination",
 		{
@@ -120,36 +137,19 @@ def update_tax_code_for_item(item, tax_template):
 		"tax_code",
 	)
 	item.au_tax_code = tax_code
-	item.save()
 
 
-def update_tax_code_for_taxes(taxes, tax_template):
-	for tax in taxes:
-		tax_code = frappe.db.get_value(
-			"AU Tax Determination",
-			{"bp_tax_template": tax_template, "item_tax_template": ""},
-			"tax_code",
-		)
-		tax.au_tax_code = tax_code
-		tax.save()
+# update au_tax_code for Taxes and Charges
+def update_tax_code_for_tax(tax, tax_template):
+	tax_code = frappe.db.get_value(
+		"AU Tax Determination",
+		{"bp_tax_template": tax_template, "item_tax_template": ""},
+		"tax_code",
+	)
+	tax.au_tax_code = tax_code
 
 
-# @frappe.whitelist()
-# def get_au_tax_code(tax_template, item_tax_template, tax_template_doctype):
-# 	if frappe.has_permission(tax_template_doctype, "read") :
-# 		tax_template = frappe.db.get_value(
-# 			tax_template_doctype, tax_template, "title"
-# 		)
-# 		if item_tax_template :
-# 			item_tax_template = frappe.db.get_value(
-# 				"Item Tax Template", item_tax_template, "title"
-# 			)
-
-# 		tax_code = frappe.db.get_value(
-# 			"AU Tax Determination",
-# 			{"bp_tax_template": tax_template, "item_tax_template": item_tax_template},
-# 			"tax_code",
-# 		)
-# 		return tax_code
-# 	else :
-# 		frappe.throw("You don't have enough permission")
+def on_cancel(doc, event):
+	bas_entries = frappe.get_list("AU BAS Entry", filters={"voucher_no": doc.name}, pluck="name")
+	for bas_entry in bas_entries:
+		frappe.delete_doc("AU BAS Entry", bas_entry, ignore_permissions=True)
