@@ -102,13 +102,9 @@ def create_au_bas_entries(doctype, docname, company, posting_date, result, sum_d
 def update_tax_code_for_sales_invoice_item(items, tax_template):
 	for item in items:
 		if item.input_taxed:
-			print("Here we are with check box")
 			item.au_tax_code = "AUSINPTAX"
-			print(item.au_tax_code, "in check")
 		else:
 			update_tax_code_for_item(item, tax_template)
-			print(item.au_tax_code, "unchecked ")
-		print(item.au_tax_code)
 
 
 # update au_tax_code for Purchase Invoice Items
