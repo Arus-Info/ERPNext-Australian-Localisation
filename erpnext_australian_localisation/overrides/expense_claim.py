@@ -48,7 +48,7 @@ def on_submit(doc, event):
 				"Deductible Purchase",
 				expense.au_tax_code,
 				account,
-				expense.sanctioned_amount,
+				round(expense.sanctioned_amount, 2),
 				sum_depends_on[0],
 			)
 		)
@@ -60,7 +60,7 @@ def on_submit(doc, event):
 				"Deductible Purchase",
 				tax.au_tax_code,
 				tax.account_head,
-				tax.tax_amount,
+				round(tax.tax_amount, 2),
 				sum_depends_on[1],
 			)
 		)

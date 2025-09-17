@@ -30,7 +30,7 @@ def on_submit(doc, event):
 					tax_allocation,
 					item.au_tax_code,
 					item.get(account_type),
-					item.base_amount,
+					round(item.base_amount, 2),
 					sum_depends_on[0],
 				)
 			)
@@ -43,7 +43,7 @@ def on_submit(doc, event):
 					tax_allocation,
 					tax.au_tax_code,
 					tax.account_head,
-					tax.base_tax_amount,
+					round(tax.base_tax_amount, 2),
 					sum_depends_on[1],
 				)
 			)
