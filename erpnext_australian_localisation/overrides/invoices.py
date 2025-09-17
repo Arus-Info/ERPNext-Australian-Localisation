@@ -41,8 +41,8 @@ def on_submit(doc, event):
 				generate_bas_labels(
 					"Tax Account",
 					tax_allocation,
-					tax.account_head,
 					tax.au_tax_code,
+					tax.account_head,
 					tax.base_tax_amount,
 					sum_depends_on[1],
 				)
