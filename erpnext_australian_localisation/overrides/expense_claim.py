@@ -58,8 +58,8 @@ def on_submit(doc, event):
 			generate_bas_labels(
 				"Tax Account",
 				"Deductible Purchase",
-				tax.account_head,
 				tax.au_tax_code,
+				tax.account_head,
 				tax.tax_amount,
 				sum_depends_on[1],
 			)
