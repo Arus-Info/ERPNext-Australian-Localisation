@@ -170,11 +170,11 @@ before_uninstall = "erpnext_australian_localisation.uninstall.before_uninstall"
 
 doc_events = {
 	"Sales Invoice": {
-		"on_submit": "erpnext_australian_localisation.overrides.invoices.on_submit",
+		"before_submit": "erpnext_australian_localisation.overrides.invoices.before_submit",
 		"on_cancel": "erpnext_australian_localisation.overrides.invoices.on_cancel",
 	},
 	"Purchase Invoice": {
-		"on_submit": "erpnext_australian_localisation.overrides.invoices.on_submit",
+		"before_submit": "erpnext_australian_localisation.overrides.invoices.before_submit",
 		"on_cancel": [
 			"erpnext_australian_localisation.overrides.invoices.on_cancel",
 			"erpnext_australian_localisation.overrides.purchase_invoice.on_cancel",

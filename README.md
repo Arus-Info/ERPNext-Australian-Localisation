@@ -1,8 +1,9 @@
 ## ERPNext Australian Localisation :
 
-The ERPNext Australian Localisation app will install the necessary localisation functionalities for Australian business in ERPNext. This app works in line with the Australian Chart of Accounts. The features of this app are as follows: 
-1. Assist the Australian companies to get the GST postings based on the Supplier and Customer type (Local / International / Capital Goods / Non Capital Goods). 
-2. Generate the BAS report with the amounts to be reported in each of the BAS Label (1A, 1B, G1 to G9 and G10 to G20). 
+The ERPNext Australian Localisation app will install the necessary localisation functionalities for Australian business in ERPNext. This app works in line with the Australian Chart of Accounts. The features of this app are as follows:
+
+1. Assist the Australian companies to get the GST postings based on the Supplier and Customer type (Local / International / Capital Goods / Non Capital Goods).
+2. Generate the BAS report with the amounts to be reported in each of the BAS Label (1A, 1B, G1 to G9 and G10 to G20).
 3. Payment Proposal functionality to match the Payment Run for local suppliers.
 4. Generate ABA (Specified by Australian Banking Association) file used to process electronic transactions for supplier payments through the internet banking system of Australian banks.
 
@@ -16,7 +17,7 @@ The AU Localisation app for ERPNext can be installed using the [bench](https://g
 
 ```bash
 cd $PATH_TO_YOUR_BENCH
-bench get-app https://github.com/Arus-Info/ERPNext-Australian-Localisation.git
+bench get-app https://github.com/Arus-Info/ERPNext-Australian-Localisation.git --branch version-15
 bench install-app erpnext_australian_localisation
 ```
 
@@ -24,20 +25,20 @@ bench install-app erpnext_australian_localisation
 
 ### Features
 
-* Capital Goods & Non Capital Goods Supplier definition in the Supplier Master's Tax Category field
-* Import Supplier definition in the Supplier Master's Tax Category field
-* Domestic / Export Customer definition in the Customer Master's Tax Category field
-* Exempt Item definition in the Item Master's Tax tab
-* Sales amounts are reported in G1, G2 and G3 as per the Customer Tax Category definition
-* Purchase amounts are reported in G10, G11 and G14 as per the Supplier Tax Category definition
-* Input Taxed Sales and the corresponding Purchase recording to report in G4 and G13 BAS Labels
-* Estimated Purchase for Private Use recording to report in G15 BAS Label
-* Adjustments for Sales and Purchase to report in G7 and G18 BAS Labels
-* The final 1A and 1B label amounts will be reported to arrive at the amount business needs to pay the ATO or the amount ATO will refund the business
-* BAS reports can be generated Monthly / Quarterly
-* BAS reports (detailed information with transactional document number) can be printed in PDF format
-* Payment Proposal (Batch) generation for Supplier Payment
-* ABA File generation for the Payment Batch which can be used to upload into the online banking system for bulk payments for the suppliers
+- Capital Goods & Non Capital Goods Supplier definition in the Supplier Master's Tax Category field
+- Import Supplier definition in the Supplier Master's Tax Category field
+- Domestic / Export Customer definition in the Customer Master's Tax Category field
+- Exempt Item definition in the Item Master's Tax tab
+- Sales amounts are reported in G1, G2 and G3 as per the Customer Tax Category definition
+- Purchase amounts are reported in G10, G11 and G14 as per the Supplier Tax Category definition
+- Input Taxed Sales and the corresponding Purchase recording to report in G4 and G13 BAS Labels
+- Estimated Purchase for Private Use recording to report in G15 BAS Label
+- Adjustments for Sales and Purchase to report in G7 and G18 BAS Labels
+- The final 1A and 1B label amounts will be reported to arrive at the amount business needs to pay the ATO or the amount ATO will refund the business
+- BAS reports can be generated Monthly / Quarterly
+- BAS reports (detailed information with transactional document number) can be printed in PDF format
+- Payment Proposal (Batch) generation for Supplier Payment
+- ABA File generation for the Payment Batch which can be used to upload into the online banking system for bulk payments for the suppliers
 
 ### Screenshots & Setup Instructions
 
@@ -98,7 +99,6 @@ ABA File generation functionality from the Payment Batch screen:
 <br><br>
 <img width="1461" height="840" alt="image" src="https://github.com/user-attachments/assets/ba0eab43-769d-4389-8863-e232b7449474" />
 <br><br>
-
 
 ### License
 

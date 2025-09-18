@@ -2,7 +2,7 @@ import frappe
 import pandas as pd
 
 
-def on_submit(doc, event):
+def before_submit(doc, event):
 	if doc.taxes_and_charges:
 		result = []
 		if doc.doctype in ["Sales Invoice"]:
