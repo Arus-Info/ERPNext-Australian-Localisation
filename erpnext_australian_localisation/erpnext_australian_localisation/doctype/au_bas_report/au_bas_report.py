@@ -1,6 +1,7 @@
 # Copyright (c) 2025, frappe.dev@arus.co.in and contributors
 # For license information, please see license.txt
 
+import math
 from datetime import datetime
 
 import frappe
@@ -81,7 +82,7 @@ def get_gst(name, company, start_date, end_date):
 				+ bas_report_entry.gst_offset_amount
 			)
 			doc.append(bas_label_detail["fieldname"], bas_report_entry)
-		doc.update({bas_label_detail["bas_label"].lower(): total})
+		doc.update({bas_label_detail["bas_label"].lower(): math.floor(total)})
 
 	doc._1a_only = doc.get("1a")
 	doc._1b_only = doc.get("1b")
@@ -89,15 +90,15 @@ def get_gst(name, company, start_date, end_date):
 	doc.g5 = doc.g2 + doc.g3 + doc.g4
 	doc.g6 = doc.g1 - doc.g5
 	doc.g8 = doc.g6 + doc.g7
-	doc.g9 = round(doc.g8 / 11, 2)
+	doc.g9 = math.floor(doc.g8 / 11)
 
 	doc.g12 = doc.g10 + doc.g11
 	doc.g16 = doc.g13 + doc.g14 + doc.g15
 	doc.g17 = doc.g12 - doc.g16
 	doc.g19 = doc.g17 + doc.g18
-	doc.g20 = round(doc.g19 / 11, 2)
+	doc.g20 = math.floor(doc.g19 / 11)
 
-	doc.update({"1a": doc._1a_only + round(doc.g7 / 11, 2), "1b": doc._1b_only + round(doc.g18 / 11, 2)})
+	doc.update({"1a": doc._1a_only + math.floor(doc.g7 / 11), "1b": doc._1b_only + math.floor(doc.g18 / 11)})
 
 	doc.net_gst = abs(doc.get("1a") - doc.get("1b"))
 	doc.save()
