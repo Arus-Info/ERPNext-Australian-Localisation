@@ -19,6 +19,12 @@ frappe.ui.form.on("AU Localisation Settings", {
 				},
 			});
 		}
+
+		frm.set_query("company", "bas_reporting_period", () => {
+			return {
+				filters: { country: "Australia" },
+			};
+		});
 	},
 
 	make_tax_category_mandatory(frm) {
