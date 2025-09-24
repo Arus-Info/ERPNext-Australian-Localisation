@@ -2,7 +2,6 @@
 # For license information, please see license.txt
 
 import json
-from datetime import datetime
 
 import frappe
 from frappe import _
@@ -98,9 +97,42 @@ def update_payment_batch(source_name, target_doc=None):
 	return target_doc
 
 
+# check whether any Payment Entry Reference in the given Payment Entry is already present in another Payment Entry
+def is_payment_entry_references_exists(name, reference):
+	print("in condiditon")
+	payment_entries = frappe.get_list(
+		"Payment Entry Reference",
+		parent_doctype="Payment Entry",
+		filters={
+			"reference_name": reference.reference_name,
+			"docstatus": 0,
+			"parent": ["!=", name],
+		},
+		fields=["parent"],
+		pluck="parent",
+	)
+	if payment_entries:
+		print(payment_entries)
+		print("Are we here")
+		frappe.throw(
+			_(
+				"Payment Entry {0}: {1} {2} already found in Payment Entry  <a href='/app/payment-entry/{3}'>{3}</a>"
+			).format(name, reference.reference_doctype, reference.reference_name, payment_entries[0])
+		)
+		# return True
+	else:
+		return True
+
+
+# create Payment Batch Invoice for a Payment Entry
 def create_payment_batch_invoices(source_name, target_doc=None):
 	from frappe.model.mapper import get_mapped_doc
 
+	def condition(doc):
+		print("How many times are we here ", doc)
+		return is_payment_entry_references_exists(source_name, doc)
+
+	# map all Purchase Invoice to Payment Batch Invoice
 	doc = get_mapped_doc(
 		"Payment Entry",
 		source_name,
@@ -112,6 +144,7 @@ def create_payment_batch_invoices(source_name, target_doc=None):
 					"reference_name": "purchase_invoice",
 					"party": "supplier",
 				},
+				"condition": condition,
 			},
 		},
 		target_doc,
@@ -120,6 +153,8 @@ def create_payment_batch_invoices(source_name, target_doc=None):
 	payment_entry = frappe.db.get_value(
 		"Payment Entry", source_name, ["unallocated_amount", "party"], as_dict=True
 	)
+
+	# add one more Payment Batch Invoice if there is any unallocated amount
 	if payment_entry.unallocated_amount:
 		row = frappe.new_doc("Payment Batch Invoice")
 		row.update(
@@ -143,6 +178,7 @@ def update_total_paid_amount(payment_batch):
 	return payment_batch
 
 
+# if Payment Entry is updated, update the connected Payment Batch
 def update_on_payment_entry_updation(payment_entry):
 	invoices = frappe.get_list(
 		"Payment Batch Invoice",
@@ -164,6 +200,10 @@ def update_on_payment_entry_updation(payment_entry):
 
 @frappe.whitelist()
 def create_payment_batch_again(doc):
+	"""
+	Rework Batch
+	Amend all Payment Entry to create Payment Batch again
+	"""
 	doc = json.loads(doc)
 
 	pb = frappe.new_doc("Payment Batch")
