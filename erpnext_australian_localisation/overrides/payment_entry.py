@@ -54,5 +54,5 @@ def on_update(doc, event):
 						frappe.throw(
 							_(
 								"{0} already found in Payment Entry <a href='/app/payment-entry/{1}'>{1}</a> which is linked with Payment Batch <a href='/app/payment-batch/{2}'>{2}</a>."
-							).format(doc.reference_doctype, *payment)
+							).format(r.reference_doctype, *payment)
 						)
