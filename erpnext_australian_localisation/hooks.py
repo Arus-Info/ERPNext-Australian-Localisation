@@ -61,6 +61,7 @@ doctype_js = {
 	"Purchase Order": "public/js/setup_input_taxed_sales.js",
 	"Purchase Receipt": "public/js/setup_input_taxed_sales.js",
 	"Supplier": ["public/js/validate_bank_details.js", "public/js/supplier.js"],
+	"Employee": ["public/js/validate_bank_details.js", "public/js/employee.js"],
 	"Bank Account": ["public/js/validate_bank_details.js", "public/js/bank_account.js"],
 }
 

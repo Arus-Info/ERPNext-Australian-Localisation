@@ -10,6 +10,7 @@
   "company",
   "posting_date",
   "bank_file_url",
+  "type",
   "column_break_psqj",
   "bank_account",
   "currency",
@@ -95,7 +96,7 @@
    "fieldname": "paid_invoices",
    "fieldtype": "Table",
    "label": "Paid Invoices",
-   "options": "Payment Batch Invoice"
+   "options": "Payment Batch Reference"
   },
   {
    "fieldname": "bank_file_url",
@@ -109,14 +110,23 @@
    "fieldtype": "Currency",
    "label": "Total Paid Amount",
    "read_only": 1
+  },
+  {
+   "fieldname": "type",
+   "fieldtype": "Link",
+   "label": "Type",
+   "link_filters": "[[\"DocType\",\"name\",\"in\",[\"Supplier\",\"Employee\"]]]",
+   "options": "DocType",
+   "reqd": 1,
+   "set_only_once": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-09-05 22:03:28.203279",
- "modified_by": "jeba.j@arus.co.in",
+ "modified": "2025-09-25 22:44:38.401350",
+ "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
  "name": "Payment Batch",
  "naming_rule": "Expression",

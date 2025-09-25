@@ -5,5 +5,5 @@
 from frappe.model.document import Document
 
 
-class PaymentBatchInvoice(Document):
+class PaymentBatchReference(Document):
 	pass

@@ -210,3 +210,24 @@ CUSTOM_FIELDS_FOR_BANK_FILE = {
 		},
 	],
 }
+
+EMPLOYEE_BANK_DETAILS = {
+	"Employee": [
+		{
+			"fieldname": "branch_code",
+			"label": "BSB",
+			"fieldtype": "Data",
+			"length": 7,
+			"insert_after": "branch",
+			"module": "ERPNext Australian Localisation",
+		},
+		{
+			"fieldname": "bank_account_no",
+			"label": "Bank Account Number",
+			"fieldtype": "Data",
+			"length": 9,
+			"insert_after": "branch_code",
+			"module": "ERPNext Australian Localisation",
+		},
+	]
+}

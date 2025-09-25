@@ -7,8 +7,9 @@
  "engine": "InnoDB",
  "field_order": [
   "payment_entry",
-  "supplier",
   "column_break_yjfm",
+  "party_type",
+  "party",
   "amount"
  ],
  "fields": [
@@ -34,12 +35,19 @@
    "read_only": 1
   },
   {
-   "fetch_from": "payment_entry.party",
-   "fieldname": "supplier",
+   "fieldname": "party_type",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Supplier",
-   "options": "Supplier",
+   "label": "Party Type",
+   "options": "DocType",
+   "read_only": 1
+  },
+  {
+   "fieldname": "party",
+   "fieldtype": "Dynamic Link",
+   "in_list_view": 1,
+   "label": "Party",
+   "options": "party_type",
    "read_only": 1
   }
  ],
@@ -47,7 +55,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-09-03 22:28:25.857044",
+ "modified": "2025-09-25 19:17:33.695155",
  "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
  "name": "Payment Batch Item",
