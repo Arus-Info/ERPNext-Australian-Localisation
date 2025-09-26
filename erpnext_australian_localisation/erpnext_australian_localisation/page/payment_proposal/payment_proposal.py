@@ -64,7 +64,7 @@ def get_outstanding_invoices(filters):
 		FROM supplier as s
 		LEFT JOIN `tabPurchase Invoice` as pi
 			ON s.supplier = pi.supplier
-		LEFT JOIN `tabPayment Entry Reference` as per
+		LEFT JOIN `tabPayment Entry Invoice` as per
 			ON per.reference_name = pi.name and per.docstatus = 0
 		WHERE
 			pi.docstatus = 1
@@ -117,7 +117,7 @@ def create_payment_entry(supplier, data):
 	)
 
 	for i in supplier["invoices"]:
-		row = frappe.new_doc("Payment Entry Reference")
+		row = frappe.new_doc("Payment Entry Invoice")
 		row.update(
 			{
 				"reference_doctype": "Purchase Invoice",

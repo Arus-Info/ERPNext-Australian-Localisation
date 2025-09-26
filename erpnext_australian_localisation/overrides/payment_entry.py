@@ -25,8 +25,8 @@ def on_update(doc, event):
 
 	Check whether the Payment Entry is linked to any Payment Batch.
 	If it is linked, verify that the Payment Entry has the same Bank Account as the Payment Batch.
-	Next, check whether any Payment Entry References included in this Payment Entry is already present in any other Payment Entry.
-	If it is not linked, check whether the Payment Entry References included here is not linked to any other Payment Batch Invoice
+	Next, check whether any Payment Entry Invoices included in this Payment Entry is already present in any other Payment Entry.
+	If it is not linked, check whether the Payment Entry Invoices included here is not linked to any other Payment Batch Invoice
 	"""
 	if doc.payment_type == "Pay":
 		payment_batch = frappe.db.get_value("Payment Batch Item", {"payment_entry": doc.name}, "parent")

@@ -106,10 +106,10 @@ def update_payment_batch(source_name, target_doc=None):
 	return target_doc
 
 
-# check whether any Payment Entry Reference in the given Payment Entry is already present in another Payment Entry
+# check whether any Payment Entry Invoice in the given Payment Entry is already present in another Payment Entry
 def is_payment_entry_references_exists(name, reference):
 	payment_entries = frappe.get_list(
-		"Payment Entry Reference",
+		"Payment Entry Invoice",
 		parent_doctype="Payment Entry",
 		filters={
 			"reference_name": reference.reference_name,
@@ -130,7 +130,7 @@ def is_payment_entry_references_exists(name, reference):
 		return True
 
 
-# create Payment Batch Invoices for Payment Entry References
+# create Payment Batch Invoices for Payment Entry Invoices
 def create_payment_batch_references(source_name, target_doc=None):
 	from frappe.model.mapper import get_mapped_doc
 
@@ -147,13 +147,13 @@ def create_payment_batch_references(source_name, target_doc=None):
 	def condition(doc):
 		return is_payment_entry_references_exists(source_name, doc)
 
-	# map all Payment Entry Reference to Payment Batch Invoice
+	# map all Payment Entry Invoice to Payment Batch Invoice
 	doc = get_mapped_doc(
 		"Payment Entry",
 		source_name,
 		{
 			"Payment Entry": {"doctype": "Payment Batch"},
-			"Payment Entry Reference": {
+			"Payment Entry Invoice": {
 				"doctype": "Payment Batch Invoice",
 				"condition": condition,
 				"postprocess": update_party_details,
