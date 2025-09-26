@@ -96,7 +96,7 @@
    "fieldname": "paid_invoices",
    "fieldtype": "Table",
    "label": "Paid Invoices",
-   "options": "Payment Batch Reference"
+   "options": "Payment Batch Invoice"
   },
   {
    "fieldname": "bank_file_url",
@@ -125,7 +125,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-09-25 22:44:38.401350",
+ "modified": "2025-09-26 13:51:04.619944",
  "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
  "name": "Payment Batch",

@@ -7,7 +7,7 @@ from erpnext_australian_localisation.setup.custom_fields import EMPLOYEE_BANK_DE
 def execute():
 	"""
 	Update Payment Batch Item in way that it can be used for paying an Employee
-	Update Payment Batch Reference in way that it can used to refer an Expense Claim
+	Update Payment Batch Invoice in way that it can used to refer an Expense Claim
 	"""
 	frappe.db.sql(
 		"""
@@ -19,16 +19,19 @@ def execute():
 
 	frappe.db.sql(
 		"""
-			UPDATE `tabPayment Batch Item`
+			UPDATE `tabPayment Batch Item` as pbi
+			INNER JOIN tabSupplier as s
+			ON pbi.supplier = s.name
 			SET
-				party_type = 'Supplier' ,
-				party = supplier
+				pbi.party_type = 'Supplier' ,
+				pbi.party = pbi.supplier ,
+				pbi.party_name = s.supplier_name
 		"""
 	)
 
 	frappe.db.sql(
 		"""
-			UPDATE `tabPayment Batch Reference`
+			UPDATE `tabPayment Batch Invoice`
 				SET
 					reference_doctype = 'Purchase Invoice' ,
 					reference_name = purchase_invoice ,

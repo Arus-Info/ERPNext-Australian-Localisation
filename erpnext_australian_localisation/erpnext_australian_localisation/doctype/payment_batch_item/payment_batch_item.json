@@ -10,6 +10,7 @@
   "column_break_yjfm",
   "party_type",
   "party",
+  "party_name",
   "amount"
  ],
  "fields": [
@@ -45,9 +46,15 @@
   {
    "fieldname": "party",
    "fieldtype": "Dynamic Link",
-   "in_list_view": 1,
    "label": "Party",
    "options": "party_type",
+   "read_only": 1
+  },
+  {
+   "fieldname": "party_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Party Name",
    "read_only": 1
   }
  ],
@@ -55,7 +62,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-09-25 19:17:33.695155",
+ "modified": "2025-09-26 14:00:02.630812",
  "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
  "name": "Payment Batch Item",

@@ -8,7 +8,7 @@ from erpnext_australian_localisation.erpnext_australian_localisation.doctype.pay
 # if a Purchase Invoice is connected with a Payment Batch, update the Payment Batch
 def on_cancel(doc, event):
 	payment_entry = frappe.db.get_value(
-		"Payment Batch Reference", {"reference_name": doc.name}, "payment_entry"
+		"Payment Batch Invoice", {"reference_name": doc.name}, "payment_entry"
 	)
 	if payment_entry:
 		update_on_payment_entry_updation(payment_entry)

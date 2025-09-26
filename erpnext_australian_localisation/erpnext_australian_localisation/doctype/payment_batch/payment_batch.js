@@ -23,7 +23,7 @@ frappe.ui.form.on("Payment Batch", {
 			frm.add_custom_button(
 				__("Payment Entry {0}", [frm.doc.type]),
 				() => {
-					get_items(frm, frm.doc.type);
+					get_items(frm);
 				},
 				__("Get Items From")
 			);
@@ -96,7 +96,7 @@ frappe.ui.form.on("Payment Batch Item", {
 	},
 });
 
-function get_items(frm, type) {
+function get_items(frm) {
 	erpnext.utils.map_current_doc({
 		method: "erpnext_australian_localisation.erpnext_australian_localisation.doctype.payment_batch.payment_batch.update_payment_batch",
 		source_doctype: "Payment Entry",
@@ -104,8 +104,8 @@ function get_items(frm, type) {
 		target: frm,
 		setters: [
 			{
-				fieldname: "party",
-				label: __("Supplier"),
+				fieldname: "party_name",
+				label: __(frm.doc.type),
 				fieldtype: "Data",
 			},
 			{
@@ -119,7 +119,7 @@ function get_items(frm, type) {
 			docstatus: 0,
 			company: frm.doc.company,
 			bank_account: frm.doc.bank_account,
-			party_type: type,
+			party_type: frm.doc.type,
 		},
 		get_query_method:
 			"erpnext_australian_localisation.erpnext_australian_localisation.doctype.payment_batch.payment_batch.get_payment_entry",

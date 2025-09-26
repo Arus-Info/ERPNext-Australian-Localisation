@@ -86,7 +86,7 @@
  "modified": "2025-09-25 17:14:15.234595",
  "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
- "name": "Payment Batch Reference",
+ "name": "Payment Batch Invoice",
  "owner": "Administrator",
  "permissions": [],
  "row_format": "Dynamic",

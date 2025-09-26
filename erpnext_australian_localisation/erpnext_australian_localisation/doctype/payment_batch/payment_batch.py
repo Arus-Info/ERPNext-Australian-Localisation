@@ -53,20 +53,20 @@ def get_payment_entry(doctype, txt, searchfield, start, page_len, filters):
 	Return Payment Entries that are posted in the given Bank Account and are in draft state,
 	except those that are already included in another Payment Batch
 	"""
-	if filters.get("party"):
-		filters["party"] += "%"
+	if filters.get("party_name"):
+		filters["party_name"] += "%"
 	else:
-		filters["party"] = "%"
+		filters["party_name"] = "%"
 
 	return frappe.db.sql(
 		"""
 		select
-			name, party, base_paid_amount
+			name, party_name, base_paid_amount
 		from `tabPayment Entry`
-		where docstatus=0 and party_type =%(party_type)s and company=%(company)s and party like %(party)s and bank_account=%(bank_account)s
+		where docstatus=0 and party_type =%(party_type)s and company=%(company)s and party_name like %(party_name)s and bank_account=%(bank_account)s
 
 		EXCEPT
-		select payment_entry, party, amount from `tabPayment Batch Item`
+		select payment_entry, party_name, amount from `tabPayment Batch Item`
 		""",
 		filters,
 		as_dict=True,
@@ -83,7 +83,7 @@ def update_payment_batch(source_name, target_doc=None):
 	party = frappe.db.get_value(
 		"Payment Entry",
 		source_name,
-		["party", "party_type", "base_paid_amount as amount", "name as payment_entry"],
+		["party", "party_type", "party_name", "base_paid_amount as amount", "name as payment_entry"],
 		as_dict=True,
 	)
 
@@ -130,25 +130,31 @@ def is_payment_entry_references_exists(name, reference):
 		return True
 
 
-# create Payment Batch References for Payment Entry References
+# create Payment Batch Invoices for Payment Entry References
 def create_payment_batch_references(source_name, target_doc=None):
 	from frappe.model.mapper import get_mapped_doc
 
-	# update party details in every Payment Batch Reference
+	# update party details in every Payment Batch Invoice
 	def update_party_details(payment_entry_reference, payment_batch_reference, payment_entry):
-		payment_batch_reference.update({"party": payment_entry.party, "party_type": payment_entry.party_type})
+		payment_batch_reference.update(
+			{
+				"party": payment_entry.party,
+				"party_type": payment_entry.party_type,
+				"party_name": payment_entry.party_name,
+			}
+		)
 
 	def condition(doc):
 		return is_payment_entry_references_exists(source_name, doc)
 
-	# map all Payment Entry Reference to Payment Batch Reference
+	# map all Payment Entry Reference to Payment Batch Invoice
 	doc = get_mapped_doc(
 		"Payment Entry",
 		source_name,
 		{
 			"Payment Entry": {"doctype": "Payment Batch"},
 			"Payment Entry Reference": {
-				"doctype": "Payment Batch Reference",
+				"doctype": "Payment Batch Invoice",
 				"condition": condition,
 				"postprocess": update_party_details,
 			},
@@ -159,13 +165,13 @@ def create_payment_batch_references(source_name, target_doc=None):
 	payment_entry = frappe.db.get_value(
 		"Payment Entry",
 		source_name,
-		["unallocated_amount as allocated_amount", "party", "party_type"],
+		["unallocated_amount as allocated_amount", "party", "party_type", "party_name"],
 		as_dict=True,
 	)
 
-	# add a Payment Batch Reference if an unallocated amount exists.
+	# add a Payment Batch Invoice if an unallocated amount exists.
 	if payment_entry.allocated_amount:
-		row = frappe.new_doc("Payment Batch Reference")
+		row = frappe.new_doc("Payment Batch Invoice")
 		row.update({"payment_entry": source_name, **payment_entry})
 		doc.append("paid_invoices", row)
 
@@ -185,14 +191,14 @@ def update_total_paid_amount(payment_batch):
 # if Payment Entry is updated, update the linked Payment Batch
 def update_on_payment_entry_updation(payment_entry):
 	invoices = frappe.get_list(
-		"Payment Batch Reference",
+		"Payment Batch Invoice",
 		parent_doctype="Payment Batch",
 		filters={"payment_entry": payment_entry, "docstatus": 0},
 		fields=["name", "parent"],
 	)
 	if invoices:
 		for i in invoices:
-			frappe.delete_doc("Payment Batch Reference", i.name)
+			frappe.delete_doc("Payment Batch Invoice", i.name)
 
 		target_doc = frappe.get_doc("Payment Batch", invoices[0].parent)
 		payment_batch = create_payment_batch_references(payment_entry, target_doc)
