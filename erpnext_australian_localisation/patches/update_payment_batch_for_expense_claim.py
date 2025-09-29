@@ -13,7 +13,7 @@ def execute():
 		"""
 			UPDATE `tabPayment Batch`
 			SET
-				type = 'Supplier'
+				party_type = 'Supplier'
 		"""
 	)
 
