@@ -40,4 +40,5 @@ def execute():
 		"""
 	)
 
-	create_custom_fields(EMPLOYEE_BANK_DETAILS, update=1)
+	if "hrms" in frappe.get_installed_apps():
+		create_custom_fields(EMPLOYEE_BANK_DETAILS, update=1)

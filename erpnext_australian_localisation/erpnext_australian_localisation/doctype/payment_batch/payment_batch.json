@@ -10,7 +10,7 @@
   "company",
   "posting_date",
   "bank_file_url",
-  "type",
+  "party_type",
   "column_break_psqj",
   "bank_account",
   "currency",
@@ -112,7 +112,7 @@
    "read_only": 1
   },
   {
-   "fieldname": "type",
+   "fieldname": "party_type",
    "fieldtype": "Link",
    "label": "Type",
    "link_filters": "[[\"DocType\",\"name\",\"in\",[\"Supplier\",\"Employee\"]]]",
@@ -125,7 +125,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-09-26 13:51:04.619944",
+ "modified": "2025-09-29 17:01:05.817840",
  "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
  "name": "Payment Batch",

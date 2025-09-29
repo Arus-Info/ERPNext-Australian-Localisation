@@ -24,23 +24,31 @@ frappe.pages["payment-proposal"].refresh = function (wrapper) {
 				filters: { default_currency: "AUD" },
 			},
 			{
+				fieldname: "party_type",
+				label: __("Party Type"),
+				fieldtype: "Link",
+				options: "DocType",
+				reqd: 1,
+				link_filters: '[["DocType","name","in",["Supplier","Employee"]]]',
+			},
+			{
 				label: __("Filters"),
 				fieldtype: "Section Break",
 			},
 			{
 				fieldname: "created_by",
-				label: __("Invoice Created By User"),
+				label: __("Document Created By User"),
 				fieldtype: "Link",
 				options: "User",
 			},
 			{
 				fieldname: "from_due_date",
-				label: __("Invoice Due Date On or After"),
+				label: __("Document Due Date On or After"),
 				fieldtype: "Date",
 			},
 			{
 				fieldname: "to_due_date",
-				label: __("Invoice Due Date On or Before"),
+				label: __("Document Due Date On or Before"),
 				fieldtype: "Date",
 			},
 		],
@@ -63,12 +71,14 @@ class PaymentProposal {
 
 		this.get_filters();
 
-		this.supplier_list = [];
+		this.party_list = [];
 		this.fields = [];
 		this.field_group = {};
 	}
 
 	get_filters() {
+		this.filters.reference_doctype =
+			this.filters.party_type === "Supplier" ? "Purchase Invoice" : "Expense Claim";
 		this.page.add_field({
 			fieldname: "company",
 			label: __("Company"),
@@ -78,8 +88,24 @@ class PaymentProposal {
 			default: this.filters.company,
 		});
 		this.page.add_field({
+			fieldname: "party_type",
+			label: __("Party Type"),
+			fieldtype: "Link",
+			options: "DocType",
+			read_only: 1,
+			default: this.filters.party_type,
+		});
+		this.page.add_field({
+			fieldname: "reference_doctype",
+			label: __("Type"),
+			fieldtype: "Link",
+			options: "DocType",
+			read_only: 1,
+			default: this.filters.reference_doctype,
+		});
+		this.page.add_field({
 			fieldname: "created_by",
-			label: __("Invoice Created By User"),
+			label: __("Document Created By User"),
 			fieldtype: "Link",
 			options: "User",
 			read_only: 1,
@@ -87,14 +113,14 @@ class PaymentProposal {
 		});
 		this.page.add_field({
 			fieldname: "from_due_date",
-			label: __("Invoice Due Date After"),
+			label: __("Document Due Date On or After"),
 			fieldtype: "Date",
 			read_only: 1,
 			default: this.filters.from_due_date,
 		});
 		this.page.add_field({
 			fieldname: "to_due_date",
-			label: __("Invoice Due Date Before"),
+			label: __("Document Due Date On or Before"),
 			fieldtype: "Date",
 			read_only: 1,
 			default: this.filters.to_due_date,
@@ -104,17 +130,18 @@ class PaymentProposal {
 			this.create_payment_batch();
 		});
 
-		this.get_invoices();
+		this.get_outstanding_entries();
 	}
 
-	async get_invoices() {
+	async get_outstanding_entries() {
 		let total_paid_amount = 0;
-		let total_number_of_invoices_to_be_paid = 0;
+		let total_number_of_entries_to_be_paid = 0;
 		await frappe.call({
-			method: "erpnext_australian_localisation.erpnext_australian_localisation.page.payment_proposal.payment_proposal.get_outstanding_invoices",
+			method: "erpnext_australian_localisation.erpnext_australian_localisation.page.payment_proposal.payment_proposal.get_unpaid_entries",
 			args: {
 				filters: {
 					company: this.filters.company,
+					party_type: this.filters.party_type,
 					from_due_date: this.filters.from_due_date ? this.filters.from_due_date : "",
 					to_due_date: this.filters.to_due_date ? this.filters.to_due_date : "",
 					created_by: this.filters.created_by ? this.filters.created_by : "",
@@ -122,19 +149,18 @@ class PaymentProposal {
 			},
 			callback: (data) => {
 				data = data.message;
+				console.log(data);
 				for (let d of data) {
-					d.purchase_invoices = JSON.parse(d.purchase_invoices);
-					d.purchase_invoices = d.purchase_invoices.filter(
-						(item) => item.purchase_invoice
+					d.outstanding_entries = JSON.parse(d.outstanding_entries);
+					d.outstanding_entries = d.outstanding_entries.filter(
+						(item) => item.entry_name // change required label
 					);
-					d.reference_invoices = JSON.parse(d.reference_invoices);
-					d.reference_invoices = d.reference_invoices.filter(
-						(item) => item.purchase_invoice
-					);
-					this.supplier_list.push({ supplier: d.supplier, is_included: d.is_included });
+					d.reference_entries = JSON.parse(d.reference_entries);
+					d.reference_entries = d.reference_entries.filter((item) => item.entry_name);
+					this.party_list.push({ party: d.party, is_included: d.is_included });
 					total_paid_amount += d.total_outstanding;
 					if (d.is_included) {
-						total_number_of_invoices_to_be_paid += d.purchase_invoices.length;
+						total_number_of_entries_to_be_paid += d.outstanding_entries.length;
 					}
 					this.create_fields(d);
 				}
@@ -152,11 +178,11 @@ class PaymentProposal {
 			},
 			{ fieldtype: "Column Break" },
 			{
-				label: __("Total Number of Invoices to be Paid"),
-				fieldname: "total_number_of_invoices_to_be_paid",
+				label: __("Total Number of {0}s to be Paid", [this.filters.reference_doctype]),
+				fieldname: "total_number_of_entries_to_be_paid",
 				fieldtype: "Data",
 				read_only: 1,
-				default: total_number_of_invoices_to_be_paid.toString(),
+				default: total_number_of_entries_to_be_paid.toString(),
 			}
 		);
 
@@ -170,11 +196,11 @@ class PaymentProposal {
 	}
 
 	create_fields(data) {
-		let { invoice_to_be_paid, invoices_in_payment_entry } = this.get_table_fields(
-			data.supplier,
+		let { entry_to_be_paid, entries_in_payment_entry } = this.get_table_fields(
+			data.party,
 			data.is_included
 		);
-		let supplier_fields = [
+		let party_fields = [
 			{ fieldtype: "Section Break" },
 			{
 				fieldtype: "HTML",
@@ -182,153 +208,132 @@ class PaymentProposal {
 			},
 			{
 				fieldtype: "Section Break",
-				fieldname: "Section_" + data.supplier,
-				label: __("Invoices for Supplier - {0}", [data.supplier_name]),
+				fieldname: "Section_" + data.party,
+				label: __("{0}s for {1} - {2}", [
+					this.filters.reference_doctype,
+					this.filters.party_type,
+					data.party_name,
+				]),
 			},
 			{
-				label: __("Supplier Warning"),
-				fieldname: "warning" + data.supplier,
+				label: __("Party Warning"),
+				fieldname: "warning" + data.party,
 				fieldtype: "HTML",
 				options: data.is_included
 					? ""
-					: __(
-							"<p style='color: #ff1a1a'>Please update bank details in the Supplier.</p>"
-					  ),
+					: __("<p style='color: #ff1a1a'>Please update bank details in the {0}.</p>", [
+							this.filters.party_type,
+					  ]),
 			},
 			{
-				label: __("Invoices"),
-				fieldname: "invoices_" + data.supplier,
+				label: __("{0}s", [this.filters.reference_doctype]),
+				fieldname: "entries_" + data.party,
 				fieldtype: "Table",
 				cannot_add_rows: true,
 				cannot_delete_rows: true,
 				cannot_delete_all_rows: true,
-				data: data.purchase_invoices,
+				data: data.outstanding_entries,
 				in_place_edit: true,
-				fields: invoice_to_be_paid,
+				fields: entry_to_be_paid,
 			},
 			{ fieldtype: "Section Break" },
 			{
 				label: __("Reference / Lodgement No"),
-				fieldname: "reference_no_" + data.supplier,
+				fieldname: "reference_no_" + data.party,
 				fieldtype: "Data",
 				reqd: data.is_included,
 				default: data.lodgement_reference,
 			},
 			{ fieldtype: "Column Break" },
 			{
-				label: __("No of Invoices Selected"),
-				fieldname: "no_of_invoices_selected_" + data.supplier,
+				label: __("No of {0}s Selected", [this.filters.reference_doctype]),
+				fieldname: "no_of_entries_selected_" + data.party,
 				fieldtype: "Data",
 				read_only: 1,
-				default: data.is_included ? data.purchase_invoices.length : "0",
+				default: data.is_included ? data.outstanding_entries.length : "0",
 				onchange: () => {
-					let total_number_of_invoices_to_be_paid = 0;
-					for (let d of this.supplier_list) {
-						let no_of_invoices_selected = Number(
+					let total_number_of_entries_to_be_paid = 0;
+					for (let d of this.party_list) {
+						let no_of_entries_selected = Number(
 							this.field_group.fields_dict[
-								"no_of_invoices_selected_" + d.supplier
+								"no_of_entries_selected_" + d.party
 							].get_value()
 						);
-						if (no_of_invoices_selected) {
-							total_number_of_invoices_to_be_paid += no_of_invoices_selected;
+						if (no_of_entries_selected) {
+							total_number_of_entries_to_be_paid += no_of_entries_selected;
 						}
 					}
-					this.field_group.fields_dict["total_number_of_invoices_to_be_paid"].set_value(
-						total_number_of_invoices_to_be_paid.toString()
+					this.field_group.fields_dict["total_number_of_entries_to_be_paid"].set_value(
+						total_number_of_entries_to_be_paid.toString()
 					);
 				},
 			},
 			{ fieldtype: "Column Break" },
 			{
-				label: __("Amount to be Paid for Supplier - {0}", [data.supplier_name]),
-				fieldname: "paid_to_supplier_" + data.supplier,
+				label: __("Amount to be Paid for {0} - {1}", [
+					this.filters.party_type,
+					data.party_name,
+				]),
+				fieldname: "paid_to_party_" + data.party,
 				fieldtype: "Currency",
 				read_only: 1,
 				default: data.total_outstanding,
 				onchange: () => {
 					let total_paid_amount = 0;
-					for (let d of this.supplier_list) {
-						let paid_to_supplier =
-							this.field_group.fields_dict[
-								"paid_to_supplier_" + d.supplier
-							].get_value();
-						if (paid_to_supplier) {
-							total_paid_amount += paid_to_supplier;
+					for (let d of this.party_list) {
+						let paid_to_party =
+							this.field_group.fields_dict["paid_to_party_" + d.party].get_value();
+						if (paid_to_party) {
+							total_paid_amount += paid_to_party;
 						}
 					}
 					this.field_group.fields_dict["total_paid_amount"].set_value(total_paid_amount);
 				},
 			},
 		];
-		if (data.reference_invoices) {
-			supplier_fields.splice(
+		if (data.reference_entries) {
+			party_fields.splice(
 				5,
 				0,
 				{
-					label: __("Supplier Warning"),
-					fieldname: "references_warning_" + data.supplier,
+					label: __("Party Warning"),
+					fieldname: "references_warning_" + data.party,
 					fieldtype: "HTML",
 					options: __(
-						"<p class='bold'> {0} Below Purchase Invoices for the supplier {1} are not loaded in this Payment Batch because they are available in Payment Entry which is not submitted.</p>",
-						[frappe.utils.icon("lock", "md"), data.supplier_name]
+						"<p class='bold'> {0} Below {1}s for the {2} {3} are not loaded in this Payment Batch because they are available in Payment Entry which is not submitted.</p>",
+						[
+							frappe.utils.icon("lock", "md"),
+							this.filters.reference_doctype,
+							this.filters.party_type,
+							data.party_name,
+						]
 					),
 				},
 				{
-					fieldname: "references_" + data.supplier,
+					fieldname: "references_" + data.party,
 					fieldtype: "Table",
 					cannot_add_rows: true,
 					cannot_delete_rows: true,
 					cannot_delete_all_rows: true,
-					data: data.reference_invoices,
+					data: data.reference_entries,
 					in_place_edit: true,
-					fields: invoices_in_payment_entry,
+					fields: entries_in_payment_entry,
 				}
 			);
 		}
-		this.fields.push(...supplier_fields);
+		this.fields.push(...party_fields);
 	}
 
-	get_table_fields(supplier, is_included) {
-		let invoice_to_be_paid = [
+	get_table_fields(party, is_included) {
+		let entry_to_be_paid = [
 			{
-				fieldname: "purchase_invoice",
+				fieldname: "entry_name",
 				fieldtype: "Link",
-				options: "Purchase Invoice",
+				options: this.filters.reference_doctype,
 				in_list_view: 1,
-				label: __("Purchase Invoice"),
+				label: __("{0}", [this.filters.reference_doctype]),
 				read_only: 1,
-			},
-			{
-				fieldname: "due_date",
-				fieldtype: "Date",
-				in_list_view: 1,
-				label: __("Due Date"),
-				columns: 1,
-				read_only: 1,
-			},
-			{
-				fieldname: "invoice_amount",
-				fieldtype: "Currency",
-				in_list_view: 1,
-				options: "invoice_currency",
-				label: __("Invoice Amount Total"),
-				read_only: 1,
-				columns: 1,
-			},
-			{
-				fieldname: "invoice_currency",
-				fieldtype: "Link",
-				options: "Currency",
-				label: __("Invoice Currency"),
-				read_only: 1,
-			},
-			{
-				fieldname: "rounded_total",
-				fieldtype: "Currency",
-				in_list_view: 1,
-				columns: 1,
-				label: __("Ledger Amount"),
-				read_only: 1,
+				columns: 2,
 			},
 			{
 				fieldname: "outstanding_amount",
@@ -336,6 +341,14 @@ class PaymentProposal {
 				in_list_view: 1,
 				columns: 1,
 				label: __("Outstanding Amount"),
+				read_only: 1,
+			},
+			{
+				fieldname: "rounded_total",
+				fieldtype: "Currency",
+				in_list_view: 1,
+				columns: 1,
+				label: __("Total Amount"),
 				read_only: 1,
 			},
 			{
@@ -350,9 +363,8 @@ class PaymentProposal {
 					);
 
 					let idx = chk.attr("data-idx") - 1;
-					let grid_row =
-						this.field_group.fields_dict["invoices_" + supplier].grid.grid_rows;
-					let row = this.field_group.fields_dict["invoices_" + supplier].grid.data[idx];
+					let grid_row = this.field_group.fields_dict["entries_" + party].grid.grid_rows;
+					let row = this.field_group.fields_dict["entries_" + party].grid.data[idx];
 
 					if (row.allocated_amount > row.outstanding_amount) {
 						frappe.msgprint(
@@ -370,20 +382,51 @@ class PaymentProposal {
 						grid_row[idx].refresh_check();
 					}
 
-					this.field_group.fields_dict["invoices_" + supplier].refresh_input();
+					this.field_group.fields_dict["entries_" + party].refresh_input();
 
-					this.update_total_paid_to_supplier(supplier);
+					this.update_total_paid_to_party(party);
 				},
 			},
 		];
 
-		let invoices_in_payment_entry = [
+		if (this.filters.party_type === "Supplier") {
+			entry_to_be_paid.splice(
+				2,
+				0,
+				{
+					fieldname: "due_date",
+					fieldtype: "Date",
+					in_list_view: 1,
+					label: __("Due Date"),
+					columns: 1,
+					read_only: 1,
+				},
+				{
+					fieldname: "invoice_amount",
+					fieldtype: "Currency",
+					in_list_view: 1,
+					options: "invoice_currency",
+					label: __("Invoice Amount"),
+					read_only: 1,
+					columns: 1,
+				},
+				{
+					fieldname: "invoice_currency",
+					fieldtype: "Link",
+					options: "Currency",
+					label: __("Invoice Currency"),
+					read_only: 1,
+				}
+			);
+		}
+
+		let entries_in_payment_entry = [
 			{
-				fieldname: "purchase_invoice",
+				fieldname: "entry_name",
 				fieldtype: "Link",
-				options: "Purchase Invoice",
+				options: this.filters.reference_doctype,
 				in_list_view: 1,
-				label: __("Purchase Invoice"),
+				label: __("{0}", [this.filters.reference_doctype]),
 				read_only: 1,
 			},
 			{
@@ -418,29 +461,27 @@ class PaymentProposal {
 		];
 
 		return {
-			invoice_to_be_paid: invoice_to_be_paid,
-			invoices_in_payment_entry: invoices_in_payment_entry,
+			entry_to_be_paid: entry_to_be_paid,
+			entries_in_payment_entry: entries_in_payment_entry,
 		};
 	}
 
-	update_total_paid_to_supplier(supplier) {
-		let invoices =
-			this.field_group.fields_dict["invoices_" + supplier].grid.get_selected_children();
-		let paid_amount_for_supplier = 0;
-		for (let i of invoices) {
-			paid_amount_for_supplier += i.allocated_amount;
+	update_total_paid_to_party(party) {
+		let entries =
+			this.field_group.fields_dict["entries_" + party].grid.get_selected_children();
+		let paid_amount_for_party = 0;
+		for (let i of entries) {
+			paid_amount_for_party += i.allocated_amount;
 		}
-		this.field_group.fields_dict["paid_to_supplier_" + supplier].set_value(
-			paid_amount_for_supplier
-		);
-		this.field_group.fields_dict["no_of_invoices_selected_" + supplier].set_value(
-			invoices.length.toString()
+		this.field_group.fields_dict["paid_to_party_" + party].set_value(paid_amount_for_party);
+		this.field_group.fields_dict["no_of_entries_selected_" + party].set_value(
+			entries.length.toString()
 		);
 	}
 
 	add_events() {
-		for (let s of this.supplier_list) {
-			let references = this.field_group.fields_dict["references_" + s.supplier];
+		for (let s of this.party_list) {
+			let references = this.field_group.fields_dict["references_" + s.party];
 			if (references) {
 				references.grid.toggle_checkboxes(0);
 				references.$wrapper
@@ -448,79 +489,78 @@ class PaymentProposal {
 					.css({ "overflow-y": "scroll", "max-height": "200px" });
 			}
 
-			let invoices_supplier = this.field_group.fields_dict["invoices_" + s.supplier];
-			invoices_supplier.$wrapper
+			let entries_party = this.field_group.fields_dict["entries_" + s.party];
+			entries_party.$wrapper
 				.find(".grid-body")
 				.css({ "overflow-y": "scroll", "max-height": "200px" });
 
 			if (s.is_included) {
-				let invoices = invoices_supplier.grid.data;
+				let entries = entries_party.grid.data;
 
-				invoices_supplier.grid.wrapper.on("change", ".grid-row-check:first", (event) => {
+				entries_party.grid.wrapper.on("change", ".grid-row-check:first", (event) => {
 					let chk = $(event.currentTarget).prop("checked");
-					for (let i = 0; i < invoices.length; i++) {
-						invoices[i].allocated_amount = chk ? invoices[i].outstanding_amount : 0;
+					for (let i = 0; i < entries.length; i++) {
+						entries[i].allocated_amount = chk ? entries[i].outstanding_amount : 0;
 					}
-					invoices_supplier.refresh_input();
-					invoices_supplier.grid.wrapper
-						.find(".grid-row-check:first")
-						.prop("checked", chk);
-					this.update_total_paid_to_supplier(s.supplier);
+					entries_party.refresh_input();
+					entries_party.grid.wrapper.find(".grid-row-check:first").prop("checked", chk);
+					this.update_total_paid_to_party(s.party);
 				});
 
-				for (let i = 0; i < invoices.length; i++) {
-					invoices_supplier.grid.grid_rows[i].wrapper.on(
+				for (let i = 0; i < entries.length; i++) {
+					entries_party.grid.grid_rows[i].wrapper.on(
 						"change",
 						"input[type='checkbox']",
 						(event) => {
 							let chk = $(event.currentTarget).prop("checked");
-							invoices[i].allocated_amount = chk
-								? invoices[i].outstanding_amount
-								: 0;
-							invoices_supplier.refresh_input();
+							entries[i].allocated_amount = chk ? entries[i].outstanding_amount : 0;
+							entries_party.refresh_input();
 
-							invoices_supplier.grid.grid_rows[i].select(chk);
-							invoices_supplier.grid.grid_rows[i].refresh_check();
+							entries_party.grid.grid_rows[i].select(chk);
+							entries_party.grid.grid_rows[i].refresh_check();
 
-							this.update_total_paid_to_supplier(s.supplier);
+							this.update_total_paid_to_party(s.party);
 						}
 					);
 				}
-				invoices_supplier.check_all_rows();
+				entries_party.check_all_rows();
 			} else {
-				invoices_supplier.grid.toggle_checkboxes(0);
+				entries_party.grid.toggle_checkboxes(0);
 			}
 		}
 	}
 
 	async create_payment_batch() {
-		const supplier_invoices = [];
+		const party_entries = [];
 
-		for (let d of this.supplier_list) {
+		for (let d of this.party_list) {
 			if (d.is_included) {
 				let data = {};
-				data.supplier = d.supplier;
-				data.invoices =
+				data.party = d.party;
+				data.entries =
 					this.field_group.fields_dict[
-						"invoices_" + d.supplier
+						"entries_" + d.party
 					].grid.get_selected_children();
-				if (data.invoices.length) {
+				if (data.entries.length) {
 					data.reference_no =
-						this.field_group.fields_dict["reference_no_" + d.supplier].get_value();
+						this.field_group.fields_dict["reference_no_" + d.party].get_value();
 					if (!data.reference_no) {
 						frappe.throw(
-							__("Reference Number not found for Supplier {0}", [d.supplier])
+							__("Reference Number not found for {0} {1}", [
+								this.filters.party_type,
+								d.party,
+							])
 						);
 					}
 					data.paid_amount =
-						this.field_group.fields_dict["paid_to_supplier_" + d.supplier].get_value();
-					supplier_invoices.push(data);
+						this.field_group.fields_dict["paid_to_party_" + d.party].get_value();
+					party_entries.push(data);
 				}
 			}
 		}
 
-		if (!supplier_invoices.length) {
-			frappe.throw(__("Please select Purchase Invoices to continue"));
+		if (!party_entries.length) {
+			frappe.throw(__("Please select {0}s to continue", [this.filters.reference_doctype]));
 		}
 
 		let bank_account;
@@ -547,6 +587,14 @@ class PaymentProposal {
 					options: "Company",
 					read_only: 1,
 					default: this.filters.company,
+				},
+				{
+					fieldname: "party_type",
+					label: __("Party Type"),
+					fieldtype: "Link",
+					options: "DocType",
+					read_only: 1,
+					default: this.filters.party_type,
 				},
 				{
 					label: __("Bank Account"),
@@ -586,23 +634,34 @@ class PaymentProposal {
 					read_only: 1,
 				},
 				{
-					label: __("Number of Invoices to be Paid"),
-					fieldname: "total_number_of_invoices_to_be_paid",
+					fieldname: "mode_of_payment",
+					label: __("Mode of Payment"),
+					fieldtype: "Link",
+					options: "Mode of Payment",
+					filters: {
+						type: "Bank",
+					},
+				},
+				{
+					label: __("Number of {0}s to be Paid", [this.filters.reference_doctype]),
+					fieldname: "total_number_of_entries_to_be_paid",
 					fieldtype: "Data",
 					default:
 						this.field_group.fields_dict[
-							"total_number_of_invoices_to_be_paid"
+							"total_number_of_entries_to_be_paid"
 						].get_value(),
 					read_only: 1,
 				},
 			],
 			primary_action_label: __("Create Payment Batch"),
 			primary_action: (values) => {
-				if (supplier_invoices.length) {
+				console.log(party_entries, values);
+				values["reference_doctype"] = this.filters.reference_doctype;
+				if (party_entries.length) {
 					frappe.call({
 						method: "erpnext_australian_localisation.erpnext_australian_localisation.page.payment_proposal.payment_proposal.create_payment_batch",
 						args: {
-							supplier_invoices: supplier_invoices,
+							party_entries: party_entries,
 							data: values,
 						},
 						callback(data) {

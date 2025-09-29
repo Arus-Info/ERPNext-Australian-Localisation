@@ -5,6 +5,7 @@ frappe.ui.form.on("Payment Batch", {
 	refresh(frm) {
 		$('[data-fieldname="paid_invoices"]').find(".grid-remove-rows").hide();
 		frm.$wrapper.find(".grid-add-row").hide();
+		frm.$wrapper.find(".grid-body").css({ "overflow-y": "scroll", "max-height": "400px" });
 
 		frm.set_query("bank_account", () => {
 			return {
@@ -21,7 +22,7 @@ frappe.ui.form.on("Payment Batch", {
 
 		if (!frm.is_new() && frm.doc.docstatus === 0) {
 			frm.add_custom_button(
-				__("Payment Entry {0}", [frm.doc.type]),
+				__("Payment Entry"),
 				() => {
 					get_items(frm);
 				},

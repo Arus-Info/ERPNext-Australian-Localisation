@@ -31,8 +31,8 @@ def initial_setup():
 
 def create_hrms_custom_fields():
 	create_custom_fields(HRMS_CUSTOM_FIELDS, update=1)
+	create_custom_fields(EMPLOYEE_BANK_DETAILS, update=1)
 
 
 def create_properties_for_bank_file():
 	create_custom_fields(CUSTOM_FIELDS_FOR_BANK_FILE, update=1)
-	create_custom_fields(EMPLOYEE_BANK_DETAILS, update=1)
