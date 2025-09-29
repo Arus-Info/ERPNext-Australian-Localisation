@@ -331,7 +331,7 @@ class PaymentProposal {
 				fieldtype: "Link",
 				options: this.filters.reference_doctype,
 				in_list_view: 1,
-				label: __("{0}", [this.filters.reference_doctype]),
+				label: __("{0} ", [this.filters.reference_doctype]),
 				read_only: 1,
 				columns: 2,
 			},
@@ -426,7 +426,7 @@ class PaymentProposal {
 				fieldtype: "Link",
 				options: this.filters.reference_doctype,
 				in_list_view: 1,
-				label: __("{0}", [this.filters.reference_doctype]),
+				label: __("{0} ", [this.filters.reference_doctype]),
 				read_only: 1,
 			},
 			{
