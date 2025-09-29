@@ -49,20 +49,24 @@ class PaymentBatch(Document):
 @frappe.whitelist()
 @frappe.validate_and_sanitize_search_inputs
 def get_payment_entry(doctype, txt, searchfield, start, page_len, filters):
-	if filters.get("party"):
-		filters["party"] += "%"
+	"""
+	Return Payment Entries that are posted in the given Bank Account and are in draft state,
+	except those that are already included in another Payment Batch
+	"""
+	if filters.get("party_name"):
+		filters["party_name"] += "%"
 	else:
-		filters["party"] = "%"
+		filters["party_name"] = "%"
 
 	return frappe.db.sql(
 		"""
 		select
-			name, party, base_paid_amount
+			name, party_name, base_paid_amount
 		from `tabPayment Entry`
-		where docstatus=0 and party_type ='Supplier' and company=%(company)s and party like %(party)s and bank_account=%(bank_account)s
+		where docstatus=0 and party_type =%(party_type)s and company=%(company)s and party_name like %(party_name)s and bank_account=%(bank_account)s
 
 		EXCEPT
-		select payment_entry, supplier, amount from `tabPayment Batch Item`
+		select payment_entry, party_name, amount from `tabPayment Batch Item`
 		""",
 		filters,
 		as_dict=True,
@@ -71,26 +75,31 @@ def get_payment_entry(doctype, txt, searchfield, start, page_len, filters):
 
 @frappe.whitelist()
 def update_payment_batch(source_name, target_doc=None):
-	supplier = frappe.db.get_value(
+	"""
+	Update the Payment Batch by adding the Payment Entry
+		source_name : str (PaymentEntry)
+		target_doc: str of json PaymentBatch
+	"""
+	party = frappe.db.get_value(
 		"Payment Entry",
 		source_name,
-		["party as supplier", "base_paid_amount as amount", "name as payment_entry"],
+		["party", "party_type", "party_name", "base_paid_amount as amount", "name as payment_entry"],
 		as_dict=True,
 	)
 
-	account_details = frappe.db.get_value("Supplier", supplier.supplier, ["bank_account_no", "branch_code"])
+	account_details = frappe.db.get_value(party.party_type, party.party, ["bank_account_no", "branch_code"])
 	if account_details[0] and account_details[1]:
 		row = frappe.new_doc("Payment Batch Item")
-		row.update(supplier)
+		row.update(party)
 
-		target_doc = create_payment_batch_invoices(source_name, target_doc)
+		target_doc = create_payment_batch_references(source_name, target_doc)
 		target_doc.append("payment_created", row)
 		target_doc = update_total_paid_amount(target_doc)
 
 	else:
 		frappe.msgprint(
 			_("Can't add Payment Entry {0}. Bank details not available for {1}").format(
-				source_name, supplier.supplier
+				source_name, party.party
 			)
 		)
 
@@ -121,14 +130,24 @@ def is_payment_entry_references_exists(name, reference):
 		return True
 
 
-# create Payment Batch Invoice for a Payment Entry
-def create_payment_batch_invoices(source_name, target_doc=None):
+# create Payment Batch Invoices for Payment Entry References
+def create_payment_batch_references(source_name, target_doc=None):
 	from frappe.model.mapper import get_mapped_doc
+
+	# update party details in every Payment Batch Invoice
+	def update_party_details(payment_entry_reference, payment_batch_reference, payment_entry):
+		payment_batch_reference.update(
+			{
+				"party": payment_entry.party,
+				"party_type": payment_entry.party_type,
+				"party_name": payment_entry.party_name,
+			}
+		)
 
 	def condition(doc):
 		return is_payment_entry_references_exists(source_name, doc)
 
-	# map all Purchase Invoice to Payment Batch Invoice
+	# map all Payment Entry Reference to Payment Batch Invoice
 	doc = get_mapped_doc(
 		"Payment Entry",
 		source_name,
@@ -136,35 +155,30 @@ def create_payment_batch_invoices(source_name, target_doc=None):
 			"Payment Entry": {"doctype": "Payment Batch"},
 			"Payment Entry Reference": {
 				"doctype": "Payment Batch Invoice",
-				"field_map": {
-					"reference_name": "purchase_invoice",
-					"party": "supplier",
-				},
 				"condition": condition,
+				"postprocess": update_party_details,
 			},
 		},
 		target_doc,
 	)
 
 	payment_entry = frappe.db.get_value(
-		"Payment Entry", source_name, ["unallocated_amount", "party"], as_dict=True
+		"Payment Entry",
+		source_name,
+		["unallocated_amount as allocated_amount", "party", "party_type", "party_name"],
+		as_dict=True,
 	)
 
-	# add one more Payment Batch Invoice if there is any unallocated amount
-	if payment_entry.unallocated_amount:
+	# add a Payment Batch Invoice if an unallocated amount exists.
+	if payment_entry.allocated_amount:
 		row = frappe.new_doc("Payment Batch Invoice")
-		row.update(
-			{
-				"payment_entry": source_name,
-				"supplier": payment_entry.party,
-				"allocated_amount": payment_entry.unallocated_amount,
-			}
-		)
+		row.update({"payment_entry": source_name, **payment_entry})
 		doc.append("paid_invoices", row)
 
 	return doc
 
 
+# update the total paid amount of the given Payment Batch
 def update_total_paid_amount(payment_batch):
 	total_paid_amount = 0
 	for i in payment_batch.payment_created:
@@ -174,7 +188,7 @@ def update_total_paid_amount(payment_batch):
 	return payment_batch
 
 
-# if Payment Entry is updated, update the connected Payment Batch
+# if Payment Entry is updated, update the linked Payment Batch
 def update_on_payment_entry_updation(payment_entry):
 	invoices = frappe.get_list(
 		"Payment Batch Invoice",
@@ -187,7 +201,7 @@ def update_on_payment_entry_updation(payment_entry):
 			frappe.delete_doc("Payment Batch Invoice", i.name)
 
 		target_doc = frappe.get_doc("Payment Batch", invoices[0].parent)
-		payment_batch = create_payment_batch_invoices(payment_entry, target_doc)
+		payment_batch = create_payment_batch_references(payment_entry, target_doc)
 		payment_batch.save()
 
 		update_total_paid_amount(payment_batch)
@@ -198,7 +212,7 @@ def update_on_payment_entry_updation(payment_entry):
 def create_payment_batch_again(doc):
 	"""
 	Rework Batch
-	Amend all Payment Entry to create Payment Batch again
+	Amend all cancelled Payment Entry to create a new Payment Batch
 	"""
 	doc = json.loads(doc)
 

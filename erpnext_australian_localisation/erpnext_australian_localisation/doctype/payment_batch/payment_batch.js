@@ -5,6 +5,7 @@ frappe.ui.form.on("Payment Batch", {
 	refresh(frm) {
 		$('[data-fieldname="paid_invoices"]').find(".grid-remove-rows").hide();
 		frm.$wrapper.find(".grid-add-row").hide();
+		frm.$wrapper.find(".grid-body").css({ "overflow-y": "scroll", "max-height": "400px" });
 
 		frm.set_query("bank_account", () => {
 			return {
@@ -22,38 +23,8 @@ frappe.ui.form.on("Payment Batch", {
 		if (!frm.is_new() && frm.doc.docstatus === 0) {
 			frm.add_custom_button(
 				__("Payment Entry"),
-				function () {
-					erpnext.utils.map_current_doc({
-						method: "erpnext_australian_localisation.erpnext_australian_localisation.doctype.payment_batch.payment_batch.update_payment_batch",
-						source_doctype: "Payment Entry",
-						date_field: "posting_date",
-						target: frm,
-						setters: [
-							{
-								fieldname: "party",
-								label: __("Supplier"),
-								fieldtype: "Data",
-							},
-							{
-								fieldname: "base_paid_amount",
-								label: __("Amount"),
-								fieldtype: "Currency",
-								hidden: 1,
-							},
-						],
-						get_query_filters: {
-							docstatus: 0,
-							company: frm.doc.company,
-							bank_account: frm.doc.bank_account,
-						},
-						get_query_method:
-							"erpnext_australian_localisation.erpnext_australian_localisation.doctype.payment_batch.payment_batch.get_payment_entry",
-					});
-
-					setTimeout(() => {
-						$("[data-fieldname='search_term']").hide();
-						$(".filter-area").hide();
-					}, 700);
+				() => {
+					get_items(frm);
 				},
 				__("Get Items From")
 			);
@@ -125,3 +96,38 @@ frappe.ui.form.on("Payment Batch Item", {
 		frm.trigger("update_total_paid_amount");
 	},
 });
+
+function get_items(frm) {
+	erpnext.utils.map_current_doc({
+		method: "erpnext_australian_localisation.erpnext_australian_localisation.doctype.payment_batch.payment_batch.update_payment_batch",
+		source_doctype: "Payment Entry",
+		date_field: "posting_date",
+		target: frm,
+		setters: [
+			{
+				fieldname: "party_name",
+				label: __(frm.doc.type),
+				fieldtype: "Data",
+			},
+			{
+				fieldname: "base_paid_amount",
+				label: __("Amount"),
+				fieldtype: "Currency",
+				hidden: 1,
+			},
+		],
+		get_query_filters: {
+			docstatus: 0,
+			company: frm.doc.company,
+			bank_account: frm.doc.bank_account,
+			party_type: frm.doc.type,
+		},
+		get_query_method:
+			"erpnext_australian_localisation.erpnext_australian_localisation.doctype.payment_batch.payment_batch.get_payment_entry",
+	});
+
+	setTimeout(() => {
+		$("[data-fieldname='search_term']").hide();
+		$(".filter-area").hide();
+	}, 700);
+}

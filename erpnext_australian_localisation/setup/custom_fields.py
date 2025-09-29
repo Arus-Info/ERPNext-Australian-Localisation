@@ -210,3 +210,38 @@ CUSTOM_FIELDS_FOR_BANK_FILE = {
 		},
 	],
 }
+
+EMPLOYEE_BANK_DETAILS = {
+	"Employee": [
+		{
+			"fieldname": "section_break_bank_details",
+			"fieldtype": "Section Break",
+			"insert_after": "grade",
+			"module": "ERPNext Australian Localisation",
+		},
+		{
+			"fieldname": "lodgement_reference",
+			"label": "Lodgement Reference",
+			"fieldtype": "Data",
+			"length": 18,
+			"insert_after": "section_break_bank_details",
+			"module": "ERPNext Australian Localisation",
+		},
+		{
+			"fieldname": "branch_code",
+			"label": "BSB",
+			"fieldtype": "Data",
+			"length": 7,
+			"insert_after": "lodgement_reference",
+			"module": "ERPNext Australian Localisation",
+		},
+		{
+			"fieldname": "bank_account_no",
+			"label": "Bank Account Number",
+			"fieldtype": "Data",
+			"length": 9,
+			"insert_after": "branch_code",
+			"module": "ERPNext Australian Localisation",
+		},
+	]
+}

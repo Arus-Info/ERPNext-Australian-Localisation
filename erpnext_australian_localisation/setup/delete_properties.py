@@ -3,6 +3,7 @@ import frappe
 from erpnext_australian_localisation.setup.custom_fields import (
 	CUSTOM_FIELDS,
 	CUSTOM_FIELDS_FOR_BANK_FILE,
+	EMPLOYEE_BANK_DETAILS,
 	HRMS_CUSTOM_FIELDS,
 )
 from erpnext_australian_localisation.setup.property_setters import PROPERTIES
@@ -45,6 +46,7 @@ def delete_property_setter():
 def remove_setup():
 	delete_custom_field(CUSTOM_FIELDS)
 	delete_custom_field(CUSTOM_FIELDS_FOR_BANK_FILE)
+	delete_custom_field(EMPLOYEE_BANK_DETAILS)
 	delete_property_setter()
 
 
