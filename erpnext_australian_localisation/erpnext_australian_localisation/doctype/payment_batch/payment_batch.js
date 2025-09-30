@@ -120,7 +120,7 @@ function get_items(frm) {
 			docstatus: 0,
 			company: frm.doc.company,
 			bank_account: frm.doc.bank_account,
-			party_type: frm.doc.type,
+			party_type: frm.doc.party_type,
 		},
 		get_query_method:
 			"erpnext_australian_localisation.erpnext_australian_localisation.doctype.payment_batch.payment_batch.get_payment_entry",

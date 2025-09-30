@@ -12,20 +12,12 @@ from erpnext_australian_localisation.erpnext_australian_localisation.doctype.pay
 def get_unpaid_entries(filters):
 	filters = json.loads(filters)
 
-	filters["condition_based_on_due_date"] = ""
-	if filters["from_due_date"]:
-		filters["condition_based_on_due_date"] = f"and pi.due_date >= '{filters['from_due_date']}'"
-	if filters["to_due_date"]:
-		filters["condition_based_on_due_date"] += f" and pi.due_date <= '{filters['to_due_date']}'"
-
 	if filters["party_type"] == "Supplier":
 		query = get_query_for_supplier_outstanding_entries(filters)
 	else:
 		query = get_query_for_employee_outstanding_expense(filters)
 
 	data = frappe.db.sql(query, as_dict=True)
-
-	print(data)
 
 	return data
 
@@ -85,6 +77,11 @@ def get_query_for_supplier_outstanding_entries(filters):
 	"""
 	Returns the query for getting the Purchase Invoice under some conditions specified as follows.
 	"""
+	filters["condition_based_on_due_date"] = ""
+	if filters["from_due_date"]:
+		filters["condition_based_on_due_date"] = f"and pi.due_date >= '{filters['from_due_date']}'"
+	if filters["to_due_date"]:
+		filters["condition_based_on_due_date"] += f" and pi.due_date <= '{filters['to_due_date']}'"
 	query = f"""
 		WITH
 		supplier AS
@@ -195,7 +192,6 @@ def get_query_for_employee_outstanding_expense(filters):
 			and ec.status = 'Unpaid'
 			and ec.company ='{filters["company"]}'
 			and ec.owner like '{filters["created_by"]}%'
-			{filters["condition_based_on_due_date"]}
 		GROUP BY e.employee
 		"""
 	return query
