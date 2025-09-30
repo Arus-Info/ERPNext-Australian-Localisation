@@ -1,7 +1,8 @@
-from datetime import date
-
 import frappe
 
+from erpnext_australian_localisation.erpnext_australian_localisation.doctype.payment_batch.payment_batch import (
+	update_on_payment_entry_updation,
+)
 from erpnext_australian_localisation.overrides.invoices import (
 	create_au_bas_entries,
 	generate_bas_labels,
@@ -9,29 +10,30 @@ from erpnext_australian_localisation.overrides.invoices import (
 
 
 def on_update(doc, event):
-	tax_template = "AU Non Capital Purchase - GST"
+	if doc.docstatus == 0:
+		tax_template = "AU Non Capital Purchase - GST"
 
-	if doc.taxes:
-		item_tax_template = ""
-	else:
-		item_tax_template = "GST Exempt Purchase"
+		if doc.taxes:
+			item_tax_template = ""
+		else:
+			item_tax_template = "GST Exempt Purchase"
 
-	for field in ["expenses", "taxes"]:
-		for i in doc.get(field):
-			if i.au_tax_code != "AUSINPTAX":
-				tax_code = frappe.db.get_value(
-					"AU Tax Determination",
-					{
-						"bp_tax_template": tax_template,
-						"item_tax_template": item_tax_template,
-					},
-					"tax_code",
-				)
-				i.au_tax_code = tax_code
-				i.save()
+		for field in ["expenses", "taxes"]:
+			for i in doc.get(field):
+				if i.au_tax_code != "AUSINPTAX":
+					tax_code = frappe.db.get_value(
+						"AU Tax Determination",
+						{
+							"bp_tax_template": tax_template,
+							"item_tax_template": item_tax_template,
+						},
+						"tax_code",
+					)
+					i.au_tax_code = tax_code
+					i.save()
 
 
-def on_submit(doc, event):
+def before_submit(doc, event):
 	result = []
 
 	sum_depends_on = ["gst_offset_basis", "gst_offset_amount"]
@@ -66,3 +68,12 @@ def on_submit(doc, event):
 		)
 
 	create_au_bas_entries(doc.doctype, doc.name, doc.company, doc.posting_date, result, sum_depends_on)
+
+
+# if a Expense Claim Invoice is connected with a Payment Batch, update the Payment Batch
+# def on_cancel(doc, event):
+# 	payment_entry = frappe.db.get_value(
+# 		"Payment Batch Invoice", {"reference_name": doc.name}, "payment_entry"
+# 	)
+# 	if payment_entry:
+# 		update_on_payment_entry_updation(payment_entry)

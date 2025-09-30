@@ -183,7 +183,7 @@ doc_events = {
 	},
 	"Company": {"after_insert": "erpnext_australian_localisation.overrides.company.after_insert"},
 	"Expense Claim": {
-		"on_submit": "erpnext_australian_localisation.overrides.expense_claim.on_submit",
+		"before_submit": "erpnext_australian_localisation.overrides.expense_claim.before_submit",
 		"on_update": "erpnext_australian_localisation.overrides.expense_claim.on_update",
 		"on_cancel": "erpnext_australian_localisation.overrides.invoices.on_cancel",
 	},
