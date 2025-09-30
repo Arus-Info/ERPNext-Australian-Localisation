@@ -149,7 +149,6 @@ class PaymentProposal {
 			},
 			callback: (data) => {
 				data = data.message;
-				console.log(data);
 				for (let d of data) {
 					d.outstanding_entries = JSON.parse(d.outstanding_entries);
 					d.outstanding_entries = d.outstanding_entries.filter(
@@ -655,7 +654,6 @@ class PaymentProposal {
 			],
 			primary_action_label: __("Create Payment Batch"),
 			primary_action: (values) => {
-				console.log(party_entries, values);
 				values["reference_doctype"] = this.filters.reference_doctype;
 				if (party_entries.length) {
 					frappe.call({
