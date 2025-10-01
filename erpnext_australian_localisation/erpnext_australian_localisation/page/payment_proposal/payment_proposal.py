@@ -9,15 +9,87 @@ from erpnext_australian_localisation.erpnext_australian_localisation.doctype.pay
 
 
 @frappe.whitelist()
-def get_outstanding_invoices(filters):
+def get_unpaid_entries(filters):
 	filters = json.loads(filters)
 
+	if filters["party_type"] == "Supplier":
+		query = get_query_for_supplier_outstanding_entries(filters)
+	else:
+		query = get_query_for_employee_outstanding_expense(filters)
+
+	data = frappe.db.sql(query, as_dict=True)
+
+	return data
+
+
+@frappe.whitelist()
+def create_payment_batch(party_entries, data):
+	party_entries = json.loads(party_entries)
+	data = json.loads(data)
+
+	bank_account = frappe.db.get_value("Bank Account", data["bank_account"], "account")
+	if not bank_account:
+		frappe.throw(_("Bank Account is not associated with any account"))
+	if data.get("mode_of_payment"):
+		data["paid_from"] = frappe.db.get_value(
+			"Mode of Payment Account",
+			{"company": data["company"], "parent": data["mode_of_payment"]},
+			"default_account",
+		)
+	if not data.get("paid_from"):
+		data["paid_from"] = bank_account
+
+	payment_batch = frappe.new_doc("Payment Batch")
+	payment_batch.update(data)
+
+	for party in party_entries:
+		payment_entry = create_payment_entry(party, data)
+		payment_batch = update_payment_batch(payment_entry, payment_batch)
+
+	payment_batch.save()
+
+	return payment_batch.name
+
+
+def create_payment_entry(party, data):
+	payment_entry = frappe.new_doc("Payment Entry")
+	payment_entry.update(
+		{
+			**data,
+			"payment_type": "Pay",
+			"party": party["party"],
+			"paid_amount": party["paid_amount"],
+			"received_amount": party["paid_amount"],
+			"reference_no": party["reference_no"],
+			"source_exchange_rate": 1,
+		}
+	)
+
+	for i in party["entries"]:
+		row = frappe.new_doc("Payment Entry Reference")
+		row.update(
+			{
+				"reference_doctype": data["reference_doctype"],
+				"reference_name": i["entry_name"],
+				"allocated_amount": i["allocated_amount"],
+			}
+		)
+		payment_entry.append("references", row)
+
+	payment_entry.save()
+
+	return payment_entry.name
+
+
+def get_query_for_supplier_outstanding_entries(filters):
+	"""
+	Returns the query for getting the Purchase Invoice under some conditions specified as follows.
+	"""
 	filters["condition_based_on_due_date"] = ""
 	if filters["from_due_date"]:
 		filters["condition_based_on_due_date"] = f"and pi.due_date >= '{filters['from_due_date']}'"
 	if filters["to_due_date"]:
 		filters["condition_based_on_due_date"] += f" and pi.due_date <= '{filters['to_due_date']}'"
-
 	query = f"""
 		WITH
 		supplier AS
@@ -31,8 +103,8 @@ def get_outstanding_invoices(filters):
 		)
 
 		SELECT
-			pi.supplier_name,
-			pi.supplier,
+			pi.supplier_name as party_name,
+			pi.supplier as party,
 			s.lodgement_reference,
 			SUM(case when s.is_included then pi.outstanding_amount else 0 end) as total_outstanding,
 			s.is_included,
@@ -40,7 +112,7 @@ def get_outstanding_invoices(filters):
 				if(
 					per.reference_name IS NULL,
 					JSON_OBJECT(
-						"purchase_invoice", pi.name,
+						"entry_name", pi.name,
 						"due_date", pi.due_date,
 						"invoice_amount", pi.rounded_total,
 						"invoice_currency", pi.currency,
@@ -48,19 +120,19 @@ def get_outstanding_invoices(filters):
 						"outstanding_amount", pi.outstanding_amount
 					),
 					JSON_OBJECT())
-			) as purchase_invoices,
+			) as outstanding_entries,
 			JSON_ARRAYAGG(
 				if(
 					per.reference_name IS NOT NULL,
 					JSON_OBJECT(
-						"purchase_invoice", per.reference_name,
+						"entry_name", per.reference_name,
 						"rounded_total", per.total_amount,
 						"outstanding_amount", per.outstanding_amount,
 						"payment_entry", per.parent,
 						"allocated_amount", per.allocated_amount
 					),
 					JSON_OBJECT())
-			) as reference_invoices
+			) as reference_entries
 		FROM supplier as s
 		LEFT JOIN `tabPurchase Invoice` as pi
 			ON s.supplier = pi.supplier
@@ -74,59 +146,66 @@ def get_outstanding_invoices(filters):
 			{filters["condition_based_on_due_date"]}
 		GROUP BY s.supplier
 		"""
-
-	data = frappe.db.sql(query, as_dict=True)
-
-	return data
+	return query
 
 
-@frappe.whitelist()
-def create_payment_batch(supplier_invoices, data):
-	supplier_invoices = json.loads(supplier_invoices)
-	data = json.loads(data)
-
-	data["paid_from"] = frappe.db.get_value("Bank Account", data["bank_account"], "account")
-	if not data["paid_from"]:
-		frappe.throw(_("Bank Account {0} is not associated with any account.").format(data["bank_account"]))
-
-	payment_batch = frappe.new_doc("Payment Batch")
-	payment_batch.update(data)
-
-	for supplier in supplier_invoices:
-		payment_entry = create_payment_entry(supplier, data)
-		payment_batch = update_payment_batch(payment_entry, payment_batch)
-
-	payment_batch.save()
-
-	return payment_batch.name
-
-
-def create_payment_entry(supplier, data):
-	payment_entry = frappe.new_doc("Payment Entry")
-	payment_entry.update(
-		{
-			**data,
-			"payment_type": "Pay",
-			"party_type": "Supplier",
-			"party": supplier["supplier"],
-			"paid_amount": supplier["paid_amount"],
-			"received_amount": supplier["paid_amount"],
-			"reference_no": supplier["reference_no"],
-			"source_exchange_rate": 1,
-		}
-	)
-
-	for i in supplier["invoices"]:
-		row = frappe.new_doc("Payment Entry Reference")
-		row.update(
-			{
-				"reference_doctype": "Purchase Invoice",
-				"reference_name": i["purchase_invoice"],
-				"allocated_amount": i["allocated_amount"],
-			}
+def get_query_for_employee_outstanding_expense(filters):
+	filters["condition_based_on_posting_date"] = ""
+	if filters["from_due_date"]:
+		filters["condition_based_on_posting_date"] = f"and ec.posting_date >= '{filters['from_due_date']}'"
+	if filters["to_due_date"]:
+		filters["condition_based_on_posting_date"] += f" and ec.posting_date <= '{filters['to_due_date']}'"
+	query = f"""
+	WITH
+		employee AS
+		(
+			SELECT
+				name as employee,
+				lodgement_reference,
+				case when (NULLIF(bank_account_no,'') IS NOT NULL and NULLIF(branch_code,'') IS NOT NULL) then 1 else 0 end as is_included
+			FROM tabEmployee
+			WHERE company = '{filters["company"]}'
 		)
-		payment_entry.append("references", row)
 
-	payment_entry.save()
-
-	return payment_entry.name
+		SELECT
+			ec.employee_name as party_name,
+			ec.employee as party,
+			e.lodgement_reference,
+			SUM(case when e.is_included then ec.grand_total - ec.total_amount_reimbursed else 0 end) as total_outstanding,
+			e.is_included,
+			JSON_ARRAYAGG(
+				if(
+					per.reference_name IS NULL,
+					JSON_OBJECT(
+						"entry_name", ec.name,
+						"rounded_total", ec.grand_total,
+						"outstanding_amount", ec.grand_total - ec.total_amount_reimbursed
+					),
+					JSON_OBJECT())
+			) as outstanding_entries,
+			JSON_ARRAYAGG(
+				if(
+					per.reference_name IS NOT NULL,
+					JSON_OBJECT(
+						"entry_name", per.reference_name,
+						"rounded_total", per.total_amount,
+						"outstanding_amount", per.outstanding_amount,
+						"payment_entry", per.parent,
+						"allocated_amount", per.allocated_amount
+					),
+					JSON_OBJECT())
+			) as reference_entries
+		FROM employee as e
+		LEFT JOIN `tabExpense Claim` as ec
+			ON e.employee = ec.employee
+		LEFT JOIN `tabPayment Entry Reference` as per
+			ON per.reference_name = ec.name and per.docstatus = 0
+		WHERE
+			ec.docstatus = 1
+			and ec.status = 'Unpaid'
+			and ec.company ='{filters["company"]}'
+			and ec.owner like '{filters["created_by"]}%'
+			{filters["condition_based_on_posting_date"]}
+		GROUP BY e.employee
+		"""
+	return query
