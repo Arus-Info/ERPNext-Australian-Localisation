@@ -27,9 +27,17 @@ def create_payment_batch(party_entries, data):
 	party_entries = json.loads(party_entries)
 	data = json.loads(data)
 
-	data["paid_from"] = frappe.db.get_value("Bank Account", data["bank_account"], "account")
-	if not data["paid_from"]:
-		frappe.throw(_("Bank Account {0} is not associated with any account.").format(data["bank_account"]))
+	bank_account = frappe.db.get_value("Bank Account", data["bank_account"], "account")
+	if not bank_account:
+		frappe.throw(_("Bank Account is not associated with any account"))
+	if data.get("mode_of_payment"):
+		data["paid_from"] = frappe.db.get_value(
+			"Mode of Payment Account",
+			{"company": data["company"], "parent": data["mode_of_payment"]},
+			"default_account",
+		)
+		if not data["paid_from"]:
+			data["paid_from"] = bank_account
 
 	payment_batch = frappe.new_doc("Payment Batch")
 	payment_batch.update(data)
@@ -158,15 +166,15 @@ def get_query_for_employee_outstanding_expense(filters):
 			ec.employee_name as party_name,
 			ec.employee as party,
 			e.lodgement_reference,
-			SUM(case when e.is_included then ec.total_sanctioned_amount - ec.total_amount_reimbursed else 0 end) as total_outstanding,
+			SUM(case when e.is_included then ec.grand_total - ec.total_amount_reimbursed else 0 end) as total_outstanding,
 			e.is_included,
 			JSON_ARRAYAGG(
 				if(
 					per.reference_name IS NULL,
 					JSON_OBJECT(
 						"entry_name", ec.name,
-						"rounded_total", ec.total_sanctioned_amount,
-						"outstanding_amount", ec.total_sanctioned_amount - ec.total_amount_reimbursed
+						"rounded_total", ec.grand_total,
+						"outstanding_amount", ec.grand_total - ec.total_amount_reimbursed
 					),
 					JSON_OBJECT())
 			) as outstanding_entries,
