@@ -43,12 +43,12 @@ frappe.pages["payment-proposal"].refresh = function (wrapper) {
 			},
 			{
 				fieldname: "from_due_date",
-				label: __("Document Due Date On or After"),
+				label: __("Document Due / Posting Date On or After"),
 				fieldtype: "Date",
 			},
 			{
 				fieldname: "to_due_date",
-				label: __("Document Due Date On or Before"),
+				label: __("Document Due / Posting Date On or Before"),
 				fieldtype: "Date",
 			},
 		],
