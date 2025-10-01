@@ -36,8 +36,8 @@ def create_payment_batch(party_entries, data):
 			{"company": data["company"], "parent": data["mode_of_payment"]},
 			"default_account",
 		)
-		if not data["paid_from"]:
-			data["paid_from"] = bank_account
+	if not data.get("paid_from"):
+		data["paid_from"] = bank_account
 
 	payment_batch = frappe.new_doc("Payment Batch")
 	payment_batch.update(data)
@@ -150,6 +150,11 @@ def get_query_for_supplier_outstanding_entries(filters):
 
 
 def get_query_for_employee_outstanding_expense(filters):
+	filters["condition_based_on_posting_date"] = ""
+	if filters["from_due_date"]:
+		filters["condition_based_on_posting_date"] = f"and ec.posting_date >= '{filters['from_due_date']}'"
+	if filters["to_due_date"]:
+		filters["condition_based_on_posting_date"] += f" and ec.posting_date <= '{filters['to_due_date']}'"
 	query = f"""
 	WITH
 		employee AS
@@ -200,6 +205,7 @@ def get_query_for_employee_outstanding_expense(filters):
 			and ec.status = 'Unpaid'
 			and ec.company ='{filters["company"]}'
 			and ec.owner like '{filters["created_by"]}%'
+			{filters["condition_based_on_posting_date"]}
 		GROUP BY e.employee
 		"""
 	return query
