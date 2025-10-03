@@ -245,3 +245,26 @@ EMPLOYEE_BANK_DETAILS = {
 		},
 	]
 }
+
+POS_INVOICE_CUSTOM_FIELDS = {
+	"POS Invoice Item": [
+		{
+			"fieldname": "au_tax_code",
+			"label": "AU Tax Code",
+			"fieldtype": "Link",
+			"options": "AU Tax Code",
+			"read_only": 1,
+			"insert_after": "item_tax_template",
+			"module": "ERPNext Australian Localisation",
+		},
+		{
+			"fieldname": "au_tax_description",
+			"label": "AU Tax Description",
+			"fieldtype": "Data",
+			"fetch_from": "au_tax_code.tax_description",
+			"read_only": 1,
+			"insert_after": "au_tax_code",
+			"module": "ERPNext Australian Localisation",
+		},
+	],
+}
