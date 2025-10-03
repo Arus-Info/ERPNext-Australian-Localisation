@@ -181,6 +181,10 @@ doc_events = {
 			"erpnext_australian_localisation.overrides.purchase_invoice.on_cancel",
 		],
 	},
+	"POS Invoice": {
+		"before_submit": "erpnext_australian_localisation.overrides.invoices.before_submit",
+		"on_cancel": "erpnext_australian_localisation.overrides.invoices.on_cancel",
+	},
 	"Company": {"after_insert": "erpnext_australian_localisation.overrides.company.after_insert"},
 	"Expense Claim": {
 		"before_submit": "erpnext_australian_localisation.overrides.expense_claim.before_submit",
