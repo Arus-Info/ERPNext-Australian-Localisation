@@ -5,7 +5,7 @@ import pandas as pd
 def before_submit(doc, event):
 	if doc.taxes_and_charges:
 		result = []
-		if doc.doctype in ["Sales Invoice"]:
+		if doc.doctype in ["Sales Invoice", "POS Invoice"]:
 			tax_allocation = "Collected Sales"
 			account_type = "income_account"
 			sum_depends_on = ["gst_pay_basis", "gst_pay_amount"]
@@ -22,6 +22,8 @@ def before_submit(doc, event):
 			update_tax_code_for_sales_invoice_item(doc.items, tax_template)
 		elif doc.doctype == "Purchase Invoice":
 			update_tax_code_for_purchase_invoice_item(doc.items, tax_template)
+		elif doc.doctype == "POS Invoice":
+			update_tax_code_for_pos_invoice_item(doc.items, tax_template)
 
 		for item in doc.items:
 			result.extend(
@@ -116,6 +118,12 @@ def update_tax_code_for_purchase_invoice_item(items, tax_template):
 			item.au_tax_code = "AUPPVTUSE"
 		else:
 			update_tax_code_for_item(item, tax_template)
+
+
+# update au_tax_code for POS Invoice Items
+def update_tax_code_for_pos_invoice_item(items, tax_template):
+	for item in items:
+		update_tax_code_for_item(item, tax_template)
 
 
 def update_tax_code_for_item(item, tax_template):
