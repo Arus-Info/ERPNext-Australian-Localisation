@@ -33,7 +33,14 @@ class AUBASReport(Document):
 
 
 @frappe.whitelist()
-def get_gst(name, company, start_date, end_date):
+def get_gst(name, company, start_date, end_date, reporting_method):
+	if reporting_method == "Full reporting method":
+		update_full_bas_report(name, company, start_date, end_date)
+	else:
+		update_simpler_bas_report(name, company, start_date, end_date)
+
+
+def update_full_bas_report(name, company, start_date, end_date):
 	from frappe.model.mapper import get_mapped_doc
 
 	frappe.publish_realtime("bas_data_generator", user=frappe.session.user)
@@ -102,6 +109,88 @@ def get_gst(name, company, start_date, end_date):
 
 	doc.net_gst = abs(doc.get("1a") - doc.get("1b"))
 	doc.save()
+
+
+def update_simpler_bas_report(name, company, start_date, end_date):
+	frappe.publish_realtime("bas_data_generator", user=frappe.session.user)
+
+	doc = frappe.get_doc("AU BAS Report", name)
+
+	frappe.publish_progress(10, title="BAS Label Generating..", description="getting ready...")
+
+	accounts_g1 = frappe.get_list(
+		"Income Account for Simpler BAS",
+		parent_doctype="AU Simpler BAS Report Setup",
+		filters={"parent": company},
+		fields=["account"],
+		pluck="account",
+	)
+	(account_1a, account_1b) = frappe.db.get_value(
+		"AU Simpler BAS Report Setup", company, ["account_1a", "account_1b"]
+	)
+	if not (accounts_g1 and account_1a and account_1b):
+		frappe.throw(
+			_(
+				"Please Setup All the necessary accounts in <a href='/app/au-simpler-bas-report-setup/{0}'>AU Simpler BAS Report Setup</a>",
+			).format(company)
+		)
+
+	doc.update({"g1_details": []})
+	doc.update({"1b_details": []})
+	doc.update({"1a_details": []})
+
+	frappe.publish_progress(40, title="BAS Label Generating..", description="G1")
+	field_with_expression = "( - debit_in_account_currency + credit_in_account_currency) as gst_pay_basis"
+	entries = get_gl_entries_for_accounts(start_date, end_date, company, accounts_g1, field_with_expression)
+	for e in entries:
+		row = frappe.new_doc("AU BAS Report Entry")
+		row.update(e)
+		doc.g1 += e.gst_pay_basis
+		doc.append("g1_details", row)
+	frappe.publish_progress(70, title="BAS Label Generating..", description="1A")
+	field_with_expression = "( - debit_in_account_currency + credit_in_account_currency) as gst_pay_amount"
+	entries = get_gl_entries_for_accounts(start_date, end_date, company, account_1a, field_with_expression)
+	for e in entries:
+		row = frappe.new_doc("AU BAS Report Entry")
+		row.update(e)
+		doc.update({"1a": doc.get("1a") + e.gst_pay_amount})
+		doc.append("1a_details", row)
+	for e in entries:
+		row = frappe.new_doc("AU BAS Report Entry")
+		row.update(e)
+		doc.g1 += e.gst_pay_amount
+		doc.append("g1_details", row)
+
+	frappe.publish_progress(100, title="BAS Label Generating..", description="1B")
+	field_with_expression = "(debit_in_account_currency - credit_in_account_currency) as gst_offset_amount"
+	entries = get_gl_entries_for_accounts(start_date, end_date, company, account_1b, field_with_expression)
+	for e in entries:
+		row = frappe.new_doc("AU BAS Report Entry")
+		row.update(e)
+		doc.update({"1b": doc.get("1b") + e.gst_offset_amount})
+		doc.append("1b_details", row)
+	doc.net_gst = abs(doc.get("1a") - doc.get("1b"))
+	doc.save()
+
+
+def get_gl_entries_for_accounts(start_date, end_date, company, accounts, field_with_expression):
+	gl_entries = frappe.get_list(
+		"GL Entry",
+		filters=[
+			["posting_date", ">=", start_date],
+			["posting_date", "<=", end_date],
+			["company", "=", company],
+			["account", "in", accounts],
+		],
+		fields=[
+			"posting_date as date",
+			"voucher_type",
+			"voucher_no",
+			"account",
+			field_with_expression,
+		],
+	)
+	return gl_entries
 
 
 @frappe.whitelist()

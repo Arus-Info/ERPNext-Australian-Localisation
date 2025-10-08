@@ -12,6 +12,7 @@ frappe.ui.form.on("AU BAS Report", {
 				},
 			};
 		});
+		frm.set_intro(__("BAS Report last updated on {0}", [frm.doc.modified]), "red");
 
 		frm.$wrapper.find(".grid-body").css({ "overflow-y": "scroll", "max-height": "200px" });
 		frm.trigger("update_label");
@@ -32,6 +33,7 @@ frappe.ui.form.on("AU BAS Report", {
 								company: frm.doc.company,
 								start_date: frm.doc.start_date,
 								end_date: frm.doc.end_date,
+								reporting_method: frm.doc.reporting_method,
 							},
 							callback: function () {},
 						});
@@ -77,7 +79,9 @@ frappe.ui.form.on("AU BAS Report", {
 		} else {
 			frm.set_df_property("net_gst", "label", "GST to Pay");
 		}
-		frm.trigger("check_data_correctness");
+		if (frm.doc.reporting_method === "Full reporting method") {
+			frm.trigger("check_data_correctness");
+		}
 	},
 
 	check_data_correctness(frm) {
@@ -190,6 +194,7 @@ frappe.ui.form.on("AU BAS Report", {
 		for (let i = 0; i < brp.length; i++) {
 			if (brp[i].company === frm.doc.company) {
 				reporting_period = brp[i].reporting_period;
+				frm.set_value("reporting_method", brp[i].reporting_method);
 				break;
 			}
 		}
