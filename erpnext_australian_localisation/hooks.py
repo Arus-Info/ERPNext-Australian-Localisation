@@ -60,9 +60,7 @@ doctype_js = {
 	"Purchase Invoice": "public/js/setup_input_taxed_sales.js",
 	"Purchase Order": "public/js/setup_input_taxed_sales.js",
 	"Purchase Receipt": "public/js/setup_input_taxed_sales.js",
-	"Supplier": ["public/js/validate_bank_details.js", "public/js/supplier.js"],
-	"Employee": ["public/js/validate_bank_details.js", "public/js/employee.js"],
-	"Bank Account": ["public/js/validate_bank_details.js", "public/js/bank_account.js"],
+	"Supplier": ["public/js/supplier.js"],
 }
 
 # include js in doctype views
@@ -197,6 +195,11 @@ doc_events = {
 	"Payment Entry": {
 		"on_submit": "erpnext_australian_localisation.overrides.payment_entry.on_submit",
 		"on_update": "erpnext_australian_localisation.overrides.payment_entry.on_update",
+	},
+	"Supplier": {"validate": "erpnext_australian_localisation.overrides.bank_details_validation.validate"},
+	"Employee": {"validate": "erpnext_australian_localisation.overrides.bank_details_validation.validate"},
+	"Bank Account": {
+		"validate": "erpnext_australian_localisation.overrides.bank_details_validation.bank_account_validation"
 	},
 }
 

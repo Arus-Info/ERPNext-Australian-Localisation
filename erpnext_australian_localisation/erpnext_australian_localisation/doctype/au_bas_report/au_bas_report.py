@@ -2,7 +2,7 @@
 # For license information, please see license.txt
 
 import math
-from datetime import datetime
+from datetime import datetime, timezone
 
 import frappe
 from frappe import _
@@ -33,25 +33,29 @@ class AUBASReport(Document):
 
 
 @frappe.whitelist()
-def get_gst(name, company, start_date, end_date, reporting_method):
-	if reporting_method == "Full reporting method":
-		update_full_bas_report(name, company, start_date, end_date)
-	else:
-		update_simpler_bas_report(name, company, start_date, end_date)
-
-
-def update_full_bas_report(name, company, start_date, end_date):
-	from frappe.model.mapper import get_mapped_doc
+def get_gst(name):
+	doc = frappe.get_doc("AU BAS Report", name)
+	doc.bas_updation_datetime = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
 
 	frappe.publish_realtime("bas_data_generator", user=frappe.session.user)
+	frappe.publish_progress(1, title="BAS Label Generating..", description="getting ready...")
 
-	doc = frappe.get_doc("AU BAS Report", name)
+	if doc.reporting_method == "Full reporting method":
+		update_full_bas_report(doc)
+	else:
+		update_simpler_bas_report(doc)
+
+	doc.net_gst = abs(doc.get("1a") - doc.get("1b"))
+	doc.save()
+
+
+def update_full_bas_report(doc):
+	from frappe.model.mapper import get_mapped_doc
 
 	bas_labels = frappe.get_all("AU BAS Label", pluck="name")
 
 	bas_label_details = [{"bas_label": l, "fieldname": l.lower() + "_details"} for l in bas_labels]
 	progress = 10
-	frappe.publish_progress(1, title="BAS Label Generating..", description="getting ready...")
 	for bas_label_detail in bas_label_details:
 		frappe.publish_progress(
 			progress,
@@ -64,9 +68,9 @@ def update_full_bas_report(name, company, start_date, end_date):
 		bas_entries = frappe.get_list(
 			"AU BAS Entry",
 			filters=[
-				["date", ">=", start_date],
-				["date", "<=", end_date],
-				["company", "=", company],
+				["date", ">=", doc.start_date],
+				["date", "<=", doc.end_date],
+				["company", "=", doc.company],
 				["bas_label", "=", bas_label_detail["bas_label"]],
 			],
 			pluck="name",
@@ -107,32 +111,24 @@ def update_full_bas_report(name, company, start_date, end_date):
 
 	doc.update({"1a": doc._1a_only + math.floor(doc.g7 / 11), "1b": doc._1b_only + math.floor(doc.g18 / 11)})
 
-	doc.net_gst = abs(doc.get("1a") - doc.get("1b"))
-	doc.save()
 
-
-def update_simpler_bas_report(name, company, start_date, end_date):
-	frappe.publish_realtime("bas_data_generator", user=frappe.session.user)
-
-	doc = frappe.get_doc("AU BAS Report", name)
-
-	frappe.publish_progress(10, title="BAS Label Generating..", description="getting ready...")
-
+def update_simpler_bas_report(doc):
+	doc.update({"1a": 0, "1b": 0, "g1": 0})
 	accounts_g1 = frappe.get_list(
 		"Income Account for Simpler BAS",
 		parent_doctype="AU Simpler BAS Report Setup",
-		filters={"parent": company},
+		filters={"parent": doc.company},
 		fields=["account"],
 		pluck="account",
 	)
 	(account_1a, account_1b) = frappe.db.get_value(
-		"AU Simpler BAS Report Setup", company, ["account_1a", "account_1b"]
+		"AU Simpler BAS Report Setup", doc.company, ["account_1a", "account_1b"]
 	)
 	if not (accounts_g1 and account_1a and account_1b):
 		frappe.throw(
 			_(
 				"Please Setup All the necessary accounts in <a href='/app/au-simpler-bas-report-setup/{0}'>AU Simpler BAS Report Setup</a>",
-			).format(company)
+			).format(doc.company)
 		)
 
 	doc.update({"g1_details": []})
@@ -141,7 +137,9 @@ def update_simpler_bas_report(name, company, start_date, end_date):
 
 	frappe.publish_progress(40, title="BAS Label Generating..", description="G1")
 	field_with_expression = "( - debit_in_account_currency + credit_in_account_currency) as gst_pay_basis"
-	entries = get_gl_entries_for_accounts(start_date, end_date, company, accounts_g1, field_with_expression)
+	entries = get_gl_entries_for_accounts(
+		doc.start_date, doc.end_date, doc.company, accounts_g1, field_with_expression
+	)
 	for e in entries:
 		row = frappe.new_doc("AU BAS Report Entry")
 		row.update(e)
@@ -149,7 +147,9 @@ def update_simpler_bas_report(name, company, start_date, end_date):
 		doc.append("g1_details", row)
 	frappe.publish_progress(70, title="BAS Label Generating..", description="1A")
 	field_with_expression = "( - debit_in_account_currency + credit_in_account_currency) as gst_pay_amount"
-	entries = get_gl_entries_for_accounts(start_date, end_date, company, account_1a, field_with_expression)
+	entries = get_gl_entries_for_accounts(
+		doc.start_date, doc.end_date, doc.company, account_1a, field_with_expression
+	)
 	for e in entries:
 		row = frappe.new_doc("AU BAS Report Entry")
 		row.update(e)
@@ -163,14 +163,14 @@ def update_simpler_bas_report(name, company, start_date, end_date):
 
 	frappe.publish_progress(100, title="BAS Label Generating..", description="1B")
 	field_with_expression = "(debit_in_account_currency - credit_in_account_currency) as gst_offset_amount"
-	entries = get_gl_entries_for_accounts(start_date, end_date, company, account_1b, field_with_expression)
+	entries = get_gl_entries_for_accounts(
+		doc.start_date, doc.end_date, doc.company, account_1b, field_with_expression
+	)
 	for e in entries:
 		row = frappe.new_doc("AU BAS Report Entry")
 		row.update(e)
 		doc.update({"1b": doc.get("1b") + e.gst_offset_amount})
 		doc.append("1b_details", row)
-	doc.net_gst = abs(doc.get("1a") - doc.get("1b"))
-	doc.save()
 
 
 def get_gl_entries_for_accounts(start_date, end_date, company, accounts, field_with_expression):

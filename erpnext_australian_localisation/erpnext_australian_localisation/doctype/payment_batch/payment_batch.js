@@ -33,18 +33,26 @@ frappe.ui.form.on("Payment Batch", {
 			frm.add_custom_button(
 				__("Generate Bank File"),
 				function () {
-					frappe.call({
-						doc: frm.doc,
-						method: "generate_bank_file",
-						callback: (url) => {
-							frappe.msgprint(
-								__(
-									"Bank File Generated. Click <a href={0}>here</a> to download the file.",
-									[url.message]
-								)
-							);
-						},
-					});
+					if (frm.doc.file_format !== "-None-") {
+						frappe.call({
+							doc: frm.doc,
+							method: "generate_bank_file",
+							callback: (url) => {
+								frappe.msgprint(
+									__(
+										"Bank File Generated. Click <a href={0}>here</a> to download the file.",
+										[url.message]
+									)
+								);
+							},
+						});
+					} else {
+						frappe.throw(
+							__(
+								"Bank file can't be generated. Please set the file format in Bank Account"
+							)
+						);
+					}
 				},
 				"Bank File"
 			);

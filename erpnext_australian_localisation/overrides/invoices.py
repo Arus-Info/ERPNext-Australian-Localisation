@@ -45,7 +45,7 @@ def before_submit(doc, event):
 					tax_allocation,
 					tax.au_tax_code,
 					tax.account_head,
-					round(tax.base_tax_amount, 2),
+					round(tax.tax_amount_after_discount_amount, 2),
 					sum_depends_on[1],
 				)
 			)
