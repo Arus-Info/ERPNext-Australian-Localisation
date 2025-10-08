@@ -30,7 +30,7 @@ frappe.ui.form.on("AU Simpler BAS Report Setup", {
 	},
 	before_save(frm) {
 		if (frm.doc.account_1a === frm.doc.account_1b) {
-			frappe.throw("1A and 1B can't be reported in the same account");
+			frappe.throw(__("1A and 1B can't be reported in the same account"));
 		}
 	},
 });
