@@ -1,37 +1,10 @@
-let country;
 frappe.ui.form.on("Bank Account", {
-	refresh(frm) {
-		if (frm.doc.is_company_account) {
-			frappe.db.get_value("Company", frm.doc.company, "country").then((data) => {
-				country = data.message.country;
-			});
-		}
-	},
-
 	before_save(frm) {
-		if (country === "Australia") {
+		if (frm.doc.file_format !== "-None-") {
 			validate_branch_code(frm); // eslint-disable-line no-undef
 			validate_account_no(frm); // eslint-disable-line no-undef
 			validate_apca_number(frm);
 			validate_fi_abbr(frm);
-		}
-	},
-
-	company(frm) {
-		if (frm.doc.is_company_account) {
-			frappe.db.get_value("Company", frm.doc.company, "country").then((data) => {
-				country = data.message.country;
-			});
-		}
-	},
-
-	is_company_account(frm) {
-		if (frm.doc.is_company_account) {
-			frappe.db.get_value("Company", frm.doc.company, "country").then((data) => {
-				country = data.message.country;
-			});
-		} else {
-			country = "";
 		}
 	},
 });

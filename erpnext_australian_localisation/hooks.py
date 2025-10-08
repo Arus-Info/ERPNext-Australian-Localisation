@@ -185,7 +185,10 @@ doc_events = {
 		"before_submit": "erpnext_australian_localisation.overrides.invoices.before_submit",
 		"on_cancel": "erpnext_australian_localisation.overrides.invoices.on_cancel",
 	},
-	"Company": {"after_insert": "erpnext_australian_localisation.overrides.company.after_insert"},
+	"Company": {
+		"after_insert": "erpnext_australian_localisation.overrides.company.after_insert",
+		"on_update": "erpnext_australian_localisation.overrides.company.on_update",
+	},
 	"Expense Claim": {
 		"before_submit": "erpnext_australian_localisation.overrides.expense_claim.before_submit",
 		"on_update": "erpnext_australian_localisation.overrides.expense_claim.on_update",

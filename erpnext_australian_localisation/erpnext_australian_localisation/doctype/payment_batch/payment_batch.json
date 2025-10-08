@@ -75,11 +75,12 @@
    "reqd": 1
   },
   {
+   "default": "-None-",
    "fetch_from": "bank_account.file_format",
    "fieldname": "file_format",
    "fieldtype": "Select",
    "label": "File Format",
-   "options": "ABA",
+   "options": "-None-\nABA",
    "read_only": 1,
    "reqd": 1
   },
@@ -125,7 +126,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-09-29 17:01:05.817840",
+ "modified": "2025-10-08 00:06:31.560552",
  "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
  "name": "Payment Batch",

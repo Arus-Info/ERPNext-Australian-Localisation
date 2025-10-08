@@ -32,7 +32,7 @@ def before_submit(doc, event):
 					tax_allocation,
 					item.au_tax_code,
 					item.get(account_type),
-					round(item.base_amount, 2),
+					round(item.base_net_amount, 2),
 					sum_depends_on[0],
 				)
 			)
