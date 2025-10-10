@@ -6,7 +6,6 @@ from erpnext_australian_localisation.setup.custom_fields import (
 	CUSTOM_FIELDS_FOR_BANK_FILE,
 	EMPLOYEE_BANK_DETAILS,
 	HRMS_CUSTOM_FIELDS,
-	POS_INVOICE_CUSTOM_FIELDS,
 )
 from erpnext_australian_localisation.setup.property_setters import PROPERTIES
 
@@ -22,7 +21,6 @@ def create_property_setter(properties):
 
 def initial_setup():
 	create_custom_fields(CUSTOM_FIELDS, update=1)
-	create_custom_fields(POS_INVOICE_CUSTOM_FIELDS, update=1)
 	create_properties_for_bank_file()
 	create_property_setter(PROPERTIES)
 

@@ -1,534 +1,534 @@
 {
- "actions": [],
- "allow_rename": 1,
- "autoname": "format:BAS-{start_date}-{###}",
- "creation": "2025-07-11 14:39:01.881471",
- "doctype": "DocType",
- "engine": "InnoDB",
- "field_order": [
-  "section_break_szad",
-  "company",
-  "start_date",
-  "reporting_method",
-  "column_break_xsiv",
-  "reporting_status",
-  "end_date",
-  "bas_updation_datetime",
-  "section_break_fwyr",
-  "column_break_ogwt",
-  "1a",
-  "_1a_warning",
-  "_1a_only",
-  "column_break_ocbf",
-  "1b",
-  "_1b_warning",
-  "_1b_only",
-  "column_break_vahx",
-  "net_gst",
-  "amended_from",
-  "section_break_jfyg",
-  "g1",
-  "g4",
-  "g7",
-  "column_break_yyiy",
-  "g2",
-  "g5",
-  "g8",
-  "column_break_hwzp",
-  "g3",
-  "g6",
-  "g9",
-  "section_break_bxaq",
-  "g10",
-  "g13",
-  "g16",
-  "g19",
-  "column_break_uylg",
-  "g11",
-  "g14",
-  "g17",
-  "g20",
-  "column_break_nlku",
-  "g12",
-  "g15",
-  "g18",
-  "section_break_uajs",
-  "1a_details",
-  "1b_details",
-  "g1_details",
-  "g2_details",
-  "g3_details",
-  "g4_details",
-  "g10_details",
-  "g11_details",
-  "g13_details",
-  "g14_details"
- ],
- "fields": [
-  {
-   "fieldname": "section_break_szad",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "company",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Company",
-   "options": "Company",
-   "reqd": 1,
-   "set_only_once": 1
-  },
-  {
-   "fieldname": "start_date",
-   "fieldtype": "Date",
-   "in_list_view": 1,
-   "label": "Start Date",
-   "reqd": 1,
-   "set_only_once": 1
-  },
-  {
-   "fieldname": "column_break_xsiv",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "reporting_status",
-   "fieldtype": "Select",
-   "label": "Reporting Status",
-   "options": "In Review\nValidated",
-   "reqd": 1
-  },
-  {
-   "fieldname": "end_date",
-   "fieldtype": "Date",
-   "in_list_view": 1,
-   "label": "End Date",
-   "read_only": 1,
-   "reqd": 1
-  },
-  {
-   "fieldname": "section_break_fwyr",
-   "fieldtype": "Section Break"
-  },
-  {
-   "default": "0",
-   "fieldname": "net_gst",
-   "fieldtype": "Currency",
-   "label": "Net GST",
-   "read_only": 1
-  },
-  {
-   "default": "0",
-   "description": "Total Sales (Including GST)",
-   "fieldname": "g1",
-   "fieldtype": "Currency",
-   "label": "G1",
-   "read_only": 1
-  },
-  {
-   "default": "0",
-   "depends_on": "eval: doc.reporting_method === \"Full Reporting Method\"",
-   "description": "Input Taxed Sales",
-   "fieldname": "g4",
-   "fieldtype": "Currency",
-   "label": "G4",
-   "read_only": 1
-  },
-  {
-   "default": "0",
-   "depends_on": "eval: doc.reporting_method === \"Full Reporting Method\"",
-   "description": "Purchase without GST in the price",
-   "fieldname": "g14",
-   "fieldtype": "Currency",
-   "label": "G14",
-   "read_only": 1
-  },
-  {
-   "fieldname": "column_break_ocbf",
-   "fieldtype": "Column Break",
-   "read_only": 1
-  },
-  {
-   "default": "0",
-   "description": "GST On Sales",
-   "fieldname": "1a",
-   "fieldtype": "Currency",
-   "label": "1A",
-   "read_only": 1
-  },
-  {
-   "default": "0",
-   "depends_on": "eval: doc.reporting_method === \"Full Reporting Method\"",
-   "description": "Export Sales",
-   "fieldname": "g2",
-   "fieldtype": "Currency",
-   "label": "G2",
-   "read_only": 1
-  },
-  {
-   "default": "0",
-   "depends_on": "eval: doc.reporting_method === \"Full Reporting Method\"",
-   "description": "Capital Purchases (Including GST)",
-   "fieldname": "g10",
-   "fieldtype": "Currency",
-   "label": "G10",
-   "read_only": 1
-  },
-  {
-   "fieldname": "column_break_vahx",
-   "fieldtype": "Column Break",
-   "read_only": 1
-  },
-  {
-   "default": "0",
-   "description": "GST On Purchases",
-   "fieldname": "1b",
-   "fieldtype": "Currency",
-   "label": "1B",
-   "read_only": 1
-  },
-  {
-   "default": "0",
-   "depends_on": "eval: doc.reporting_method === \"Full Reporting Method\"",
-   "description": "Other GST-Free Sales",
-   "fieldname": "g3",
-   "fieldtype": "Currency",
-   "label": "G3",
-   "read_only": 1
-  },
-  {
-   "default": "0",
-   "depends_on": "eval: doc.reporting_method === \"Full Reporting Method\"",
-   "description": "Non Capital Purchases (Including GST)",
-   "fieldname": "g11",
-   "fieldtype": "Currency",
-   "label": "G11",
-   "read_only": 1
-  },
-  {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "AU BAS Report",
-   "print_hide": 1,
-   "read_only": 1,
-   "search_index": 1
-  },
-  {
-   "fieldname": "column_break_ogwt",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "section_break_uajs",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "1a_details",
-   "fieldtype": "Table",
-   "label": "1A Details",
-   "options": "AU BAS Report Entry",
-   "read_only": 1
-  },
-  {
-   "fieldname": "g1_details",
-   "fieldtype": "Table",
-   "label": "G1 Details",
-   "options": "AU BAS Report Entry",
-   "read_only": 1
-  },
-  {
-   "fieldname": "1b_details",
-   "fieldtype": "Table",
-   "label": "1B Details",
-   "options": "AU BAS Report Entry",
-   "read_only": 1
-  },
-  {
-   "fieldname": "g2_details",
-   "fieldtype": "Table",
-   "label": "G2 Details",
-   "options": "AU BAS Report Entry",
-   "read_only": 1
-  },
-  {
-   "fieldname": "g3_details",
-   "fieldtype": "Table",
-   "label": "G3 Details",
-   "options": "AU BAS Report Entry",
-   "read_only": 1
-  },
-  {
-   "fieldname": "g4_details",
-   "fieldtype": "Table",
-   "label": "G4 Details",
-   "options": "AU BAS Report Entry",
-   "read_only": 1
-  },
-  {
-   "fieldname": "g10_details",
-   "fieldtype": "Table",
-   "label": "G10 Details",
-   "options": "AU BAS Report Entry",
-   "read_only": 1
-  },
-  {
-   "fieldname": "g11_details",
-   "fieldtype": "Table",
-   "label": "G11 Details",
-   "options": "AU BAS Report Entry",
-   "read_only": 1
-  },
-  {
-   "fieldname": "g14_details",
-   "fieldtype": "Table",
-   "label": "G14 Details",
-   "options": "AU BAS Report Entry",
-   "read_only": 1
-  },
-  {
-   "default": "0",
-   "depends_on": "eval: doc.reporting_method === \"Full Reporting Method\"",
-   "description": "Purchase for Input Tax Sales",
-   "fieldname": "g13",
-   "fieldtype": "Currency",
-   "label": "G13",
-   "read_only": 1
-  },
-  {
-   "fieldname": "g13_details",
-   "fieldtype": "Table",
-   "label": "G13 Details",
-   "options": "AU BAS Report Entry",
-   "read_only": 1
-  },
-  {
-   "fieldname": "section_break_jfyg",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "column_break_yyiy",
-   "fieldtype": "Column Break"
-  },
-  {
-   "default": "0",
-   "depends_on": "eval: doc.reporting_method === \"Full Reporting Method\"",
-   "description": "Sub Total",
-   "fieldname": "g5",
-   "fieldtype": "Currency",
-   "label": "G5",
-   "read_only": 1
-  },
-  {
-   "fieldname": "column_break_hwzp",
-   "fieldtype": "Column Break"
-  },
-  {
-   "default": "0",
-   "depends_on": "eval: doc.reporting_method === \"Full Reporting Method\"",
-   "description": "Sales Subject to GST",
-   "fieldname": "g6",
-   "fieldtype": "Currency",
-   "label": "G6",
-   "read_only": 1
-  },
-  {
-   "default": "0",
-   "depends_on": "eval: doc.reporting_method === \"Full Reporting Method\"",
-   "description": "Adjustments (Total Sales subjected to GST)",
-   "fieldname": "g7",
-   "fieldtype": "Currency",
-   "label": "G7"
-  },
-  {
-   "default": "0",
-   "depends_on": "eval: doc.reporting_method === \"Full Reporting Method\"",
-   "description": "Sub Total",
-   "fieldname": "g8",
-   "fieldtype": "Currency",
-   "label": "G8",
-   "read_only": 1
-  },
-  {
-   "default": "0",
-   "depends_on": "eval: doc.reporting_method === \"Full Reporting Method\"",
-   "description": "GST on Sales",
-   "fieldname": "g9",
-   "fieldtype": "Currency",
-   "label": "G9",
-   "read_only": 1
-  },
-  {
-   "fieldname": "section_break_bxaq",
-   "fieldtype": "Section Break"
-  },
-  {
-   "default": "0",
-   "depends_on": "eval: doc.reporting_method === \"Full Reporting Method\"",
-   "description": "Sub Total",
-   "fieldname": "g16",
-   "fieldtype": "Currency",
-   "label": "G16",
-   "read_only": 1
-  },
-  {
-   "default": "0",
-   "depends_on": "eval: doc.reporting_method === \"Full Reporting Method\"",
-   "description": "Sub Total",
-   "fieldname": "g19",
-   "fieldtype": "Currency",
-   "label": "G19",
-   "read_only": 1
-  },
-  {
-   "fieldname": "column_break_uylg",
-   "fieldtype": "Column Break"
-  },
-  {
-   "default": "0",
-   "depends_on": "eval: doc.reporting_method === \"Full Reporting Method\"",
-   "description": "Total of purchases subject to GST",
-   "fieldname": "g17",
-   "fieldtype": "Currency",
-   "label": "G17",
-   "read_only": 1
-  },
-  {
-   "default": "0",
-   "depends_on": "eval: doc.reporting_method === \"Full Reporting Method\"",
-   "description": "GST on Purchases",
-   "fieldname": "g20",
-   "fieldtype": "Currency",
-   "label": "G20",
-   "read_only": 1
-  },
-  {
-   "fieldname": "column_break_nlku",
-   "fieldtype": "Column Break"
-  },
-  {
-   "default": "0",
-   "depends_on": "eval: doc.reporting_method === \"Full Reporting Method\"",
-   "description": "Sub Total",
-   "fieldname": "g12",
-   "fieldtype": "Currency",
-   "label": "G12",
-   "read_only": 1
-  },
-  {
-   "default": "0",
-   "depends_on": "eval: doc.reporting_method === \"Full Reporting Method\"",
-   "description": "Purchases for private use / not income tax deductible",
-   "fieldname": "g15",
-   "fieldtype": "Currency",
-   "label": "G15",
-   "read_only": 1
-  },
-  {
-   "default": "0",
-   "depends_on": "eval: doc.reporting_method === \"Full Reporting Method\"",
-   "description": "Adjustments (Total Purchase subjected to GST)",
-   "fieldname": "g18",
-   "fieldtype": "Currency",
-   "label": "G18"
-  },
-  {
-   "fieldname": "_1a_only",
-   "fieldtype": "Currency",
-   "hidden": 1,
-   "label": "1A only"
-  },
-  {
-   "fieldname": "_1b_only",
-   "fieldtype": "Currency",
-   "hidden": 1,
-   "label": "1B only"
-  },
-  {
-   "fieldname": "_1a_warning",
-   "fieldtype": "HTML",
-   "label": "1A Warning"
-  },
-  {
-   "fieldname": "_1b_warning",
-   "fieldtype": "HTML",
-   "label": "1B Warning"
-  },
-  {
-   "fieldname": "reporting_method",
-   "fieldtype": "Select",
-   "label": "Reporting Method",
-   "options": "Full reporting method\nSimpler BAS reporting method",
-   "read_only": 1
-  },
-  {
-   "fieldname": "bas_updation_datetime",
-   "fieldtype": "Datetime",
-   "hidden": 1,
-   "label": "BAS Data Updation Datetime"
-  }
- ],
- "grid_page_length": 50,
- "index_web_pages_for_search": 1,
- "is_submittable": 1,
- "links": [],
- "modified": "2025-10-08 22:10:44.892782",
- "modified_by": "Administrator",
- "module": "ERPNext Australian Localisation",
- "name": "AU BAS Report",
- "naming_rule": "Expression",
- "owner": "Administrator",
- "permissions": [
-  {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Accounts Manager",
-   "share": 1,
-   "submit": 1,
-   "write": 1
-  },
-  {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Accounts User",
-   "share": 1,
-   "submit": 1,
-   "write": 1
-  },
-  {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Auditor",
-   "share": 1,
-   "submit": 1,
-   "write": 1
-  },
-  {
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "AU Localisation Admin",
-   "share": 1
-  }
- ],
- "row_format": "Dynamic",
- "sort_field": "modified",
- "sort_order": "DESC",
- "states": []
+  "actions": [],
+  "allow_rename": 1,
+  "autoname": "format:BAS-{start_date}-{###}",
+  "creation": "2025-07-11 14:39:01.881471",
+  "doctype": "DocType",
+  "engine": "InnoDB",
+  "field_order": [
+    "section_break_szad",
+    "company",
+    "start_date",
+    "reporting_method",
+    "column_break_xsiv",
+    "reporting_status",
+    "end_date",
+    "bas_updation_datetime",
+    "section_break_fwyr",
+    "column_break_ogwt",
+    "1a",
+    "_1a_warning",
+    "_1a_only",
+    "column_break_ocbf",
+    "1b",
+    "_1b_warning",
+    "_1b_only",
+    "column_break_vahx",
+    "net_gst",
+    "amended_from",
+    "section_break_jfyg",
+    "g1",
+    "g4",
+    "g7",
+    "column_break_yyiy",
+    "g2",
+    "g5",
+    "g8",
+    "column_break_hwzp",
+    "g3",
+    "g6",
+    "g9",
+    "section_break_bxaq",
+    "g10",
+    "g13",
+    "g16",
+    "g19",
+    "column_break_uylg",
+    "g11",
+    "g14",
+    "g17",
+    "g20",
+    "column_break_nlku",
+    "g12",
+    "g15",
+    "g18",
+    "section_break_uajs",
+    "1a_details",
+    "1b_details",
+    "g1_details",
+    "g2_details",
+    "g3_details",
+    "g4_details",
+    "g10_details",
+    "g11_details",
+    "g13_details",
+    "g14_details"
+  ],
+  "fields": [
+    {
+      "fieldname": "section_break_szad",
+      "fieldtype": "Section Break"
+    },
+    {
+      "fieldname": "company",
+      "fieldtype": "Link",
+      "in_list_view": 1,
+      "label": "Company",
+      "options": "Company",
+      "reqd": 1,
+      "set_only_once": 1
+    },
+    {
+      "fieldname": "start_date",
+      "fieldtype": "Date",
+      "in_list_view": 1,
+      "label": "Start Date",
+      "reqd": 1,
+      "set_only_once": 1
+    },
+    {
+      "fieldname": "column_break_xsiv",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "reporting_status",
+      "fieldtype": "Select",
+      "label": "Reporting Status",
+      "options": "In Review\nValidated",
+      "reqd": 1
+    },
+    {
+      "fieldname": "end_date",
+      "fieldtype": "Date",
+      "in_list_view": 1,
+      "label": "End Date",
+      "read_only": 1,
+      "reqd": 1
+    },
+    {
+      "fieldname": "section_break_fwyr",
+      "fieldtype": "Section Break"
+    },
+    {
+      "default": "0",
+      "fieldname": "net_gst",
+      "fieldtype": "Currency",
+      "label": "Net GST",
+      "read_only": 1
+    },
+    {
+      "default": "0",
+      "description": "Total Sales (Including GST)",
+      "fieldname": "g1",
+      "fieldtype": "Currency",
+      "label": "G1",
+      "read_only": 1
+    },
+    {
+      "default": "0",
+      "depends_on": "eval: doc.reporting_method === \"Full reporting method\"",
+      "description": "Input Taxed Sales",
+      "fieldname": "g4",
+      "fieldtype": "Currency",
+      "label": "G4",
+      "read_only": 1
+    },
+    {
+      "default": "0",
+      "depends_on": "eval: doc.reporting_method === \"Full reporting method\"",
+      "description": "Purchase without GST in the price",
+      "fieldname": "g14",
+      "fieldtype": "Currency",
+      "label": "G14",
+      "read_only": 1
+    },
+    {
+      "fieldname": "column_break_ocbf",
+      "fieldtype": "Column Break",
+      "read_only": 1
+    },
+    {
+      "default": "0",
+      "description": "GST On Sales",
+      "fieldname": "1a",
+      "fieldtype": "Currency",
+      "label": "1A",
+      "read_only": 1
+    },
+    {
+      "default": "0",
+      "depends_on": "eval: doc.reporting_method === \"Full reporting method\"",
+      "description": "Export Sales",
+      "fieldname": "g2",
+      "fieldtype": "Currency",
+      "label": "G2",
+      "read_only": 1
+    },
+    {
+      "default": "0",
+      "depends_on": "eval: doc.reporting_method === \"Full reporting method\"",
+      "description": "Capital Purchases (Including GST)",
+      "fieldname": "g10",
+      "fieldtype": "Currency",
+      "label": "G10",
+      "read_only": 1
+    },
+    {
+      "fieldname": "column_break_vahx",
+      "fieldtype": "Column Break",
+      "read_only": 1
+    },
+    {
+      "default": "0",
+      "description": "GST On Purchases",
+      "fieldname": "1b",
+      "fieldtype": "Currency",
+      "label": "1B",
+      "read_only": 1
+    },
+    {
+      "default": "0",
+      "depends_on": "eval: doc.reporting_method === \"Full reporting method\"",
+      "description": "Other GST-Free Sales",
+      "fieldname": "g3",
+      "fieldtype": "Currency",
+      "label": "G3",
+      "read_only": 1
+    },
+    {
+      "default": "0",
+      "depends_on": "eval: doc.reporting_method === \"Full reporting method\"",
+      "description": "Non Capital Purchases (Including GST)",
+      "fieldname": "g11",
+      "fieldtype": "Currency",
+      "label": "G11",
+      "read_only": 1
+    },
+    {
+      "fieldname": "amended_from",
+      "fieldtype": "Link",
+      "label": "Amended From",
+      "no_copy": 1,
+      "options": "AU BAS Report",
+      "print_hide": 1,
+      "read_only": 1,
+      "search_index": 1
+    },
+    {
+      "fieldname": "column_break_ogwt",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "section_break_uajs",
+      "fieldtype": "Section Break"
+    },
+    {
+      "fieldname": "1a_details",
+      "fieldtype": "Table",
+      "label": "1A Details",
+      "options": "AU BAS Report Entry",
+      "read_only": 1
+    },
+    {
+      "fieldname": "g1_details",
+      "fieldtype": "Table",
+      "label": "G1 Details",
+      "options": "AU BAS Report Entry",
+      "read_only": 1
+    },
+    {
+      "fieldname": "1b_details",
+      "fieldtype": "Table",
+      "label": "1B Details",
+      "options": "AU BAS Report Entry",
+      "read_only": 1
+    },
+    {
+      "fieldname": "g2_details",
+      "fieldtype": "Table",
+      "label": "G2 Details",
+      "options": "AU BAS Report Entry",
+      "read_only": 1
+    },
+    {
+      "fieldname": "g3_details",
+      "fieldtype": "Table",
+      "label": "G3 Details",
+      "options": "AU BAS Report Entry",
+      "read_only": 1
+    },
+    {
+      "fieldname": "g4_details",
+      "fieldtype": "Table",
+      "label": "G4 Details",
+      "options": "AU BAS Report Entry",
+      "read_only": 1
+    },
+    {
+      "fieldname": "g10_details",
+      "fieldtype": "Table",
+      "label": "G10 Details",
+      "options": "AU BAS Report Entry",
+      "read_only": 1
+    },
+    {
+      "fieldname": "g11_details",
+      "fieldtype": "Table",
+      "label": "G11 Details",
+      "options": "AU BAS Report Entry",
+      "read_only": 1
+    },
+    {
+      "fieldname": "g14_details",
+      "fieldtype": "Table",
+      "label": "G14 Details",
+      "options": "AU BAS Report Entry",
+      "read_only": 1
+    },
+    {
+      "default": "0",
+      "depends_on": "eval: doc.reporting_method === \"Full reporting method\"",
+      "description": "Purchase for Input Tax Sales",
+      "fieldname": "g13",
+      "fieldtype": "Currency",
+      "label": "G13",
+      "read_only": 1
+    },
+    {
+      "fieldname": "g13_details",
+      "fieldtype": "Table",
+      "label": "G13 Details",
+      "options": "AU BAS Report Entry",
+      "read_only": 1
+    },
+    {
+      "fieldname": "section_break_jfyg",
+      "fieldtype": "Section Break"
+    },
+    {
+      "fieldname": "column_break_yyiy",
+      "fieldtype": "Column Break"
+    },
+    {
+      "default": "0",
+      "depends_on": "eval: doc.reporting_method === \"Full reporting method\"",
+      "description": "Sub Total",
+      "fieldname": "g5",
+      "fieldtype": "Currency",
+      "label": "G5",
+      "read_only": 1
+    },
+    {
+      "fieldname": "column_break_hwzp",
+      "fieldtype": "Column Break"
+    },
+    {
+      "default": "0",
+      "depends_on": "eval: doc.reporting_method === \"Full reporting method\"",
+      "description": "Sales Subject to GST",
+      "fieldname": "g6",
+      "fieldtype": "Currency",
+      "label": "G6",
+      "read_only": 1
+    },
+    {
+      "default": "0",
+      "depends_on": "eval: doc.reporting_method === \"Full reporting method\"",
+      "description": "Adjustments (Total Sales subjected to GST)",
+      "fieldname": "g7",
+      "fieldtype": "Currency",
+      "label": "G7"
+    },
+    {
+      "default": "0",
+      "depends_on": "eval: doc.reporting_method === \"Full reporting method\"",
+      "description": "Sub Total",
+      "fieldname": "g8",
+      "fieldtype": "Currency",
+      "label": "G8",
+      "read_only": 1
+    },
+    {
+      "default": "0",
+      "depends_on": "eval: doc.reporting_method === \"Full reporting method\"",
+      "description": "GST on Sales",
+      "fieldname": "g9",
+      "fieldtype": "Currency",
+      "label": "G9",
+      "read_only": 1
+    },
+    {
+      "fieldname": "section_break_bxaq",
+      "fieldtype": "Section Break"
+    },
+    {
+      "default": "0",
+      "depends_on": "eval: doc.reporting_method === \"Full reporting method\"",
+      "description": "Sub Total",
+      "fieldname": "g16",
+      "fieldtype": "Currency",
+      "label": "G16",
+      "read_only": 1
+    },
+    {
+      "default": "0",
+      "depends_on": "eval: doc.reporting_method === \"Full reporting method\"",
+      "description": "Sub Total",
+      "fieldname": "g19",
+      "fieldtype": "Currency",
+      "label": "G19",
+      "read_only": 1
+    },
+    {
+      "fieldname": "column_break_uylg",
+      "fieldtype": "Column Break"
+    },
+    {
+      "default": "0",
+      "depends_on": "eval: doc.reporting_method === \"Full reporting method\"",
+      "description": "Total of purchases subject to GST",
+      "fieldname": "g17",
+      "fieldtype": "Currency",
+      "label": "G17",
+      "read_only": 1
+    },
+    {
+      "default": "0",
+      "depends_on": "eval: doc.reporting_method === \"Full reporting method\"",
+      "description": "GST on Purchases",
+      "fieldname": "g20",
+      "fieldtype": "Currency",
+      "label": "G20",
+      "read_only": 1
+    },
+    {
+      "fieldname": "column_break_nlku",
+      "fieldtype": "Column Break"
+    },
+    {
+      "default": "0",
+      "depends_on": "eval: doc.reporting_method === \"Full reporting method\"",
+      "description": "Sub Total",
+      "fieldname": "g12",
+      "fieldtype": "Currency",
+      "label": "G12",
+      "read_only": 1
+    },
+    {
+      "default": "0",
+      "depends_on": "eval: doc.reporting_method === \"Full reporting method\"",
+      "description": "Purchases for private use / not income tax deductible",
+      "fieldname": "g15",
+      "fieldtype": "Currency",
+      "label": "G15",
+      "read_only": 1
+    },
+    {
+      "default": "0",
+      "depends_on": "eval: doc.reporting_method === \"Full reporting method\"",
+      "description": "Adjustments (Total Purchase subjected to GST)",
+      "fieldname": "g18",
+      "fieldtype": "Currency",
+      "label": "G18"
+    },
+    {
+      "fieldname": "_1a_only",
+      "fieldtype": "Currency",
+      "hidden": 1,
+      "label": "1A only"
+    },
+    {
+      "fieldname": "_1b_only",
+      "fieldtype": "Currency",
+      "hidden": 1,
+      "label": "1B only"
+    },
+    {
+      "fieldname": "_1a_warning",
+      "fieldtype": "HTML",
+      "label": "1A Warning"
+    },
+    {
+      "fieldname": "_1b_warning",
+      "fieldtype": "HTML",
+      "label": "1B Warning"
+    },
+    {
+      "fieldname": "reporting_method",
+      "fieldtype": "Select",
+      "label": "Reporting Method",
+      "options": "Full reporting method\nSimpler BAS reporting method",
+      "read_only": 1
+    },
+    {
+      "fieldname": "bas_updation_datetime",
+      "fieldtype": "Datetime",
+      "hidden": 1,
+      "label": "BAS Data Updation Datetime"
+    }
+  ],
+  "grid_page_length": 50,
+  "index_web_pages_for_search": 1,
+  "is_submittable": 1,
+  "links": [],
+  "modified": "2025-10-08 22:10:44.892782",
+  "modified_by": "Administrator",
+  "module": "ERPNext Australian Localisation",
+  "name": "AU BAS Report",
+  "naming_rule": "Expression",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Accounts Manager",
+      "share": 1,
+      "submit": 1,
+      "write": 1
+    },
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Accounts User",
+      "share": 1,
+      "submit": 1,
+      "write": 1
+    },
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Auditor",
+      "share": 1,
+      "submit": 1,
+      "write": 1
+    },
+    {
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "AU Localisation Admin",
+      "share": 1
+    }
+  ],
+  "row_format": "Dynamic",
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "states": []
 }
