@@ -203,8 +203,8 @@ CUSTOM_FIELDS_FOR_BANK_FILE = {
 			"fieldname": "file_format",
 			"label": "File Format",
 			"fieldtype": "Select",
-			"options": "ABA",
-			"default": "ABA",
+			"options": "-None-\nABA",
+			"default": "-None-",
 			"insert_after": "currency",
 			"module": "ERPNext Australian Localisation",
 		},
@@ -244,27 +244,4 @@ EMPLOYEE_BANK_DETAILS = {
 			"module": "ERPNext Australian Localisation",
 		},
 	]
-}
-
-POS_INVOICE_CUSTOM_FIELDS = {
-	"POS Invoice Item": [
-		{
-			"fieldname": "au_tax_code",
-			"label": "AU Tax Code",
-			"fieldtype": "Link",
-			"options": "AU Tax Code",
-			"read_only": 1,
-			"insert_after": "item_tax_template",
-			"module": "ERPNext Australian Localisation",
-		},
-		{
-			"fieldname": "au_tax_description",
-			"label": "AU Tax Description",
-			"fieldtype": "Data",
-			"fetch_from": "au_tax_code.tax_description",
-			"read_only": 1,
-			"insert_after": "au_tax_code",
-			"module": "ERPNext Australian Localisation",
-		},
-	],
 }
