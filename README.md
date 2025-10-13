@@ -3,9 +3,11 @@
 The ERPNext Australian Localisation app will install the necessary localisation functionalities for Australian business in ERPNext. This app works in line with the Australian Chart of Accounts. The features of this app are as follows:
 
 1. Assist the Australian companies to get the GST postings based on the Supplier and Customer type (Local / International / Capital Goods / Non Capital Goods).
-2. Generate the BAS report with the amounts to be reported in each of the BAS Label (1A, 1B, G1 to G9 and G10 to G20).
-3. Payment Proposal functionality to match the Payment Run for local suppliers.
-4. Generate ABA (Specified by Australian Banking Association) file used to process electronic transactions for supplier payments through the internet banking system of Australian banks.
+2. Options for the companies to choose the method for BAS Reporting - Full reporting or Simpler Reporting.
+3. Generate the BAS report based on Full Reporting method with the amounts to be reported in each of the BAS Label (1A, 1B, G1 to G9 and G10 to G20).
+4. Generate the BAS report based on Simpler Reporting method with the amounts to be reported in each of the BAS Label (1A, 1B and G1).
+5. Payment Proposal functionality to match the Payment Run for local suppliers.
+6. Generate ABA (Specified by Australian Banking Association) file used to process electronic transactions for supplier payments through the internet banking system of Australian banks.
 
 ### Prerequisites
 
@@ -25,20 +27,24 @@ bench install-app erpnext_australian_localisation
 
 ### Features
 
+- BAS Report can be generated based on either Simpler or Full reporting method
 - Capital Goods & Non Capital Goods Supplier definition in the Supplier Master's Tax Category field
 - Import Supplier definition in the Supplier Master's Tax Category field
 - Domestic / Export Customer definition in the Customer Master's Tax Category field
 - Exempt Item definition in the Item Master's Tax tab
-- Sales amounts are reported in G1, G2 and G3 as per the Customer Tax Category definition
-- Purchase amounts are reported in G10, G11 and G14 as per the Supplier Tax Category definition
-- Input Taxed Sales and the corresponding Purchase recording to report in G4 and G13 BAS Labels
-- Estimated Purchase for Private Use recording to report in G15 BAS Label
-- Adjustments for Sales and Purchase to report in G7 and G18 BAS Labels
+- ### Full BAS Reporting Method:
+  - Sales amounts are reported in G1, G2 and G3 as per the Customer Tax Category definition
+  - Purchase amounts are reported in G10, G11 and G14 as per the Supplier Tax Category definition
+  - Input Taxed Sales and the corresponding Purchase recording to report in G4 and G13 BAS Labels
+  - Estimated Purchase for Private Use recording to report in G15 BAS Label
+  - Adjustments for Sales and Purchase to report in G7 and G18 BAS Labels
+- ### Simpler BAS Reporting Method:
+  - Sales amounts are reported in G1 based on GL Entries.
 - The final 1A and 1B label amounts will be reported to arrive at the amount business needs to pay the ATO or the amount ATO will refund the business
 - BAS reports can be generated Monthly / Quarterly
 - BAS reports (detailed information with transactional document number) can be printed in PDF format
-- Payment Proposal (Batch) generation for Supplier Payment
-- ABA File generation for the Payment Batch which can be used to upload into the online banking system for bulk payments for the suppliers
+- Payment Proposal (Batch) generation for Supplier / Employee Payment
+- ABA File generation for the Payment Batch which can be used to upload into the online banking system for bulk payments for the suppliers / employees
 
 ### Screenshots & Setup Instructions
 
@@ -56,9 +62,13 @@ Australian Localiation Workspace - Carries the basic instructions & the function
 <br><br>
 <img width="1342" height="867" alt="image" src="https://github.com/user-attachments/assets/c3618678-4b1c-443d-ab6c-59d84e390e61" />
 <br><br>
-<ins>AU Localisation Settings:</ins> The frequency of BAS report submission can be changed from Monthly to Quarterly only when there is no open BAS report is available in the system
+<ins>AU Localisation Settings:</ins> The frequency of BAS report submission can be changed from Monthly to Quarterly only when there is no open BAS report is available in the system. Also the BAS Reporting Method (Full/Simpler) is defined on the below page.
 <br><br>
 <img width="1332" height="360" alt="image" src="https://github.com/user-attachments/assets/6cab65ea-c20b-4544-bec2-dccf386c708a" />
+<br><br>
+In case of Simpler BAS Reporting method to be used, the Account setup for BAS labels are available in Simpler BAS Report Setup.
+<br><br>
+img
 <br><br>
 <ins>Glimpse of the BAS Report:</ins>
 <br><br>

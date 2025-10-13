@@ -47,7 +47,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-10-06 21:56:44.708576",
+ "modified": "2025-10-13 23:26:58.633848",
  "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
  "name": "AU Simpler BAS Report Setup",
@@ -57,13 +57,10 @@
   {
    "create": 1,
    "delete": 1,
-   "email": 1,
    "export": 1,
-   "print": 1,
    "read": 1,
    "report": 1,
-   "role": "System Manager",
-   "share": 1,
+   "role": "AU Localisation Admin",
    "write": 1
   }
  ],
