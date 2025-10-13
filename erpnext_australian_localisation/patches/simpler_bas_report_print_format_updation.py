@@ -33,7 +33,17 @@ def execute():
 		{"options": "-None-\nABA", "default": "-None-"},
 	)
 
-	delete_custom_field(POS_INVOICE_CUSTOM_FIELDS)
+	try:
+		frappe.db.sql(
+			"""
+				DELETE FROM `tabAU BAS Entry`
+				WHERE voucher_type = 'POS Invoice'
+			"""
+		)
+		delete_custom_field(POS_INVOICE_CUSTOM_FIELDS)
+
+	except Exception:
+		pass
 
 	try:
 		frappe.rename_doc("Print Format", "AU BAS Report Format", "AU Full BAS Report Format")
