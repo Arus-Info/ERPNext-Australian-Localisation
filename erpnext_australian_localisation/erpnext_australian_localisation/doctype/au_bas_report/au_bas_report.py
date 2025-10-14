@@ -135,42 +135,40 @@ def update_simpler_bas_report(doc):
 	doc.update({"1b_details": []})
 	doc.update({"1a_details": []})
 
-	frappe.publish_progress(40, title="BAS Label Generating..", description="G1")
-	field_with_expression = "( - debit_in_account_currency + credit_in_account_currency) as gst_pay_basis"
-	entries = get_gl_entries_for_accounts(
-		doc.start_date, doc.end_date, doc.company, accounts_g1, field_with_expression
-	)
-	for e in entries:
-		row = frappe.new_doc("AU BAS Report Entry")
-		row.update(e)
-		doc.g1 += e.gst_pay_basis
-		doc.append("g1_details", row)
-	frappe.publish_progress(70, title="BAS Label Generating..", description="1A")
+	frappe.publish_progress(40, title="BAS Label Generating..", description="1A")
 	field_with_expression = "( - debit_in_account_currency + credit_in_account_currency) as gst_pay_amount"
-	entries = get_gl_entries_for_accounts(
+	entries_1a = get_gl_entries_for_accounts(
 		doc.start_date, doc.end_date, doc.company, account_1a, field_with_expression
 	)
-	for e in entries:
+	for e in entries_1a:
 		row = frappe.new_doc("AU BAS Report Entry")
 		row.update(e)
 		doc.update({"1a": doc.get("1a") + e.gst_pay_amount})
 		doc.append("1a_details", row)
-	for e in entries:
-		row = frappe.new_doc("AU BAS Report Entry")
-		row.update(e)
-		doc.g1 += e.gst_pay_amount
-		doc.append("g1_details", row)
 
-	frappe.publish_progress(100, title="BAS Label Generating..", description="1B")
+	frappe.publish_progress(70, title="BAS Label Generating..", description="1B")
 	field_with_expression = "(debit_in_account_currency - credit_in_account_currency) as gst_offset_amount"
-	entries = get_gl_entries_for_accounts(
+	entries_1b = get_gl_entries_for_accounts(
 		doc.start_date, doc.end_date, doc.company, account_1b, field_with_expression
 	)
-	for e in entries:
+	for e in entries_1b:
 		row = frappe.new_doc("AU BAS Report Entry")
 		row.update(e)
 		doc.update({"1b": doc.get("1b") + e.gst_offset_amount})
 		doc.append("1b_details", row)
+
+	frappe.publish_progress(100, title="BAS Label Generating..", description="G1")
+	field_with_expression = "( - debit_in_account_currency + credit_in_account_currency) as gst_pay_basis"
+	entries_g1 = get_gl_entries_for_accounts(
+		doc.start_date, doc.end_date, doc.company, accounts_g1, field_with_expression
+	)
+	entries_g1.extend(entries_1a)
+	entries_g1 = sorted(entries_g1, key=lambda x: (x.date, x.voucher_no))
+	for e in entries_g1:
+		row = frappe.new_doc("AU BAS Report Entry")
+		row.update(e)
+		doc.g1 += e.get("gst_pay_basis") if e.get("gst_pay_basis") else e.get("gst_pay_amount")
+		doc.append("g1_details", row)
 
 
 def get_gl_entries_for_accounts(start_date, end_date, company, accounts, field_with_expression):
@@ -189,6 +187,7 @@ def get_gl_entries_for_accounts(start_date, end_date, company, accounts, field_w
 			"account",
 			field_with_expression,
 		],
+		order_by="date",
 	)
 	return gl_entries
 
