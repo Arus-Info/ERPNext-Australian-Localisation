@@ -18,9 +18,9 @@ frappe.ui.form.on("AU BAS Report", {
 
 		if (frm.is_new()) {
 			frm.set_df_property("reporting_status", "read_only", 1);
+			frm.trigger("update_reporting_period");
 		} else {
 			frm.set_df_property("reporting_status", "read_only", 0);
-			frm.trigger("update_reporting_period");
 			if (frm.doc.docstatus == 0) {
 				if (frm.doc.bas_updation_datetime) {
 					frm.trigger("update_intro");
