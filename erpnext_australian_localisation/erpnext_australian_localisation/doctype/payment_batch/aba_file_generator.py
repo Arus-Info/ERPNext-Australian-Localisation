@@ -44,28 +44,34 @@ def generate_aba_file(payment_batch):
 			payment_entry.payment_entry,
 			"reference_no",
 		)
-		supplier_account_details = frappe.db.get_value(
-			"Supplier",
-			payment_entry.supplier,
-			["bank_account_no", "branch_code", "supplier_name"],
+		party_account_details = frappe.db.get_value(
+			payment_entry.party_type,
+			payment_entry.party,
+			["bank_account_no", "branch_code", payment_entry.party_type.lower() + "_name"],
 			as_dict=True,
 		)
 		content += "1"
 
-		if supplier_account_details.branch_code:
-			content += supplier_account_details.branch_code[0:7].ljust(7)
+		if party_account_details.branch_code:
+			content += party_account_details.branch_code[0:7].ljust(7)
 		else:
-			frappe.throw(_("Branch code not found for Supplier {0}").format(payment_entry.supplier))
+			frappe.throw(
+				_("Branch code not found for {0} {1}").format(payment_entry.party_type, payment_entry.party)
+			)
 
-		if supplier_account_details.bank_account_no:
-			content += supplier_account_details.bank_account_no[0:9].rjust(9)
+		if party_account_details.bank_account_no:
+			content += party_account_details.bank_account_no[0:9].rjust(9)
 		else:
-			frappe.throw(_("Bank account number not found for Supplier {0}").format(payment_entry.supplier))
+			frappe.throw(
+				_("Bank account number not found for {0} {1}").format(
+					payment_entry.party_type, payment_entry.party
+				)
+			)
 
 		content += " "
 		content += "50"
 		content += str(round(payment_entry.amount * 100))[0:10].rjust(10, "0")
-		content += supplier_account_details.supplier_name[0:32].ljust(32)
+		content += party_account_details.get(payment_entry.party_type.lower() + "_name")[0:32].ljust(32)
 		content += reference_no[0:18].ljust(18)
 
 		if bank_account.branch_code:

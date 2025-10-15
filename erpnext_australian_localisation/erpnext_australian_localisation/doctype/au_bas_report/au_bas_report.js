@@ -18,10 +18,13 @@ frappe.ui.form.on("AU BAS Report", {
 
 		if (frm.is_new()) {
 			frm.set_df_property("reporting_status", "read_only", 1);
+			frm.trigger("update_reporting_period");
 		} else {
 			frm.set_df_property("reporting_status", "read_only", 0);
-			frm.trigger("update_reporting_period");
 			if (frm.doc.docstatus == 0) {
+				if (frm.doc.bas_updation_datetime) {
+					frm.trigger("update_intro");
+				}
 				frm.add_custom_button(__("Update BAS Data"), () => {
 					if (frm.doc.reporting_status === "In Review") {
 						frappe.realtime.on("bas_data_generator", () => {});
@@ -29,9 +32,6 @@ frappe.ui.form.on("AU BAS Report", {
 							method: "erpnext_australian_localisation.erpnext_australian_localisation.doctype.au_bas_report.au_bas_report.get_gst",
 							args: {
 								name: frm.doc.name,
-								company: frm.doc.company,
-								start_date: frm.doc.start_date,
-								end_date: frm.doc.end_date,
 							},
 							callback: function () {},
 						});
@@ -77,7 +77,9 @@ frappe.ui.form.on("AU BAS Report", {
 		} else {
 			frm.set_df_property("net_gst", "label", "GST to Pay");
 		}
-		frm.trigger("check_data_correctness");
+		if (frm.doc.reporting_method === "Full reporting method") {
+			frm.trigger("check_data_correctness");
+		}
 	},
 
 	check_data_correctness(frm) {
@@ -190,9 +192,44 @@ frappe.ui.form.on("AU BAS Report", {
 		for (let i = 0; i < brp.length; i++) {
 			if (brp[i].company === frm.doc.company) {
 				reporting_period = brp[i].reporting_period;
+				frm.set_value("reporting_method", brp[i].reporting_method);
 				break;
 			}
 		}
+	},
+
+	update_intro(frm) {
+		let msg = "";
+		let color = "red";
+		const now = new Date(new Date().toUTCString().replace(" GMT", ""));
+		let milliseconds = now.getTime() - new Date(frm.doc.bas_updation_datetime).getTime();
+		let minutes = Math.floor(milliseconds / (1000 * 60));
+		if (minutes <= 1) {
+			color = "green";
+		}
+		minutes = minutes % 60;
+		let hours = Math.floor(milliseconds / (1000 * 60 * 60)) % 24;
+		let days = Math.floor(milliseconds / (1000 * 60 * 60 * 24));
+		if (days) {
+			msg += " " + days + " day";
+			if (days > 1) {
+				msg += "s";
+			}
+		}
+		if (hours) {
+			msg += " " + hours + " hour";
+			if (hours > 1) {
+				msg += "s";
+			}
+		}
+		if (minutes) {
+			msg += " " + minutes + " minute";
+			if (minutes > 1) {
+				msg += "s";
+			}
+		}
+		msg = msg === "" ? " now" : msg + " ago";
+		frm.set_intro(__("BAS Report last updated{0}", [msg]), color);
 	},
 });
 

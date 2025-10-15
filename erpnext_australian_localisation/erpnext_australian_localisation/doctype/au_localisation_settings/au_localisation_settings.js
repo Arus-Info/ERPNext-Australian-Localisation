@@ -16,6 +16,11 @@ frappe.ui.form.on("AU Localisation Settings", {
 						"reporting_period",
 						rp[i].name
 					).read_only = r.message;
+					frappe.meta.get_docfield(
+						rp[i].doctype,
+						"reporting_method",
+						rp[i].name
+					).read_only = r.message;
 				},
 			});
 		}
