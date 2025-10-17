@@ -179,6 +179,7 @@ def get_gl_entries_for_accounts(start_date, end_date, company, accounts, field_w
 			["posting_date", "<=", end_date],
 			["company", "=", company],
 			["account", "in", accounts],
+			["is_cancelled", "=", 0],
 		],
 		fields=[
 			"posting_date as date",
