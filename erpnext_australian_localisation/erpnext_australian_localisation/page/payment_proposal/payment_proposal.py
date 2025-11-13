@@ -114,9 +114,9 @@ def get_query_for_supplier_outstanding_entries(filters):
 					JSON_OBJECT(
 						"entry_name", pi.name,
 						"due_date", pi.due_date,
-						"invoice_amount", pi.rounded_total,
+						"invoice_amount",if(pi.disable_rounded_total,pi.grand_total,pi.rounded_total),
 						"invoice_currency", pi.currency,
-						"rounded_total", pi.base_rounded_total,
+						"rounded_total", if(pi.disable_rounded_total,pi.base_grand_total,pi.base_rounded_total),
 						"outstanding_amount", pi.outstanding_amount
 					),
 					JSON_OBJECT())
@@ -150,6 +150,9 @@ def get_query_for_supplier_outstanding_entries(filters):
 
 
 def get_query_for_employee_outstanding_expense(filters):
+	"""
+	Returns the query for getting the Expense Claim under some conditions specified as follows.
+	"""
 	filters["condition_based_on_posting_date"] = ""
 	if filters["from_due_date"]:
 		filters["condition_based_on_posting_date"] = f"and ec.posting_date >= '{filters['from_due_date']}'"
