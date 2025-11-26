@@ -26,6 +26,7 @@ frappe.ui.form.on("AU BAS Report", {
 					frm.trigger("update_intro");
 				}
 				frm.add_custom_button(__("Update BAS Data"), () => {
+					frappe.dom.freeze();
 					if (frm.doc.reporting_status === "In Review") {
 						frappe.realtime.on("bas_data_generator", () => {});
 						frappe.call({
@@ -33,7 +34,9 @@ frappe.ui.form.on("AU BAS Report", {
 							args: {
 								name: frm.doc.name,
 							},
-							callback: function () {},
+							callback: function () {
+								frappe.dom.unfreeze();
+							},
 						});
 					} else {
 						frappe.throw(
