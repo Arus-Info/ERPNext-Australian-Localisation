@@ -18,11 +18,11 @@ def create_simpler_bas_report_setup(company, chart_of_accounts):
 					["account_type", "=", "Income Account"],
 					["company", "=", company],
 				],
+				pluck="name",
 			)
 			for account in accounts:
-				child = frappe.new_doc("Income Account for Simpler BAS")
-				child.account = account
-				doc.append("accounts_g1", child)
+				doc.append("accounts_g1", {"doctype": "Income Account for Simpler BAS", "account": account})
+
 			account_1a = frappe.db.get_value(
 				"Account",
 				{
@@ -44,8 +44,7 @@ def create_simpler_bas_report_setup(company, chart_of_accounts):
 				"name",
 			)
 
-			if account_1a != account_1b:
-				doc.update({"account_1a": account_1a, "account_1b": account_1b})
+			doc.update({"account_1a": account_1a, "account_1b": account_1b})
 
 		doc.flags.ignore_mandatory = True
 		doc.save()
@@ -65,6 +64,10 @@ def after_insert(doc, event):
 
 
 def on_update(doc, event):
+	"""
+	Create Simpler BAS Report Setup for the company on update
+	Because accounts for company will be created only after insertion of company
+	"""
 	if doc.country == "Australia":
 		create_simpler_bas_report_setup(doc.name, doc.chart_of_accounts)
 
