@@ -5,7 +5,7 @@ from frappe import _
 
 
 def validate(doc, event):
-	if doc.branch_code:
+	if doc.get("branch_code"):
 		pattern = re.compile(r"^\d{6}$")
 		branch_code = doc.branch_code.replace("-", "")
 		if not pattern.match(branch_code):
@@ -13,7 +13,7 @@ def validate(doc, event):
 		else:
 			doc.branch_code = branch_code[0:3] + "-" + branch_code[3:]
 
-	if doc.bank_account_no:
+	if doc.get("bank_account_no"):
 		pattern = re.compile(r"^\d{9}$")
 		if not pattern.match(doc.bank_account_no):
 			frappe.throw(_("Only 9-digit numbers are allowed in Bank Account Number."))

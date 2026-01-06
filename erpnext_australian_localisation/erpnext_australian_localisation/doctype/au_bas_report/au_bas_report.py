@@ -34,6 +34,9 @@ class AUBASReport(Document):
 
 @frappe.whitelist()
 def get_gst(name):
+	"""
+	Update the BAS Report G labels based on the reporting method
+	"""
 	doc = frappe.get_doc("AU BAS Report", name)
 	doc.bas_updation_datetime = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
 
@@ -50,6 +53,9 @@ def get_gst(name):
 
 
 def update_full_bas_report(doc):
+	"""
+	Update the BAS Report from AU BAS Entry which is generated on transaction
+	"""
 	from frappe.model.mapper import get_mapped_doc
 
 	bas_labels = frappe.get_all("AU BAS Label", pluck="name")
@@ -93,7 +99,7 @@ def update_full_bas_report(doc):
 				+ bas_report_entry.gst_offset_amount
 			)
 			doc.append(bas_label_detail["fieldname"], bas_report_entry)
-		doc.update({bas_label_detail["bas_label"].lower(): math.floor(total)})
+		doc.update({bas_label_detail["bas_label"].lower(): total})
 
 	doc._1a_only = doc.get("1a")
 	doc._1b_only = doc.get("1b")
@@ -101,18 +107,39 @@ def update_full_bas_report(doc):
 	doc.g5 = doc.g2 + doc.g3 + doc.g4
 	doc.g6 = doc.g1 - doc.g5
 	doc.g8 = doc.g6 + doc.g7
-	doc.g9 = math.floor(doc.g8 / 11)
+	doc.g9 = doc.g8 / 11
 
 	doc.g12 = doc.g10 + doc.g11
 	doc.g16 = doc.g13 + doc.g14 + doc.g15
 	doc.g17 = doc.g12 - doc.g16
 	doc.g19 = doc.g17 + doc.g18
-	doc.g20 = math.floor(doc.g19 / 11)
+	doc.g20 = doc.g19 / 11
 
-	doc.update({"1a": doc._1a_only + math.floor(doc.g7 / 11), "1b": doc._1b_only + math.floor(doc.g18 / 11)})
+	doc.update({"1a": doc._1a_only + doc.g7 / 11, "1b": doc._1b_only + doc.g18 / 11})
+
+	for bas_label in [
+		*bas_labels,
+		"g5",
+		"g6",
+		"g7",
+		"g8",
+		"g9",
+		"g12",
+		"g17",
+		"g18",
+		"g19",
+		"g20",
+		"_1a_only",
+		"_1b_only",
+	]:
+		label = bas_label.lower()
+		doc.update({label: math.floor(doc.get(label))})
 
 
 def update_simpler_bas_report(doc):
+	"""
+	Update BAS Report from GL Entry based on the account specifications in AU Simpler BAS Report Setup
+	"""
 	doc.update({"1a": 0, "1b": 0, "g1": 0})
 	accounts_g1 = frappe.get_list(
 		"Income Account for Simpler BAS",
@@ -170,8 +197,15 @@ def update_simpler_bas_report(doc):
 		doc.g1 += e.get("gst_pay_basis") if e.get("gst_pay_basis") else e.get("gst_pay_amount")
 		doc.append("g1_details", row)
 
+	doc.update(
+		{"1a": math.floor(doc.get("1a")), "1b": math.floor(doc.get("1b")), "g1": math.floor(doc.get("g1"))}
+	)
+
 
 def get_gl_entries_for_accounts(start_date, end_date, company, accounts, field_with_expression):
+	"""
+	Return GL Entries with the given start_date, end_date, company and accounts
+	"""
 	gl_entries = frappe.get_list(
 		"GL Entry",
 		filters=[
@@ -188,7 +222,7 @@ def get_gl_entries_for_accounts(start_date, end_date, company, accounts, field_w
 			"account",
 			field_with_expression,
 		],
-		order_by="date",
+		order_by="date desc",
 	)
 	return gl_entries
 
