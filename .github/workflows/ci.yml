@@ -46,7 +46,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.12"
+          python-version: "3.10"
 
       - name: Setup Node
         uses: actions/setup-node@v3
@@ -103,6 +103,7 @@ jobs:
       - name: Run Tests
         working-directory: /home/runner/frappe-bench
         run: |
+          bench --site test_site execute erpnext.setup.doctype.warehouse_type.warehouse_type.create_warehouse_types
           bench --site test_site set-config allow_tests true
           bench --site test_site run-tests --app erpnext_australian_localisation
         env:
