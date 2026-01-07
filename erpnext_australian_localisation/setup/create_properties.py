@@ -2,6 +2,7 @@ import frappe
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 
 from erpnext_australian_localisation.setup.custom_fields import (
+	BAI2_FIELDS,
 	CUSTOM_FIELDS,
 	CUSTOM_FIELDS_FOR_BANK_FILE,
 	EMPLOYEE_BANK_DETAILS,
@@ -36,3 +37,7 @@ def create_hrms_custom_fields():
 
 def create_properties_for_bank_file():
 	create_custom_fields(CUSTOM_FIELDS_FOR_BANK_FILE, update=1)
+
+
+def create_properties_for_bai2_file():
+	create_custom_fields(BAI2_FIELDS, update=1)
