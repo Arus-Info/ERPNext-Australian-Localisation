@@ -47,10 +47,16 @@ def download_uploaded_csv_template(bank_account):
 		csv_content = (
 			"Date,Amount,Account Number,,Transaction Type,"
 			"Transaction Details,Balance,Category,Merchant Name\n"
-			"01/01/2025,-150.00,12345678,,DEBIT,"
-			"Coffee Shop,1200.50,Food,Starbucks\n"
-			"02/01/2025,2000.00,12345678,,CREDIT,"
-			"Salary Credit,3200.50,Income,Employer\n"
+			"01/01/2025,-150.00,123456789,,DEBIT,"
+			"Coffee Shop,12000.00,Food,Starbucks\n"
+			"02/01/2025,2000.00,123456789,,CREDIT,"
+			"Salary Credit,10000.00,Income,Employer\n"
+			"03/01/2025,-300.00,123456789,,DEBIT,"
+			"ecommerce,9700.00,Shopping,Flipkart\n"
+			"04/01/2025,+1000.00,123456789,,CREDIT,"
+			"Refund from flipkart,11700.00,Shopping,Flipkart\n"
+			"05/01/2025,-400.00,123456789,,DEBIT,"
+			"Hypermarket,11300.00,Grocery,lulu\n"
 		)
 
 		return {"filename": "NAB_Bank_Statement_Template.csv", "filecontent": csv_content}

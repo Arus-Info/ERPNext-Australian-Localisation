@@ -15,9 +15,7 @@ def rename_properties_for_bank_file():
 	# Get the Custom Field
 	cf_name = f"{doctype}-{fieldname}"
 	if frappe.db.exists("Custom Field", cf_name):
-		cf = frappe.get_doc("Custom Field", cf_name)
-		cf.label = new_label
-		cf.save()
-		frappe.db.commit()
+		frappe.db.set_value("Custom Field", cf_name, "label", new_label)
+
 	else:
-		print(f"Field '{fieldname}' not found in '{doctype}'")
+		print(f"Custom Field '{cf_name}' not found")
