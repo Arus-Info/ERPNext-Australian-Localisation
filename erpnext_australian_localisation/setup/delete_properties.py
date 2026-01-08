@@ -1,6 +1,7 @@
 import frappe
 
 from erpnext_australian_localisation.setup.custom_fields import (
+	BAI2_FIELDS,
 	CUSTOM_FIELDS,
 	CUSTOM_FIELDS_FOR_BANK_FILE,
 	EMPLOYEE_BANK_DETAILS,
@@ -46,6 +47,7 @@ def delete_property_setter():
 def remove_setup():
 	delete_custom_field(CUSTOM_FIELDS)
 	delete_custom_field(CUSTOM_FIELDS_FOR_BANK_FILE)
+	delete_custom_field(BAI2_FIELDS)
 	if "hrms" in frappe.get_installed_apps():
 		delete_hrms_custom_fields()
 	delete_property_setter()

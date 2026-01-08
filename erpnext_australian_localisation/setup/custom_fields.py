@@ -201,7 +201,7 @@ CUSTOM_FIELDS_FOR_BANK_FILE = {
 		},
 		{
 			"fieldname": "file_format",
-			"label": "File Format",
+			"label": "Payment File Format",
 			"fieldtype": "Select",
 			"options": "-None-\nABA",
 			"default": "-None-",
@@ -244,4 +244,40 @@ EMPLOYEE_BANK_DETAILS = {
 			"module": "ERPNext Australian Localisation",
 		},
 	]
+}
+BAI2_FIELDS = {
+	"Bank Account": [
+		{
+			"fieldname": "bank_file_format_column",
+			"fieldtype": "Column Break",
+			"label": "Bank Statement Import",
+			"insert_after": "file_format",
+		},
+		{
+			"label": "Bank Statement Format",
+			"fieldname": "bank_statement_format",
+			"fieldtype": "Select",
+			"options": "-None-\nNAB CSV Format",
+			"default": "-None-",
+			"insert_after": "bank_file_format_column",
+		},
+	],
+	"Bank Statement Import": [
+		{
+			"fieldname": "bs_import_file",
+			"label": "Import File (NAB CSV Format)",
+			"fieldtype": "Attach",
+			"insert_after": "import_file",
+			"hidden": 1,
+			"no_copy": 1,
+		},
+		{
+			"fieldname": "bs_download_template",
+			"label": "Download Template",
+			"fieldtype": "Button",
+			"insert_after": "download_template",
+			"hidden": 1,
+			"no_copy": 1,
+		},
+	],
 }

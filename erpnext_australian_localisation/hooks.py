@@ -61,6 +61,7 @@ doctype_js = {
 	"Purchase Order": "public/js/setup_input_taxed_sales.js",
 	"Purchase Receipt": "public/js/setup_input_taxed_sales.js",
 	"Supplier": ["public/js/supplier.js"],
+	"Bank Statement Import": "public/js/bank_statement_import.js",
 }
 
 # include js in doctype views
@@ -197,6 +198,9 @@ doc_events = {
 	"Bank Account": {
 		"validate": "erpnext_australian_localisation.overrides.bank_details_validation.bank_account_validation"
 	},
+	"Bank Statement Import": {
+		"on_update": "erpnext_australian_localisation.overrides.bank_statement_import.after_save"
+	},
 }
 
 # Scheduled Tasks
@@ -231,7 +235,8 @@ scheduler_events = {"monthly": ["erpnext_australian_localisation.tasks.bas_repor
 # ------------------------------
 #
 # override_whitelisted_methods = {
-# 	"frappe.desk.doctype.event.event.get_events": "erpnext_australian_localisation.event.get_events"
+# 	# 	"frappe.desk.doctype.event.event.get_events": "erpnext_australian_localisation.event.get_events"
+# 	"frappe.core.doctype.data_import.data_import.download_template": "erpnext_australian_localisation.overrides.bank_statement_import.download_template"
 # }
 #
 # each overriding function accepts a `data` argument;
