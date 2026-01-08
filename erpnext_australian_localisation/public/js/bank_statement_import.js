@@ -12,7 +12,7 @@ frappe.ui.form.on("Bank Statement Import", {
 	},
 	bs_download_template(frm) {
 		if (!frm.doc.bank_account) {
-			frappe.msgprint(_("Please select Bank Account first"));
+			frappe.msgprint(__("Please select Bank Account first"));
 			return;
 		}
 
