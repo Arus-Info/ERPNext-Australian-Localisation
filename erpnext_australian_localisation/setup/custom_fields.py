@@ -256,9 +256,8 @@ BAI2_FIELDS = {
 		{
 			"label": "Bank Statement Format",
 			"fieldname": "bank_statement_format",
-			"fieldtype": "Select",
-			"options": "-None-\nNAB CSV Format",
-			"default": "-None-",
+			"fieldtype": "Link",
+			"options": "AU Bank Statement Format",
 			"insert_after": "bank_file_format_column",
 		},
 	],
