@@ -49,7 +49,12 @@ frappe.ui.form.on("Bank Statement Import", {
 		}
 
 		frappe.db.get_doc("Bank Account", frm.doc.bank_account).then((bank) => {
-			if (bank.bank_statement_format === "NAB CSV Format") {
+			if (
+				bank.bank_statement_format === "NAB CSV Format" ||
+				bank.bank_statement_format === "Commonwealth Bank CSV Format" ||
+				bank.bank_statement_format === "Westpac CSV Format" ||
+				bank.bank_statement_format === "ANZ CSV Format"
+			) {
 				frm.set_df_property("google_sheets_url", "hidden", 1);
 				frm.set_df_property("import_file", "hidden", 1);
 				frm.set_df_property("html_5", "hidden", 1);

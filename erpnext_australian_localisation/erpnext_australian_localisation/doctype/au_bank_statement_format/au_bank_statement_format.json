@@ -6,18 +6,36 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "section_break_9six"
+  "credit_debit_mapping",
+  "date_format",
+  "table_avar"
  ],
  "fields": [
   {
-   "fieldname": "section_break_9six",
-   "fieldtype": "Section Break"
+   "fieldname": "credit_debit_mapping",
+   "fieldtype": "Select",
+   "label": "Credit Debit Mapping",
+   "options": "Single credit&debit\nCombined credit&debit",
+   "read_only": 1
+  },
+  {
+   "fieldname": "date_format",
+   "fieldtype": "Data",
+   "label": "Date Format",
+   "read_only": 1
+  },
+  {
+   "fieldname": "table_avar",
+   "fieldtype": "Table",
+   "label": "Fields",
+   "options": "AU Bank Statement Format Mapping",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-01-08 20:44:46.813055",
+ "modified": "2026-01-13 16:58:43.685335",
  "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
  "name": "AU Bank Statement Format",

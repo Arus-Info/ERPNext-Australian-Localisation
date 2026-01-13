@@ -8,6 +8,7 @@ def create_default_records():
 	records.extend(get_au_tax_determination())
 	records.extend(get_au_bas_labels())
 	records.extend(get_au_bas_label_setup())
+	records.extend(get_au_bank_statement_format())
 
 	make_records(records)
 
@@ -382,6 +383,134 @@ def get_au_bas_label_setup():
 			"tax_management": "Subjected",
 			"tax_allocation": "Deductible Purchase",
 			"tax_code": "AUPPVTUSE",
+		},
+	]
+	return records
+
+
+def get_au_bank_statement_format():
+	records = [
+		{
+			"doctype": "AU Bank Statement Format",
+			"name": "NAB CSV Format",
+			"credit_debit_mapping": "Combined credit&debit",
+			"date_format": "DD MMM YYYY",
+			"table_avar": [
+				{
+					"doctype": "AU Bank Statement Format Mapping",
+					"erpnext_column": "Date",
+					"bank_statement_column": "Date",
+				},
+				{
+					"doctype": "AU Bank Statement Format Mapping",
+					"erpnext_column": "Deposit",
+					"bank_statement_column": "Amount",
+				},
+				{
+					"doctype": "AU Bank Statement Format Mapping",
+					"erpnext_column": "Withdrawal",
+					"bank_statement_column": "Amount",
+				},
+				{
+					"doctype": "AU Bank Statement Format Mapping",
+					"erpnext_column": "Description",
+					"bank_statement_column": "Transaction Details",
+				},
+			],
+		},
+		{
+			"doctype": "AU Bank Statement Format",
+			"name": "Westpac CSV Format",
+			"credit_debit_mapping": "Combined credit&debit",
+			"date_format": "YYYYMMDD",
+			"table_avar": [
+				{
+					"doctype": "AU Bank Statement Format Mapping",
+					"erpnext_column": "Date",
+					"bank_statement_column": "TRAN_DATE",
+				},
+				{
+					"doctype": "AU Bank Statement Format Mapping",
+					"erpnext_column": "Deposit",
+					"bank_statement_column": "AMOUNT",
+				},
+				{
+					"doctype": "AU Bank Statement Format Mapping",
+					"erpnext_column": "Withdrawal",
+					"bank_statement_column": "AMOUNT",
+				},
+				{
+					"doctype": "AU Bank Statement Format Mapping",
+					"erpnext_column": "Description",
+					"bank_statement_column": "NARRATIVE",
+				},
+				{
+					"doctype": "AU Bank Statement Format Mapping",
+					"erpnext_column": "Reference Number",
+					"bank_statement_column": "SERIAL",
+				},
+			],
+		},
+		{
+			"doctype": "AU Bank Statement Format",
+			"name": "ANZ CSV Format",
+			"credit_debit_mapping": "Single credit&debit",
+			"date_format": "DD-MMM-YY",
+			"table_avar": [
+				{
+					"doctype": "AU Bank Statement Format Mapping",
+					"erpnext_column": "Date",
+					"bank_statement_column": "Post Date",
+				},
+				{
+					"doctype": "AU Bank Statement Format Mapping",
+					"erpnext_column": "Deposit",
+					"bank_statement_column": "Credits",
+				},
+				{
+					"doctype": "AU Bank Statement Format Mapping",
+					"erpnext_column": "Withdrawal",
+					"bank_statement_column": "Debits",
+				},
+				{
+					"doctype": "AU Bank Statement Format Mapping",
+					"erpnext_column": "Description",
+					"bank_statement_column": "Narrative",
+				},
+				{
+					"doctype": "AU Bank Statement Format Mapping",
+					"erpnext_column": "Reference Number",
+					"bank_statement_column": "Bank Reference",
+				},
+			],
+		},
+		{
+			"doctype": "AU Bank Statement Format",
+			"name": "Commonwealth Bank CSV Format",
+			"credit_debit_mapping": "Combined credit&debit",
+			"date_format": "DD/MM/YYYY",
+			"table_avar": [
+				{
+					"doctype": "AU Bank Statement Format Mapping",
+					"erpnext_column": "Date",
+					"bank_statement_column": "Date",
+				},
+				{
+					"doctype": "AU Bank Statement Format Mapping",
+					"erpnext_column": "Deposit",
+					"bank_statement_column": "Amount",
+				},
+				{
+					"doctype": "AU Bank Statement Format Mapping",
+					"erpnext_column": "Withdrawal",
+					"bank_statement_column": "Amount",
+				},
+				{
+					"doctype": "AU Bank Statement Format Mapping",
+					"erpnext_column": "Description",
+					"bank_statement_column": "Description",
+				},
+			],
 		},
 	]
 	return records
