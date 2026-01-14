@@ -12,10 +12,6 @@ on:
 
 env:
   BRANCH: ${{ github.base_ref }}
-      - version-*
-
-env:
-  BRANCH: ${{ github.base_ref }}
 
 concurrency:
   group: develop-erpnext_australian_localisation-${{ github.event.number }}
