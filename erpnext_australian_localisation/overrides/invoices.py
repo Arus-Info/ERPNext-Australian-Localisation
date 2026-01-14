@@ -37,9 +37,14 @@ def before_submit(doc, event):
 
 		for tax in doc.taxes:
 			update_tax_code_for_tax(tax, tax_template)
+			tax_management = (
+				"Tax Account"
+				if frappe.db.get_value("Account", tax.account_head, "account_type") == "Tax"
+				else "Subjected"
+			)
 			result.extend(
 				generate_bas_labels(
-					"Tax Account",
+					tax_management,
 					tax_allocation,
 					tax.au_tax_code,
 					tax.account_head,
