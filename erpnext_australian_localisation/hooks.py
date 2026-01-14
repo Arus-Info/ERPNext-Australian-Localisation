@@ -17,6 +17,8 @@ company_data_to_be_ignored = ["Tax Rule"]
 after_app_install = "erpnext_australian_localisation.install.after_app_install"
 before_app_uninstall = "erpnext_australian_localisation.uninstall.before_app_uninstall"
 
+before_tests = "erpnext_australian_localisation.tests.before_tests"
+
 # required_apps = []
 
 # Each item in the list will be shown as an app in the apps page
