@@ -11,7 +11,7 @@ on:
       - version-*
 
 env:
-  BRANCH: ${{ github.base_ref }}
+  BRANCH: ${{ github.base_ref || github.ref_name }}
 
 concurrency:
   group: develop-erpnext_australian_localisation-${{ github.event.number }}
@@ -53,12 +53,12 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.11"
 
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
           check-latest: true
 
       - name: Cache pip
