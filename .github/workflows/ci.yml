@@ -11,7 +11,7 @@ on:
       - version-*
 
 env:
-  BRANCH: ${{ github.base_ref }}
+  BRANCH: ${{ github.base_ref || github.ref_name }}
 
 concurrency:
   group: develop-erpnext_australian_localisation-${{ github.event.number }}
@@ -34,7 +34,7 @@ jobs:
         ports:
           - 11000:6379
       mariadb:
-        image: mariadb:10.6
+        image: mariadb:11.8
         env:
           MYSQL_ROOT_PASSWORD: root
         ports:
@@ -51,14 +51,14 @@ jobs:
           grep -rn "def test" > /dev/null
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
-          python-version: "3.10"
+          python-version: "3.14"
 
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v6
         with:
-          node-version: 18
+          node-version: 24
           check-latest: true
 
       - name: Cache pip
@@ -74,7 +74,7 @@ jobs:
         id: yarn-cache-dir-path
         run: 'echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT'
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         id: yarn-cache
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
@@ -101,7 +101,9 @@ jobs:
           bench get-app erpnext_australian_localisation $GITHUB_WORKSPACE
           bench setup requirements --dev
           bench new-site --db-root-password root --admin-password admin test_site
+          bench get-app payments --branch develop
           bench --site test_site install-app erpnext
+          bench --site test_site install-app payments
           bench --site test_site install-app erpnext_australian_localisation
           bench build
         env:

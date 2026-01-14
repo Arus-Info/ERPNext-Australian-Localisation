@@ -5,7 +5,6 @@ from frappe.utils.data import now_datetime
 
 
 def before_tests():
-	print("is test running")
 	frappe.clear_cache()
 
 	if not frappe.db.a_row_exists("Company"):
