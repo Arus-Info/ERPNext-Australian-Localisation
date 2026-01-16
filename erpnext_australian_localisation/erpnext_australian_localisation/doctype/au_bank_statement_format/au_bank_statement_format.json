@@ -8,7 +8,7 @@
  "field_order": [
   "credit_debit_mapping",
   "date_format",
-  "table_avar"
+  "mapping_fields"
  ],
  "fields": [
   {
@@ -25,17 +25,16 @@
    "read_only": 1
   },
   {
-   "fieldname": "table_avar",
+   "fieldname": "mapping_fields",
    "fieldtype": "Table",
-   "label": "Fields",
-   "options": "AU Bank Statement Format Mapping",
-   "read_only": 1
+   "label": "Mapping Fields",
+   "options": "AU Bank Statement Format Mapping"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-01-13 16:58:43.685335",
+ "modified": "2026-01-16 14:17:43.913729",
  "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
  "name": "AU Bank Statement Format",

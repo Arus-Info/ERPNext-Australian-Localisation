@@ -121,7 +121,7 @@ def convert_using_child_mapping(content, format_doc, bank_account, currency):
 	# Build mapping from child table
 	# -------------------------------
 	mapping = {}
-	for row in format_doc.table_avar:
+	for row in format_doc.mapping_fields:
 		if row.erpnext_column and row.bank_statement_column:
 			mapping[row.erpnext_column] = row.bank_statement_column
 
