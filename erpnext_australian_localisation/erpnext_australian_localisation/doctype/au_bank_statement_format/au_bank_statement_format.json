@@ -6,18 +6,42 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "section_break_9six"
+  "credit_debit_mapping",
+  "date_format",
+  "mapping_fields",
+  "sample_data"
  ],
  "fields": [
   {
-   "fieldname": "section_break_9six",
-   "fieldtype": "Section Break"
+   "fieldname": "credit_debit_mapping",
+   "fieldtype": "Select",
+   "label": "Credit Debit Mapping",
+   "options": "Single credit&debit\nCombined credit&debit",
+   "read_only": 1
+  },
+  {
+   "fieldname": "date_format",
+   "fieldtype": "Data",
+   "label": "Date Format",
+   "read_only": 1
+  },
+  {
+   "fieldname": "mapping_fields",
+   "fieldtype": "Table",
+   "label": "Mapping Fields",
+   "options": "AU Bank Statement Format Mapping"
+  },
+  {
+   "fieldname": "sample_data",
+   "fieldtype": "Long Text",
+   "label": "Sample Data",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-01-08 20:44:46.813055",
+ "modified": "2026-01-16 18:25:03.007776",
  "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
  "name": "AU Bank Statement Format",
@@ -32,7 +56,19 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "System Manager",
+   "role": "Accounts User",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
    "share": 1,
    "write": 1
   }

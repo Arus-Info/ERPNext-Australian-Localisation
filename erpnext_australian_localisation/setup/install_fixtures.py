@@ -8,6 +8,7 @@ def create_default_records():
 	records.extend(get_au_tax_determination())
 	records.extend(get_au_bas_labels())
 	records.extend(get_au_bas_label_setup())
+	records.extend(get_au_bank_statement_format())
 
 	make_records(records)
 
@@ -382,6 +383,156 @@ def get_au_bas_label_setup():
 			"tax_management": "Subjected",
 			"tax_allocation": "Deductible Purchase",
 			"tax_code": "AUPPVTUSE",
+		},
+	]
+	return records
+
+
+def get_au_bank_statement_format():
+	records = [
+		{
+			"doctype": "AU Bank Statement Format",
+			"name": "NAB CSV Format",
+			"credit_debit_mapping": "Combined credit&debit",
+			"date_format": "DD MMM YYYY",
+			"mapping_fields": [
+				{
+					"erpnext_column": "Date",
+					"bank_statement_column": "Date",
+				},
+				{
+					"erpnext_column": "Deposit",
+					"bank_statement_column": "Amount",
+				},
+				{
+					"erpnext_column": "Withdrawal",
+					"bank_statement_column": "Amount",
+				},
+				{
+					"erpnext_column": "Description",
+					"bank_statement_column": "Transaction Details",
+				},
+			],
+			"sample_data": (
+				"Date,Amount,Account Number,,Transaction Type,"
+				"Transaction Details,Balance,Category,Merchant Name\n"
+				"29 Dec 25,-1200.00,234567819,,DEBIT,"
+				"Monthly house rent,6856.50,Housing,Property Manager\n"
+				"29 Dec 25,-250.00,234567819,,DEBIT,"
+				"Online shopping,8056.50,Shopping,Amazon AU\n"
+				"26 Dec 25,-65.00,234567819,,DEBIT,"
+				"Fuel purchase,8306.50,Transport,BP Australia\n"
+				"24 Dec 25,3500.00,234567819,,CREDIT,"
+				"Salary payment,8371.50,Income,ABC Pty Ltd\n"
+				"23 Dec 25,-120.00,234567819,,DEBIT,"
+				"Grocery shopping,4871.50,Groceries,Woolworths\n"
+				"22 Dec 25,-400.00,234567819,,DEBIT,"
+				"Coffee purchase,4991.50,Food&Drink,Starbucks"
+			),
+		},
+		{
+			"doctype": "AU Bank Statement Format",
+			"name": "Westpac CSV Format",
+			"credit_debit_mapping": "Combined credit&debit",
+			"date_format": "YYYYMMDD",
+			"mapping_fields": [
+				{
+					"erpnext_column": "Date",
+					"bank_statement_column": "TRAN_DATE",
+				},
+				{
+					"erpnext_column": "Deposit",
+					"bank_statement_column": "AMOUNT",
+				},
+				{
+					"erpnext_column": "Withdrawal",
+					"bank_statement_column": "AMOUNT",
+				},
+				{
+					"erpnext_column": "Description",
+					"bank_statement_column": "NARRATIVE",
+				},
+				{
+					"erpnext_column": "Reference Number",
+					"bank_statement_column": "SERIAL",
+				},
+			],
+			"sample_data": (
+				"TRAN_DATE,ACCOUNT_NO,ACCOUNT_NAME,CCY,CLOSING_BAL,AMOUNT,TRAN_CODE,NARRATIVE,SERIAL\n"
+				"20250101,032000123456,Business Account,AUD,15000.00,5000.00,050,Salary Payment,1234567\n"
+				"20250102,032000123456,Business Account,AUD,14849.50,-150.50,009,Transfer Out,1234568\n"
+				"20250103,032000123456,Business Account,AUD,14804.50,-45.00,013,BPAY Payment,1234569\n"
+				"20250104,032000123456,Business Account,AUD,14904.50,100.00,014,Shopping,1234570\n"
+				"20250105,032000123456,Business Account,AUD,18854.50,-50.00,017,BPAY Payment,1234571"
+			),
+		},
+		{
+			"doctype": "AU Bank Statement Format",
+			"name": "ANZ CSV Format",
+			"credit_debit_mapping": "Single credit&debit",
+			"date_format": "DD-MMM-YY",
+			"mapping_fields": [
+				{
+					"erpnext_column": "Date",
+					"bank_statement_column": "Post Date",
+				},
+				{
+					"erpnext_column": "Deposit",
+					"bank_statement_column": "Credits",
+				},
+				{
+					"erpnext_column": "Withdrawal",
+					"bank_statement_column": "Debits",
+				},
+				{
+					"erpnext_column": "Description",
+					"bank_statement_column": "Narrative",
+				},
+				{
+					"erpnext_column": "Reference Number",
+					"bank_statement_column": "Bank Reference",
+				},
+			],
+			"sample_data": (
+				"Statement Number,Account Number,Account Name,Account Currency,Opening Available Balance,Opening Ledger Balance,Closing Available Balance,Closing Ledger Balance,Value Date,Post Date,Tran Type,Bank Reference,Narrative,Debits,Credits\n"
+				"1,013-999-123456,Business Account,AUD,10000.00,10000.00,17418.75,17418.75,01-Jan-25,01-Jan-25,DEPOSIT,REF001,Salary Payment,0.00,5000.00\n"
+				"1,013-999-123456,Business Account,AUD,15000.00,15000.00,14849.50,14849.50,02-Jan-25,02-Jan-25,PAYMENT,REF002,Transfer Out,150.50,0.00\n"
+				"1,013-999-123456,Business Account,AUD,14849.50,14849.50,14804.50,14804.50,03-Jan-25,03-Jan-25,BPAY,REF003,BPAY Payment,45.00,0.00\n"
+				"1,013-999-123456,Business Account,AUD,14804.50,14804.50,15204.50,15204.50,04-Jan-25,04-Jan-25,SHOPPING,REF004,Refund,0.00,400.00\n"
+				"1,013-999-123456,Business Account,AUD,15204.50,15204.50,15159.50,15159.50,05-Jan-25,05-Jan-25,BPAY,REF005,BPAY Payment,45.00,0.00"
+			),
+		},
+		{
+			"doctype": "AU Bank Statement Format",
+			"name": "Commonwealth Bank CSV Format",
+			"credit_debit_mapping": "Combined credit&debit",
+			"date_format": "DD/MM/YYYY",
+			"mapping_fields": [
+				{
+					"erpnext_column": "Date",
+					"bank_statement_column": "Date",
+				},
+				{
+					"erpnext_column": "Deposit",
+					"bank_statement_column": "Amount",
+				},
+				{
+					"erpnext_column": "Withdrawal",
+					"bank_statement_column": "Amount",
+				},
+				{
+					"erpnext_column": "Description",
+					"bank_statement_column": "Description",
+				},
+			],
+			"sample_data": (
+				"Date,Amount,Description,Balance\n"
+				"01/01/2025,5000.00,Salary Payment,15000.00\n"
+				"02/01/2025,-150.50,Transfer Out,14849.50\n"
+				"03/01/2025,-45.00,BPAY Payment,14804.50\n"
+				"04/01/2025,+200.00,Refund,15004.50\n"
+				"05/01/2025,-200.00,Grocery shopping,14804.50\n"
+			),
 		},
 	]
 	return records

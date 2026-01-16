@@ -238,7 +238,6 @@ scheduler_events = {"monthly": ["erpnext_australian_localisation.tasks.bas_repor
 #
 # override_whitelisted_methods = {
 # 	# 	"frappe.desk.doctype.event.event.get_events": "erpnext_australian_localisation.event.get_events"
-# 	"frappe.core.doctype.data_import.data_import.download_template": "erpnext_australian_localisation.overrides.bank_statement_import.download_template"
 # }
 #
 # each overriding function accepts a `data` argument;
