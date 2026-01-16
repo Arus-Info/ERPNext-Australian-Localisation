@@ -1,14 +1,20 @@
-
 name: CI
 
 on:
   push:
     branches:
-      - main
+      - version-1*
+
   pull_request:
+    branches:
+      - develop
+      - version-*
+
+env:
+  BRANCH: ${{ github.base_ref || github.ref_name }}
 
 concurrency:
-  group: main-erpnext_australian_localisation-${{ github.event.number }}
+  group: develop-erpnext_australian_localisation-${{ github.event.number }}
   cancel-in-progress: true
 
 jobs:
@@ -28,7 +34,7 @@ jobs:
         ports:
           - 11000:6379
       mariadb:
-        image: mariadb:10.6
+        image: mariadb:11.8
         env:
           MYSQL_ROOT_PASSWORD: root
         ports:
@@ -37,7 +43,7 @@ jobs:
 
     steps:
       - name: Clone
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
 
       - name: Find tests
         run: |
@@ -45,14 +51,14 @@ jobs:
           grep -rn "def test" > /dev/null
 
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
-          python-version: '3.10'
+          python-version: "3.14"
 
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v6
         with:
-          node-version: 18
+          node-version: 24
           check-latest: true
 
       - name: Cache pip
@@ -68,7 +74,7 @@ jobs:
         id: yarn-cache-dir-path
         run: 'echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT'
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         id: yarn-cache
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
@@ -84,22 +90,24 @@ jobs:
       - name: Setup
         run: |
           pip install frappe-bench
-          bench init --skip-redis-config-generation --skip-assets --python "$(which python)" ~/frappe-bench
+          bench init --skip-redis-config-generation --skip-assets --python "$(which python)" --frappe-branch "$BRANCH" ~/frappe-bench
           mariadb --host 127.0.0.1 --port 3306 -u root -proot -e "SET GLOBAL character_set_server = 'utf8mb4'"
           mariadb --host 127.0.0.1 --port 3306 -u root -proot -e "SET GLOBAL collation_server = 'utf8mb4_unicode_ci'"
 
       - name: Install
         working-directory: /home/runner/frappe-bench
         run: |
-          bench get-app erpnext
+          bench get-app erpnext --branch "$BRANCH"
           bench get-app erpnext_australian_localisation $GITHUB_WORKSPACE
           bench setup requirements --dev
           bench new-site --db-root-password root --admin-password admin test_site
+          bench get-app payments --branch develop
           bench --site test_site install-app erpnext
+          bench --site test_site install-app payments
           bench --site test_site install-app erpnext_australian_localisation
           bench build
         env:
-          CI: 'Yes'
+          CI: "Yes"
 
       - name: Run Tests
         working-directory: /home/runner/frappe-bench
