@@ -8,7 +8,8 @@
  "field_order": [
   "credit_debit_mapping",
   "date_format",
-  "mapping_fields"
+  "mapping_fields",
+  "sample_data"
  ],
  "fields": [
   {
@@ -29,12 +30,18 @@
    "fieldtype": "Table",
    "label": "Mapping Fields",
    "options": "AU Bank Statement Format Mapping"
+  },
+  {
+   "fieldname": "sample_data",
+   "fieldtype": "Long Text",
+   "label": "Sample Data",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-01-16 14:17:43.913729",
+ "modified": "2026-01-16 18:25:03.007776",
  "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
  "name": "AU Bank Statement Format",
@@ -49,7 +56,19 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "System Manager",
+   "role": "Accounts User",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
    "share": 1,
    "write": 1
   }
