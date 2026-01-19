@@ -1,0 +1,23 @@
+{
+ "app": "erpnext_australian_localisation",
+ "creation": "2026-01-19 20:44:43.123559",
+ "docstatus": 0,
+ "doctype": "Desktop Icon",
+ "hidden": 0,
+ "icon": "permission",
+ "icon_type": "Link",
+ "idx": 345,
+ "label": "AU Localisation",
+ "link_to": "AU Localisation",
+ "link_type": "Workspace Sidebar",
+ "logo_url": "/assets/erpnext_australian_localisation/img/au-localisation-logo.png",
+ "modified": "2026-01-20 02:36:58.797634",
+ "modified_by": "Administrator",
+ "name": "AU Localisation",
+ "owner": "Administrator",
+ "parent_icon": "",
+ "restrict_removal": 0,
+ "roles": [],
+ "sidebar": "",
+ "standard": 1
+}
