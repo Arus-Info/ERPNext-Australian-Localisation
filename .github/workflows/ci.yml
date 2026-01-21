@@ -102,6 +102,7 @@ jobs:
           bench get-app payments --branch develop
           bench setup requirements --dev
           bench new-site --db-root-password root --admin-password admin test_site
+          bench get-app payments --branch develop
           bench --site test_site install-app erpnext
           bench --site test_site install-app payments
           bench --site test_site install-app erpnext_australian_localisation
