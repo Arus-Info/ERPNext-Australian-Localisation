@@ -163,9 +163,10 @@ def update_simpler_bas_report(doc):
 	doc.update({"1a_details": []})
 
 	frappe.publish_progress(40, title="BAS Label Generating..", description="1A")
-	field_with_expression = "( - debit_in_account_currency + credit_in_account_currency) as gst_pay_amount"
+
+	calculated_field = {"fieldname": "gst_pay_amount", "obtained_by": "credit_minus_debit"}
 	entries_1a = get_gl_entries_for_accounts(
-		doc.start_date, doc.end_date, doc.company, account_1a, field_with_expression
+		doc.start_date, doc.end_date, doc.company, account_1a, calculated_field
 	)
 	for e in entries_1a:
 		row = frappe.new_doc("AU BAS Report Entry")
@@ -174,9 +175,9 @@ def update_simpler_bas_report(doc):
 		doc.append("1a_details", row)
 
 	frappe.publish_progress(70, title="BAS Label Generating..", description="1B")
-	field_with_expression = "(debit_in_account_currency - credit_in_account_currency) as gst_offset_amount"
+	calculated_field = {"fieldname": "gst_offset_amount", "obtained_by": "debit_minus_credit"}
 	entries_1b = get_gl_entries_for_accounts(
-		doc.start_date, doc.end_date, doc.company, account_1b, field_with_expression
+		doc.start_date, doc.end_date, doc.company, account_1b, calculated_field
 	)
 	for e in entries_1b:
 		row = frappe.new_doc("AU BAS Report Entry")
@@ -185,11 +186,13 @@ def update_simpler_bas_report(doc):
 		doc.append("1b_details", row)
 
 	frappe.publish_progress(100, title="BAS Label Generating..", description="G1")
-	field_with_expression = "( - debit_in_account_currency + credit_in_account_currency) as gst_pay_basis"
+	calculated_field = {"fieldname": "gst_pay_basis", "obtained_by": "credit_minus_debit"}
 	entries_g1 = get_gl_entries_for_accounts(
-		doc.start_date, doc.end_date, doc.company, accounts_g1, field_with_expression
+		doc.start_date, doc.end_date, doc.company, accounts_g1, calculated_field
 	)
-	entries_g1.extend(entries_1a)
+	if entries_1a:
+		entries_g1.extend(entries_1a)
+
 	entries_g1 = sorted(entries_g1, key=lambda x: (x.date, x.voucher_no))
 	for e in entries_g1:
 		row = frappe.new_doc("AU BAS Report Entry")
@@ -202,7 +205,7 @@ def update_simpler_bas_report(doc):
 	)
 
 
-def get_gl_entries_for_accounts(start_date, end_date, company, accounts, field_with_expression):
+def get_gl_entries_for_accounts(start_date, end_date, company, accounts, calculated_field):
 	"""
 	Return GL Entries with the given start_date, end_date, company and accounts
 	"""
@@ -220,10 +223,21 @@ def get_gl_entries_for_accounts(start_date, end_date, company, accounts, field_w
 			"voucher_type",
 			"voucher_no",
 			"account",
-			field_with_expression,
+			"credit_in_account_currency",
+			"debit_in_account_currency",
 		],
 		order_by="date desc",
 	)
+	for gl in gl_entries:
+		if calculated_field["obtained_by"] == "credit_minus_debit":
+			gl.update(
+				{calculated_field["fieldname"]: gl.credit_in_account_currency - gl.debit_in_account_currency}
+			)
+		elif calculated_field["obtained_by"] == "debit_minus_credit":
+			gl.update(
+				{calculated_field["fieldname"]: gl.debit_in_account_currency - gl.credit_in_account_currency}
+			)
+
 	return gl_entries
 
 
