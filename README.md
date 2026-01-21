@@ -11,7 +11,7 @@ The ERPNext Australian Localisation app will install the necessary localisation 
 
 ### Prerequisites
 
-ERPNext v15.74.0 or above
+ERPNext v16.0.0 or above
 
 ### Installation
 
@@ -19,9 +19,10 @@ The AU Localisation app for ERPNext can be installed using the [bench](https://g
 
 ```bash
 cd $PATH_TO_YOUR_BENCH
-bench get-app https://github.com/Arus-Info/ERPNext-Australian-Localisation.git --branch version-15
+bench get-app https://github.com/Arus-Info/ERPNext-Australian-Localisation.git --branch version-16
 bench install-app erpnext_australian_localisation
 ```
+
 <img width="1620" height="870" alt="image" src="https://github.com/user-attachments/assets/c4c9056b-3ca9-4933-ba13-9e63b2547d40" />
 
 ### Features
