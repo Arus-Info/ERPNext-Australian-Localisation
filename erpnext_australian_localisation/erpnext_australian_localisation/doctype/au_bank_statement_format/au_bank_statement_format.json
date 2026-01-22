@@ -8,7 +8,10 @@
  "field_order": [
   "credit_debit_mapping",
   "date_format",
+<<<<<<< HEAD
   "acc_no_col",
+=======
+>>>>>>> develop
   "mapping_fields",
   "sample_data"
  ],
