@@ -203,7 +203,7 @@ def validate_account_and_branch(reader, format_doc, bank_account):
 		raw_val = (row.get(acc_col) or "").strip()
 		# normalises csv acc no
 		csv_digits = normalize(raw_val)
-		# csv acc no missing throws error
+		# csv acc no and entire col missing throws error
 		if not raw_val:
 			frappe.throw(_("Account Number is missing in CSV at row {0}").format(row_no))
 
@@ -213,15 +213,15 @@ def validate_account_and_branch(reader, format_doc, bank_account):
 			if csv_digits != expected:
 				frappe.throw(
 					_(
-						"Account Number mismatch at row {0}.<br><b>Account Number:</b> {1}{2}<br><b>CSV Value:</b> {3}"
+						"Account Number mismatch at row {0}.<br><b>Bank Account Number:</b> {1}{2}<br><b>CSV Value:</b> {3}"
 					).format(row_no, branch_code, bank_acc_no, raw_val)
 				)
 		else:
-			# No branch code → check only accounts
+			# No branch code → check only account numbers
 			if csv_digits != bank_acc_n:
 				frappe.throw(
 					_(
-						"Account Number mismatch at row {0}.<br><b>Expected:</b> {1}<br><b>CSV:</b> {2}"
+						"Account Number mismatch at row {0}.<br><b>Bank Account Number :</b> {1}<br><b>CSV Value:</b> {2}"
 					).format(row_no, bank_acc_no, raw_val)
 				)
 
