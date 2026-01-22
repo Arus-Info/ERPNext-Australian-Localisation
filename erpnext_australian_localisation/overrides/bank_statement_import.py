@@ -74,6 +74,12 @@ def convert_using_child_mapping(content, format_doc, bank_account, currency):
 
 	reader = csv.DictReader(io.StringIO(content))
 
+	# validation of bank account number
+	validate_account_and_branch(reader=reader, format_doc=format_doc, bank_account=bank_account)
+
+	# Reset reader after validation
+	reader = csv.DictReader(io.StringIO(content))
+
 	# mapping from child table
 	# -------------------------------
 	mapping = {}
@@ -163,3 +169,63 @@ def normalize_date(value, row_no=None):
 
 	except Exception:
 		frappe.throw(f"Invalid date '{value}' at row {row_no}")
+
+
+# ------------------------------------------------------------------------
+
+
+def validate_account_and_branch(reader, format_doc, bank_account):
+	bank_acc_no = frappe.db.get_value("Bank Account", bank_account, "bank_account_no")
+	branch_code = frappe.db.get_value("Bank Account", bank_account, "branch_code")
+	# this is for csv header name(account number) there or not
+	acc_col = format_doc.acc_no_col
+	# if header not there exits silently
+	if not acc_col:
+		return
+
+	# this normalises value removes (-)
+	def normalize(val):
+		# Remove all non-numeric characters
+		return "".join(ch for ch in (val or "") if ch.isdigit())
+
+	# normalises bank acc values removes(-) or anyother
+	bank_acc_n = normalize(bank_acc_no)
+	bank_branch_n = normalize(branch_code) if branch_code else None
+
+	# this is for empty csv file if there is
+	row_found = False
+
+	# iterates csv rows
+	for row_no, row in enumerate(reader, start=2):
+		# this row_found insists that csv has atleast one row
+		row_found = True
+		# reads acc no from csv and removes spaces and values are configured
+		raw_val = (row.get(acc_col) or "").strip()
+		# normalises csv acc no
+		csv_digits = normalize(raw_val)
+		# csv acc no missing throws error
+		if not raw_val:
+			frappe.throw(_("Account Number is missing in CSV at row {0}").format(row_no))
+
+		if bank_branch_n:
+			# Branch exists → check branch code  + account together
+			expected = bank_branch_n + bank_acc_n
+			if csv_digits != expected:
+				frappe.throw(
+					_(
+						"Account Number mismatch at row {0}.<br><b>Account Number:</b> {1}{2}<br><b>CSV Value:</b> {3}"
+					).format(row_no, branch_code, bank_acc_no, raw_val)
+				)
+		else:
+			# No branch code → check only accounts
+			if csv_digits != bank_acc_n:
+				frappe.throw(
+					_(
+						"Account Number mismatch at row {0}.<br><b>Expected:</b> {1}<br><b>CSV:</b> {2}"
+					).format(row_no, bank_acc_no, raw_val)
+				)
+
+	if not row_found:
+		frappe.throw(_("CSV file is empty"))
+
+	frappe.msgprint(_("Bank Account validation successfully passed for all rows"), indicator="green")
