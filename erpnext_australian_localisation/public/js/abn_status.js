@@ -28,7 +28,7 @@ function apply_abn_indicator(frm) {
 		static_area.append(indicator_span);
 		value_el.append(static_area);
 	}
-	// abn indictor is stadard class fro orange and blue dots 
+	// abn indictor is standard class for orange and blue dots
 	const indicator_el = value_el.find(".abn-indicator");
 	indicator_el.removeClass("indicator blue orange");
 
