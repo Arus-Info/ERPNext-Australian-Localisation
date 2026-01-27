@@ -197,8 +197,10 @@ doc_events = {
 		"on_update": "erpnext_australian_localisation.overrides.payment_entry.on_update",
 	},
 	"Supplier": {
-		"validate": "erpnext_australian_localisation.overrides.bank_details_validation.validate",
-		"validate": "erpnext_australian_localisation.overrides.abn_verification.fetch_and_update_abn",
+		"validate": [
+			"erpnext_australian_localisation.overrides.bank_details_validation.validate",
+			"erpnext_australian_localisation.overrides.abn_verification.fetch_and_update_abn",
+		],
 	},
 	"Customer": {
 		"validate": "erpnext_australian_localisation.overrides.abn_verification.fetch_and_update_abn"
