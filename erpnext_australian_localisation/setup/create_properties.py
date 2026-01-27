@@ -26,6 +26,7 @@ def initial_setup():
 	create_properties_for_bank_file()
 	create_property_setter(PROPERTIES)
 	create_properties_for_bai2_file()
+	create_properties_for_abn_guid()
 	installed_apps = frappe.get_installed_apps()
 	if "hrms" in installed_apps:
 		create_hrms_custom_fields()
