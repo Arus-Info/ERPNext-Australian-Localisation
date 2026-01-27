@@ -1,5 +1,6 @@
 import csv
 import io
+import re
 from datetime import datetime
 
 import frappe
@@ -183,14 +184,12 @@ def validate_account_and_branch(reader, format_doc, bank_account):
 	if not acc_col:
 		return
 
-	# this normalises value removes (-)
-	def normalize(val):
-		# Remove all non-numeric characters
-		return "".join(ch for ch in (val or "") if ch.isdigit())
-
-	# normalises bank acc values removes(-) or anyother
-	bank_acc_n = normalize(bank_acc_no)
-	bank_branch_n = normalize(branch_code) if branch_code else None
+	def validate_format(val, row_no):
+		# Allow ONLY digits and hyphen
+		if not re.fullmatch(r"[0-9\-]+", val):
+			frappe.throw(
+				_("Invalid Account Number format at row {0}. Only digits and '-' are allowed.").format(row_no)
+			)
 
 	# this is for empty csv file if there is
 	row_found = False
@@ -201,29 +200,27 @@ def validate_account_and_branch(reader, format_doc, bank_account):
 		row_found = True
 		# reads acc no from csv and removes spaces and values are configured
 		raw_val = (row.get(acc_col) or "").strip()
-		# normalises csv acc no
-		csv_digits = normalize(raw_val)
 		# csv acc no and entire col missing throws error
 		if not raw_val:
 			frappe.throw(_("Account Number is missing in CSV at row {0}").format(row_no))
+		validate_format(raw_val, row_no)
 
-		if bank_branch_n:
-			# Branch exists → check branch code  + account together
-			expected = bank_branch_n + bank_acc_n
-			if csv_digits != expected:
-				frappe.throw(
-					_(
-						"Account Number mismatch at row {0}.<br><b>Bank Account Number:</b> {1}{2}<br><b>CSV Value:</b> {3}"
-					).format(row_no, branch_code, bank_acc_no, raw_val)
-				)
+		# Prepare expected value
+		if branch_code:
+			expected = f"{branch_code}{bank_acc_no}"
 		else:
-			# No branch code → check only account numbers
-			if csv_digits != bank_acc_n:
-				frappe.throw(
-					_(
-						"Account Number mismatch at row {0}.<br><b>Bank Account Number :</b> {1}<br><b>CSV Value:</b> {2}"
-					).format(row_no, bank_acc_no, raw_val)
-				)
+			expected = bank_acc_no
+
+		# Remove spaces ONLY (not hyphen)
+		csv_val = raw_val.replace(" ", "")
+		expected_val = expected.replace(" ", "")
+
+		if csv_val != expected_val:
+			frappe.throw(
+				_(
+					"Account Number mismatch at row {0}.<br><b>Bank Account Number :</b> {1}<br><b>CSV Value:</b> {2}"
+				).format(row_no, expected, raw_val)
+			)
 
 	if not row_found:
 		frappe.throw(_("CSV file is empty"))

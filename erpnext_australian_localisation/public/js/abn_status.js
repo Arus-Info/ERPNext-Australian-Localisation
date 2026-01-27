@@ -21,7 +21,7 @@ function apply_abn_indicator(frm) {
 		const text = value_el.text().trim();
 		// removes current text inside .control-value
 		value_el.empty();
-
+		// abn-indicator is my custom class
 		const static_area = $("<div>").addClass("static-area ellipsis");
 		const indicator_span = $("<span>").addClass("abn-indicator").text(text);
 
@@ -30,11 +30,11 @@ function apply_abn_indicator(frm) {
 	}
 	// abn indictor is standard class for orange and blue dots
 	const indicator_el = value_el.find(".abn-indicator");
-	indicator_el.removeClass("indicator blue orange");
+	indicator_el.removeClass("indicator green red");
 
 	if (frm.doc.abn_status === "Active") {
-		indicator_el.addClass("indicator blue");
+		indicator_el.addClass("indicator green");
 	} else {
-		indicator_el.addClass("indicator orange");
+		indicator_el.addClass("indicator red");
 	}
 }

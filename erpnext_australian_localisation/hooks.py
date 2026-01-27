@@ -267,7 +267,7 @@ scheduler_events = {"monthly": ["erpnext_australian_localisation.tasks.bas_repor
 
 # Request Events
 # ----------------
-before_request = ["erpnext_australian_localisation.overrides.one.before_request_test"]
+# before_request = ["erpnext_australian_localisation.utils.before_request"]
 # after_request = ["erpnext_australian_localisation.utils.after_request"]
 
 # Job Events
