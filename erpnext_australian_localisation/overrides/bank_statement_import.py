@@ -204,23 +204,32 @@ def validate_account_and_branch(reader, format_doc, bank_account):
 		if not raw_val:
 			frappe.throw(_("Account Number is missing in CSV at row {0}").format(row_no))
 		validate_format(raw_val, row_no)
-
-		# Prepare expected value
-		if branch_code:
-			expected = f"{branch_code}{bank_acc_no}"
-		else:
-			expected = bank_acc_no
-
 		# Remove spaces ONLY (not hyphen)
 		csv_val = raw_val.replace(" ", "")
-		expected_val = expected.replace(" ", "")
 
-		if csv_val != expected_val:
-			frappe.throw(
-				_(
-					"Account Number mismatch at row {0}.<br><b>Bank Account Number :</b> {1}<br><b>CSV Value:</b> {2}"
-				).format(row_no, expected, raw_val)
-			)
+		# ANZ → branch + account must match
+		if format_doc.name == "ANZ CSV Format":
+			if not branch_code:
+				frappe.throw(_("Branch Code is mandatory for ANZ bank accounts."))
+
+			expected = f"{branch_code}-{bank_acc_no}"
+
+			if csv_val != expected:
+				frappe.throw(
+					_(
+						"Account Number mismatch at row {0}.<br><b>Bank Account Number :</b> {1}<br><b>CSV Value:</b> {2}"
+					).format(row_no, expected, raw_val)
+				)
+		# NAB / Westpac → only account number
+		else:
+			expected = bank_acc_no.replace(" ", "")
+
+			if csv_val != expected:
+				frappe.throw(
+					_(
+						"Account Number mismatch at row {0}.<br><b>Bank Account Number :</b> {1}<br><b>CSV Value:</b> {2}"
+					).format(row_no, expected, raw_val)
+				)
 
 	if not row_found:
 		frappe.throw(_("CSV file is empty"))
