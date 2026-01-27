@@ -6,7 +6,11 @@
  "engine": "InnoDB",
  "field_order": [
   "make_tax_category_mandatory",
-  "bas_reporting_period"
+  "bas_reporting_period",
+  "section_break_ichx",
+  "is_verify_abn",
+  "abn_lookup_guid",
+  "html_mdrh"
  ],
  "fields": [
   {
@@ -20,14 +24,35 @@
    "fieldtype": "Table",
    "label": "BAS Reporting Period",
    "options": "AU BAS Reporting Period"
+  },
+  {
+   "fieldname": "section_break_ichx",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_verify_abn",
+   "fieldtype": "Check",
+   "label": "Verify ABN in Customer/Supplier Master"
+  },
+  {
+   "fieldname": "abn_lookup_guid",
+   "fieldtype": "Password",
+   "label": "ABN Lookup GUID",
+   "mandatory_depends_on": "eval: doc.is_verify_abn == 1"
+  },
+  {
+   "fieldname": "html_mdrh",
+   "fieldtype": "HTML",
+   "options": "<p>\nTo get the GUID for your company, please apply it in ABR \u2013 Australian Business Register using this link\n<a href=\"https://abr.business.gov.au/Tools/WebServicesAgreement\" target=\"_blank\">Click Here</a>.\n</p>"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-07-24 15:23:35.767844",
- "modified_by": "jeba.j@arus.co.in",
+ "modified": "2026-01-22 23:05:08.341832",
+ "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
  "name": "AU Localisation Settings",
  "owner": "Administrator",

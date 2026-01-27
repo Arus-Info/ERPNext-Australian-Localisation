@@ -280,3 +280,60 @@ BAI2_FIELDS = {
 		},
 	],
 }
+ABN_GUID_FIELDS = {
+	("Supplier", "Customer"): [
+		{
+			"fieldname": "section_break_abn",
+			"label": "ABN Fields",
+			"fieldtype": "Section Break",
+			"insert_after": "tax_withholding_group",
+		},
+		{
+			"fieldname": "entity_name",
+			"label": "Entity Name",
+			"fieldtype": "Data",
+			"insert_after": "section_break_abn",
+			"read_only": 1,
+		},
+		{
+			"fieldname": "abn_status",
+			"label": "ABN Status",
+			"fieldtype": "Data",
+			"insert_after": "entity_name",
+			"read_only": 1,
+		},
+		{
+			"fieldname": "abn_effective_from",
+			"label": "ABN Effective From",
+			"fieldtype": "Data",
+			"insert_after": "abn_status",
+			"read_only": 1,
+		},
+		{
+			"fieldname": "column_break_abn",
+			"fieldtype": "Column Break",
+			"insert_after": "abn_effective_from",
+		},
+		{
+			"fieldname": "address_postcode",
+			"label": "Address Postcode",
+			"fieldtype": "Data",
+			"insert_after": "column_break_abn",
+			"read_only": 1,
+		},
+		{
+			"fieldname": "address_state",
+			"label": "Address State",
+			"fieldtype": "Data",
+			"insert_after": "address_postcode",
+			"read_only": 1,
+		},
+		{
+			"fieldname": "business_name",
+			"label": "Business Name",
+			"fieldtype": "Data",
+			"insert_after": "address_state",
+			"read_only": 1,
+		},
+	],
+}
