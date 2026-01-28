@@ -8,6 +8,7 @@
  "field_order": [
   "credit_debit_mapping",
   "date_format",
+  "acc_no_col",
   "mapping_fields",
   "sample_data"
  ],
@@ -36,12 +37,18 @@
    "fieldtype": "Long Text",
    "label": "Sample Data",
    "read_only": 1
+  },
+  {
+   "fieldname": "acc_no_col",
+   "fieldtype": "Data",
+   "label": "Account Number",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-01-16 18:25:03.007776",
+ "modified": "2026-01-22 16:58:35.730684",
  "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
  "name": "AU Bank Statement Format",

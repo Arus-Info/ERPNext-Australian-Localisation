@@ -62,7 +62,8 @@ doctype_js = {
 	"Purchase Invoice": "public/js/setup_input_taxed_sales.js",
 	"Purchase Order": "public/js/setup_input_taxed_sales.js",
 	"Purchase Receipt": "public/js/setup_input_taxed_sales.js",
-	"Supplier": ["public/js/supplier.js"],
+	"Supplier": ["public/js/supplier.js", "public/js/abn_status.js"],
+	"Customer": "public/js/abn_status.js",
 	"Bank Statement Import": "public/js/bank_statement_import.js",
 }
 
@@ -195,7 +196,15 @@ doc_events = {
 		"on_submit": "erpnext_australian_localisation.overrides.payment_entry.on_submit",
 		"on_update": "erpnext_australian_localisation.overrides.payment_entry.on_update",
 	},
-	"Supplier": {"validate": "erpnext_australian_localisation.overrides.bank_details_validation.validate"},
+	"Supplier": {
+		"validate": [
+			"erpnext_australian_localisation.overrides.bank_details_validation.validate",
+			"erpnext_australian_localisation.overrides.abn_verification.fetch_and_update_abn",
+		],
+	},
+	"Customer": {
+		"validate": "erpnext_australian_localisation.overrides.abn_verification.fetch_and_update_abn"
+	},
 	"Employee": {"validate": "erpnext_australian_localisation.overrides.bank_details_validation.validate"},
 	"Bank Account": {
 		"validate": "erpnext_australian_localisation.overrides.bank_details_validation.bank_account_validation"

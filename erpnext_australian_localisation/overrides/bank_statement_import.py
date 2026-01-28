@@ -1,5 +1,6 @@
 import csv
 import io
+import re
 from datetime import datetime
 
 import frappe
@@ -72,6 +73,12 @@ def convert_using_child_mapping(content, format_doc, bank_account, currency):
 	output = io.StringIO()
 	writer = csv.writer(output)
 
+	reader = csv.DictReader(io.StringIO(content))
+
+	# validation of bank account number
+	validate_account_and_branch(reader=reader, format_doc=format_doc, bank_account=bank_account)
+
+	# Reset reader after validation
 	reader = csv.DictReader(io.StringIO(content))
 
 	# mapping from child table
@@ -163,3 +170,68 @@ def normalize_date(value, row_no=None):
 
 	except Exception:
 		frappe.throw(f"Invalid date '{value}' at row {row_no}")
+
+
+# ------------------------------------------------------------------------
+
+
+def validate_account_and_branch(reader, format_doc, bank_account):
+	bank_acc_no = frappe.db.get_value("Bank Account", bank_account, "bank_account_no")
+	branch_code = frappe.db.get_value("Bank Account", bank_account, "branch_code")
+	# this is for csv header name(account number) there or not
+	acc_col = format_doc.acc_no_col
+	# if header not there exits silently
+	if not acc_col:
+		return
+
+	def validate_format(val, row_no):
+		# Allow ONLY digits and hyphen
+		if not re.fullmatch(r"[0-9\-]+", val):
+			frappe.throw(
+				_("Invalid Account Number format at row {0}. Only digits and '-' are allowed.").format(row_no)
+			)
+
+	# this is for empty csv file if there is
+	row_found = False
+
+	# iterates csv rows
+	for row_no, row in enumerate(reader, start=2):
+		# this row_found insists that csv has atleast one row
+		row_found = True
+		# reads acc no from csv and removes spaces and values are configured
+		raw_val = (row.get(acc_col) or "").strip()
+		# csv acc no and entire col missing throws error
+		if not raw_val:
+			frappe.throw(_("Account Number is missing in CSV at row {0}").format(row_no))
+		validate_format(raw_val, row_no)
+		# Remove spaces ONLY (not hyphen)
+		csv_val = raw_val.replace(" ", "")
+
+		# ANZ → branch + account must match
+		if format_doc.name == "ANZ CSV Format":
+			if not branch_code:
+				frappe.throw(_("Branch Code is mandatory for ANZ bank accounts."))
+
+			expected = f"{branch_code}-{bank_acc_no}"
+
+			if csv_val != expected:
+				frappe.throw(
+					_(
+						"Account Number mismatch at row {0}.<br><b>Bank Account Number :</b> {1}<br><b>CSV Value:</b> {2}"
+					).format(row_no, expected, raw_val)
+				)
+		# NAB / Westpac → only account number
+		else:
+			expected = bank_acc_no.replace(" ", "")
+
+			if csv_val != expected:
+				frappe.throw(
+					_(
+						"Account Number mismatch at row {0}.<br><b>Bank Account Number :</b> {1}<br><b>CSV Value:</b> {2}"
+					).format(row_no, expected, raw_val)
+				)
+
+	if not row_found:
+		frappe.throw(_("CSV file is empty"))
+
+	frappe.msgprint(_("Bank Account validation successfully passed for all rows"), indicator="green")

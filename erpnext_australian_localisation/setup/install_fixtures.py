@@ -395,6 +395,7 @@ def get_au_bank_statement_format():
 			"name": "NAB CSV Format",
 			"credit_debit_mapping": "Combined credit&debit",
 			"date_format": "DD MMM YYYY",
+			"acc_no_col": "Account Number",
 			"mapping_fields": [
 				{
 					"erpnext_column": "Date",
@@ -435,6 +436,7 @@ def get_au_bank_statement_format():
 			"name": "Westpac CSV Format",
 			"credit_debit_mapping": "Combined credit&debit",
 			"date_format": "YYYYMMDD",
+			"acc_no_col": "ACCOUNT_NO",
 			"mapping_fields": [
 				{
 					"erpnext_column": "Date",
@@ -471,6 +473,7 @@ def get_au_bank_statement_format():
 			"name": "ANZ CSV Format",
 			"credit_debit_mapping": "Single credit&debit",
 			"date_format": "DD-MMM-YY",
+			"acc_no_col": "Account Number",
 			"mapping_fields": [
 				{
 					"erpnext_column": "Date",
