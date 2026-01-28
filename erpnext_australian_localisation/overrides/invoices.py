@@ -87,7 +87,8 @@ def create_au_bas_entries(doctype, docname, company, posting_date, result, sum_d
 	"""
 	if result:
 		result = pd.DataFrame(result)
-		result = result.groupby(["bas_label", "account", "tax_code"])[sum_depends_on].sum().reset_index()
+		cols_to_sum = [c for c in sum_depends_on if c in result.columns]
+		result = result.groupby(["bas_label", "account", "tax_code"], as_index=False)[cols_to_sum].sum()
 		bas_entries = result.to_dict(orient="records")
 		for bas_entry in bas_entries:
 			bas_doc = frappe.new_doc("AU BAS Entry")
