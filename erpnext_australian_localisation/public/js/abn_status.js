@@ -7,9 +7,10 @@ frappe.ui.form.on("*", {
 });
 
 function apply_abn_indicator(frm) {
-	// frm.ields_dict(dictionary of all fields)
+	// frm.fields_dict(dictionary of all fields)
 	const field = frm.fields_dict.abn_status;
 	// if field does not exist it exits quitely
+	// .$wrapper jquery object of enitre field container
 	if (!field || !field.$wrapper) return;
 
 	// read only field will have this class we targetting here to make style

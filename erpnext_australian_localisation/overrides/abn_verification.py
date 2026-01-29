@@ -4,28 +4,44 @@ import frappe
 import requests
 
 
+def clear_abn_fields(doc):
+	doc.entity_name = ""
+	doc.business_name = ""
+	doc.abn_status = ""
+	doc.abn_effective_from = ""
+	doc.address_postcode = ""
+	doc.address_state = ""
+
+
 def fetch_and_update_abn(doctype, docname):
 	doc = frappe.get_doc(doctype, docname)
 
 	settings = frappe.get_single("AU Localisation Settings")
+
 	# no check in au localisation settings no api calls
 	if not settings.is_verify_abn:
 		return
 
-	# get pwd from au localisation settings
-	guid = settings.get_password("abn_lookup_guid")
+	# get guid from au localisation settings
 
-	# no tax id no api call exits function
-	if not doc.tax_id:
+	guid = settings.abn_lookup_guid
+
+	# Normalize ABN
+	abn = "".join(ch for ch in (doc.tax_id or "") if ch.isdigit())
+
+	# Invalid / partial ABN → clear & exit
+	if len(abn) != 11:
+		clear_abn_fields(doc)
 		return
 
-	# api call
+		# api call
+
 	response = requests.get(
 		# this link gives value in jsonp format
 		"https://abr.business.gov.au/json/AbnDetails.aspx",
 		params={
-			# sends abn num and remove spaces
-			"abn": doc.tax_id.strip(),
+			# sends abn num
+			"abn": abn,
 			# sends guid and removes spaces
 			"guid": guid.strip(),
 			# tells abr to give jsonp format
@@ -36,6 +52,7 @@ def fetch_and_update_abn(doctype, docname):
 	)
 	# handles http error
 	response.raise_for_status()
+
 	# reads api response as plain text
 	raw = response.text.strip()
 
@@ -46,13 +63,14 @@ def fetch_and_update_abn(doctype, docname):
 	# json string to python dict
 	data = json.loads(raw)
 
-	# # 🔴 ABR error
-	# if data.get("Message"):
-	# 	frappe.throw(data["Message"])
+	# this is abr error thows when guid in wrong
+	if data.get("Message"):
+		frappe.throw("The entered GUID is invalid. Unable to fetch ABN informations")
 
-	# SAVE VALUES INTO DOCUMENT (THIS IS THE KEY)
+	# save values into document
 	doc.entity_name = data.get("EntityName") or ""
-	doc.business_name = ", ".join(data.get("BusinessName") or [])
+	business_name = ", ".join(data.get("BusinessName") or [])
+	doc.business_name = business_name[:140]  # 140 chars only
 	doc.abn_status = data.get("AbnStatus") or ""
 	doc.abn_effective_from = data.get("AbnStatusEffectiveFrom") or ""
 	doc.address_postcode = data.get("AddressPostcode") or ""

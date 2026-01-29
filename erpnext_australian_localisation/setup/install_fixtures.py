@@ -465,7 +465,7 @@ def get_au_bank_statement_format():
 				"20250102,032000123456,Business Account,AUD,14849.50,-150.50,009,Transfer Out,1234568\n"
 				"20250103,032000123456,Business Account,AUD,14804.50,-45.00,013,BPAY Payment,1234569\n"
 				"20250104,032000123456,Business Account,AUD,14904.50,100.00,014,Shopping,1234570\n"
-				"20250105,032000123456,Business Account,AUD,18854.50,-50.00,017,BPAY Payment,1234571"
+				"20250105,032000123456,Business Account,AUD,14854.50,-50.00,017,BPAY Payment,1234571"
 			),
 		},
 		{

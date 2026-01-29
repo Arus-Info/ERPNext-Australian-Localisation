@@ -264,7 +264,7 @@ BAI2_FIELDS = {
 	"Bank Statement Import": [
 		{
 			"fieldname": "bs_import_file",
-			"label": "Import File (NAB CSV Format)",
+			"label": "Import File",
 			"fieldtype": "Attach",
 			"insert_after": "import_file",
 			"hidden": 1,
@@ -284,7 +284,7 @@ ABN_GUID_FIELDS = {
 	("Supplier", "Customer"): [
 		{
 			"fieldname": "section_break_abn",
-			"label": "ABN Fields",
+			"label": "ABN Information",
 			"fieldtype": "Section Break",
 			"insert_after": "tax_withholding_group",
 		},
