@@ -89,14 +89,14 @@ frappe.ui.form.on("Bank Statement Import", {
 					frm.set_df_property("bs_import_file", "label", "Import File (NAB CSV Format)");
 				} else if (format === "Commonwealth Bank CSV Format") {
 					frm.set_df_property("bs_import_file", "label", "Import File (CBA CSV Format)");
+				} else if (format === "ANZ CSV Format") {
+					frm.set_df_property("bs_import_file", "label", "Import File (ANZ CSV Format)");
 				} else if (format === "Westpac CSV Format") {
 					frm.set_df_property(
 						"bs_import_file",
 						"label",
-						"Import File (Westpac CSV Format)",
+						"Import File (Westpac CSV Format)"
 					);
-				} else if (format === "ANZ CSV Format") {
-					frm.set_df_property("bs_import_file", "label", "Import File (ANZ CSV Format)");
 				}
 			});
 	},
