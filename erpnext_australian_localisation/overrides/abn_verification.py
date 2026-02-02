@@ -2,6 +2,7 @@ import json
 
 import frappe
 import requests
+from frappe import _
 
 
 def clear_abn_fields(doc):
@@ -65,7 +66,7 @@ def fetch_and_update_abn(doctype, docname):
 
 	# this is abr error thows when guid in wrong
 	if data.get("Message"):
-		frappe.throw("The entered GUID is invalid. Unable to fetch ABN informations")
+		frappe.throw(_("The entered GUID is invalid. Unable to fetch ABN informations"))
 
 	# save values into document
 	doc.entity_name = data.get("EntityName") or ""
