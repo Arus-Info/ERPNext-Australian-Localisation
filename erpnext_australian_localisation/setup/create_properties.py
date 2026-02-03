@@ -9,7 +9,7 @@ from erpnext_australian_localisation.setup.custom_fields import (
 	EMPLOYEE_BANK_DETAILS,
 	HRMS_CUSTOM_FIELDS,
 )
-from erpnext_australian_localisation.setup.property_setters import PROPERTIES
+from erpnext_australian_localisation.setup.property_setters import ABN_PROPERTIES, PROPERTIES
 
 
 def create_property_setter(properties):
@@ -47,3 +47,4 @@ def create_properties_for_bai2_file():
 
 def create_properties_for_abn_guid():
 	create_custom_fields(ABN_GUID_FIELDS, update=1)
+	create_property_setter(ABN_PROPERTIES)
