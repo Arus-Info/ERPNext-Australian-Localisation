@@ -33,7 +33,6 @@ def fetch_and_update_abn(doctype, docname):
 	# Invalid / partial ABN → clear & exit
 	if len(abn) != 11:
 		clear_abn_fields(doc)
-		doc.db.update()
 		return
 
 		# api call
@@ -74,7 +73,6 @@ def fetch_and_update_abn(doctype, docname):
 		# ABN problem → clear silently
 	if message:
 		clear_abn_fields(doc)
-		doc.db_update()
 		return
 
 	# save values into document
