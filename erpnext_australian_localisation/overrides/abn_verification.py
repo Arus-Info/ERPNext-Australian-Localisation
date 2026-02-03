@@ -33,6 +33,7 @@ def fetch_and_update_abn(doctype, docname):
 	# Invalid / partial ABN → clear & exit
 	if len(abn) != 11:
 		clear_abn_fields(doc)
+		doc.db.update()
 		return
 
 		# api call
@@ -65,8 +66,16 @@ def fetch_and_update_abn(doctype, docname):
 	data = json.loads(raw)
 
 	# this is abr error thows when guid in wrong
-	if data.get("Message"):
+	message = (data.get("Message") or "").lower()
+
+	# GUID problem → show error
+	if "guid" in message:
 		frappe.throw(_("The entered GUID is invalid. Unable to fetch ABN informations"))
+		# ABN problem → clear silently
+	if message:
+		clear_abn_fields(doc)
+		doc.db_update()
+		return
 
 	# save values into document
 	doc.entity_name = data.get("EntityName") or ""
