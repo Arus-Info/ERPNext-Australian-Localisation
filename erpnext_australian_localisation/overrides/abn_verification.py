@@ -33,7 +33,6 @@ def fetch_and_update_abn(doctype, docname):
 				"address_state": None,
 			}
 		)
-		doc.db_update()
 		return
 
 		# api call
