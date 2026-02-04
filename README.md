@@ -123,7 +123,7 @@ GUID setup – Below information is mandatory for ABN Validation for Customers a
 <br><br>
 <img width="1891" height="634" alt="ABN Validation 1" src="https://github.com/user-attachments/assets/bfa8089f-20a7-409f-b5ac-0a7566136d5e" />
 <br><br>
-To get the GUID for your company, please apply it in ABR – Australian Business Register using this link <a href="https://abr.business.gov.au/Tools/WebServicesAgreement" target="_blank">Click Here</a> .
+To get the GUID for your company, please apply it in ABR – Australian Business Register using this link [Click Here](https://abr.business.gov.au/Tools/WebServicesAgreement).
 <br><br>
 Enter the ABN number in the Tax ID field and click on save. Then the ABN information will be fetched. This information will be available for both Customer and Supplier master. 
 <br><br>
