@@ -119,33 +119,35 @@ ABA File generation functionality from the Payment Batch screen:
 <br><br>
 <ins>ABN Validation:</ins>
 <br><br>
-GUID setup – Below information is mandatory for ABN Validation for Customers and Suppliers. This can be setup in <ins>AU Localisation Settings.</ins>
+GUID setup – Below information is mandatory for ABN Validation for Customers and Suppliers.
 <br><br>
-<img width="800" height="268" alt="image" src="https://github.com/user-attachments/assets/024ec2d2-3b71-47c3-9488-fa82451c0b8a" />
+<img width="1891" height="634" alt="ABN Validation 1" src="https://github.com/user-attachments/assets/bfa8089f-20a7-409f-b5ac-0a7566136d5e" />
+<br><br>
+To get the GUID for your company, please apply it in ABR – Australian Business Register using this link [Click Here](https://abr.business.gov.au/Tools/WebServicesAgreement) .
 <br><br>
 Enter the ABN number in the Tax ID field and click on save. Then the ABN information will be fetched. This information will be available for both Customer and Supplier master. 
 <br><br>
-<img width="800" height="285" alt="image" src="https://github.com/user-attachments/assets/00940c08-9e98-4ad3-9f14-c1dfb881fb83" />
+<img width="1889" height="672" alt="ABN 2" src="https://github.com/user-attachments/assets/23ed2301-7657-46e6-beb3-b10e0efc46c4" />
 <br><br>
 <ins>Bank Statement (Compatible for AU Banks CSV format) Import Functionality:</ins>
 <br><br>
 Bank Statement format setup – Below information is mandatory for importing the Bank Statement into the system. Please select your Bank in the field shown below. Currently all the big four Banks’ statement format is compatible with ERPNext’s AU Localisation app. 
 <br><br>
-<img width="800" height="324" alt="image" src="https://github.com/user-attachments/assets/bf458488-9400-44cd-8d9e-ce8b58af95d7" />
+<img width="1533" height="621" alt="BSI Func 1" src="https://github.com/user-attachments/assets/a77cfcae-bc2f-4257-b202-5637c8d4a431" />
 <br><br>
 You will be able to import the bank statements
 <br><br>
 Below is the sample screenshot from NAB to download the CSV format of the Bank Statement. Please use similar options to download the CSV format of the bank statement of your banking online portal. 
 <br><br>
-<img width="800" height="453" alt="image" src="https://github.com/user-attachments/assets/fedae36c-5fa7-456d-9525-d7d1b4902f6d" />
+<img width="1363" height="771" alt="BSI Func 2" src="https://github.com/user-attachments/assets/7acacded-8687-44b9-9ce1-94566afea0d7" />
 <br><br>
 Attach the CSV format bank statement file downloaded from the bank portal as detailed in the previous step 
 <br><br>
-<img width="800" height="231" alt="image" src="https://github.com/user-attachments/assets/2ca1a581-e615-40d3-a94d-e8d65e4ae932" />
+<img width="1714" height="495" alt="BSI Func 3" src="https://github.com/user-attachments/assets/f68c492b-4e18-4773-8741-6d938613c70d" />
 <br><br>
 Once the attachment is imported, click on Start Import. This will convert the Bank statement CSV file to the ERPNext compatible format in the background and the transactions will be imported. 
 <br><br>
-<img width="800" height="328" alt="image" src="https://github.com/user-attachments/assets/a2633059-e055-4ee2-908b-7f9f1befc3be" />
+<img width="1912" height="785" alt="BSI Func 4" src="https://github.com/user-attachments/assets/11166c45-ed5a-413d-b118-cff2a71652d0" />
 
 
 ### License
