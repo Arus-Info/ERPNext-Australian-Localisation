@@ -523,11 +523,11 @@ def get_au_bank_statement_format():
 			],
 			"sample_data": (
 				"Date,Amount,Description,Balance\n"
-				"01/01/2025,5000,Salary Payment,15000\n"
-				"02/01/2025,-150.5,Transfer Out,14849.5\n"
-				"03/01/2025,-45.00,BPAY Payment,14804.5\n"
-				"04/01/2025,+200,Refund,15004.5\n"
-				"05/01/2025,-200,Grocery shopping,14804.5\n"
+				"01-01-2025,-5000,Salary Payment,15000\n"
+				"02-01-2025,-150.5,Transfer Out,14849.5\n"
+				"03-01-2025,-45,BPAY Payment,14804.5\n"
+				"04-01-2025,200,Refund,15004.5\n"
+				"05-01-2025,-200,Grocery shopping,14804.5\n"
 			),
 		},
 	]
