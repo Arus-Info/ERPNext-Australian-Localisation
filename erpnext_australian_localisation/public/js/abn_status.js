@@ -6,76 +6,57 @@ frappe.ui.form.on("*", {
 	},
 });
 
-frappe.ui.form.on("Supplier", {
-	tax_id(frm) {
-		// fires on blur after typing/paste
-		const tax_id = (frm.doc.tax_id || "").replace(/\D/g, "");
-
-		// 🔴 PARTIAL OR CLEARED TAX ID
-		if (tax_id.length !== 11) {
-			clear_tax_id_fields(frm);
-			frm._last_abn = null;
-			return;
-		}
-		// Avoid duplicate calls for same value
-		if (frm._last_abn === tax_id) return;
-		frm._last_abn = tax_id;
-
-		frappe
-			.call({
-				method: "erpnext_australian_localisation.overrides.abn_verification.fetch_and_update_abn",
-				args: {
-					tax_id: frm.doc.tax_id,
-				},
-				freeze: true,
-				freeze_message: __("Validating Tax ID and GUID..."),
-			})
-			.then((r) => {
-				// 🔴 INVALID ABN (API returned nothing)
-				if (!r.message) {
-					clear_tax_id_fields(frm);
-					return;
+frappe.ui.form.on("*", {
+	refresh(frm) {
+		// Only for Supplier or Customer
+		if (["Supplier", "Customer"].includes(frm.doctype)) {
+			// Bind the blur event only once to avoid multiple blurs
+			if (!frm._tax_id_blur) {
+				// checks tax id field is tehre or not
+				if (frm.fields_dict.tax_id) {
+					frm.fields_dict.tax_id.$wrapper.find("input").on("blur", function () {
+						handle_tax_id_blur(frm);
+					});
+					frm._tax_id_blur = true;
 				}
-
-				show_tax_id_popup(frm, r.message);
-			});
+			}
+		}
 	},
 });
-frappe.ui.form.on("Customer", {
-	tax_id(frm) {
-		// fires on blur after typing/paste
-		const tax_id = (frm.doc.tax_id || "").replace(/\D/g, "");
 
-		// 🔴 PARTIAL OR CLEARED TAX ID
-		if (tax_id.length !== 11) {
-			clear_tax_id_fields(frm);
-			frm._last_abn = null;
-			return;
-		}
-		// Avoid duplicate calls for same value
-		if (frm._last_abn === tax_id) return;
-		frm._last_abn = tax_id;
+function handle_tax_id_blur(frm) {
+	// fires on blur after typing/paste
+	const tax_id = (frm.doc.tax_id || "").replace(/\D/g, "");
 
-		frappe
-			.call({
-				method: "erpnext_australian_localisation.overrides.abn_verification.fetch_and_update_abn",
-				args: {
-					tax_id: frm.doc.tax_id,
-				},
-				freeze: true,
-				freeze_message: __("Validating Tax ID and GUID..."),
-			})
-			.then((r) => {
-				// 🔴 INVALID ABN (API returned nothing)
-				if (!r.message) {
-					clear_tax_id_fields(frm);
-					return;
-				}
+	// 🔴 PARTIAL OR CLEARED TAX ID
+	if (tax_id.length !== 11) {
+		clear_tax_id_fields(frm);
+		frm._last_abn = null;
+		return;
+	}
+	// Avoid duplicate calls for same value
+	if (frm._last_abn === tax_id) return;
+	frm._last_abn = tax_id;
 
-				show_tax_id_popup(frm, r.message);
-			});
-	},
-});
+	frappe
+		.call({
+			method: "erpnext_australian_localisation.overrides.abn_verification.fetch_and_update_abn",
+			args: {
+				tax_id: frm.doc.tax_id,
+			},
+			freeze: true,
+			freeze_message: __("Validating Tax ID and GUID..."),
+		})
+		.then((r) => {
+			// 🔴 INVALID ABN (API returned nothing)
+			if (!r.message) {
+				clear_tax_id_fields(frm);
+				return;
+			}
+
+			show_tax_id_popup(frm, r.message);
+		});
+}
 
 function show_tax_id_popup(frm, data) {
 	const d = new frappe.ui.Dialog({
