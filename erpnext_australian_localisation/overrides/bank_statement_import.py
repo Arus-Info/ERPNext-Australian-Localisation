@@ -249,7 +249,7 @@ def validate_account_and_branch(reader, format_doc, bank_account):
 			if csv_val != expected:
 				frappe.throw(
 					_(
-						"Account Number mismatch at row {0}.<br><b>Bank Account Number :</b> {1}<br><b>CSV Value:</b> {2}"
+						"Account Number mismatch at row {0}.<br><b>Bank Account Number in ERPNext:</b> {1}<br><b>Bank Account Number in Statement:</b> {2}"
 					).format(row_no, expected, raw_val)
 				)
 		# NAB / Westpac → only account number
@@ -259,7 +259,7 @@ def validate_account_and_branch(reader, format_doc, bank_account):
 			if csv_val != expected:
 				frappe.throw(
 					_(
-						"Account Number mismatch at row {0}.<br><b>Bank Account Number :</b> {1}<br><b>CSV Value:</b> {2}"
+						"Account Number mismatch at row {0}.<br><b>Bank Account Number in ERPNext:</b> {1}<br><b>Bank Account Number in Statement:</b> {2}"
 					).format(row_no, expected, raw_val)
 				)
 

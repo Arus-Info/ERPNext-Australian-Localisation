@@ -5,8 +5,8 @@ import requests
 from frappe import _
 
 
-def fetch_and_update_abn(doctype, docname):
-	doc = frappe.get_doc(doctype, docname)
+@frappe.whitelist()
+def fetch_and_update_abn(tax_id):
 
 	settings = frappe.get_single("AU Localisation Settings")
 
@@ -19,21 +19,10 @@ def fetch_and_update_abn(doctype, docname):
 	guid = settings.abn_lookup_guid
 
 	# Normalize ABN
-	abn = "".join(ch for ch in (doc.tax_id or "") if ch.isdigit())
+	abn = "".join(ch for ch in (tax_id or "") if ch.isdigit())
 
-	# Invalid / partial ABN → clear & exit
 	if len(abn) != 11:
-		doc.update(
-			{
-				"entity_name": None,
-				"business_name": None,
-				"abn_status": None,
-				"abn_effective_from": None,
-				"address_postcode": None,
-				"address_state": None,
-			}
-		)
-		return
+		return {}
 
 		# api call
 
@@ -72,10 +61,11 @@ def fetch_and_update_abn(doctype, docname):
 		frappe.throw(_("The entered GUID is invalid. Unable to fetch ABN informations"))
 
 	# save values into document
-	doc.entity_name = data.get("EntityName") or ""
-	business_name = ", ".join(data.get("BusinessName") or [])
-	doc.business_name = business_name[:140]  # 140 chars only
-	doc.abn_status = data.get("AbnStatus") or ""
-	doc.abn_effective_from = data.get("AbnStatusEffectiveFrom") or ""
-	doc.address_postcode = data.get("AddressPostcode") or ""
-	doc.address_state = data.get("AddressState") or ""
+	return {
+		"entity_name": data.get("EntityName") or "",
+		"business_name": ", ".join(data.get("BusinessName") or [])[:140],
+		"abn_status": data.get("AbnStatus") or "",
+		"abn_effective_from": data.get("AbnStatusEffectiveFrom") or "",
+		"address_postcode": data.get("AddressPostcode") or "",
+		"address_state": data.get("AddressState") or "",
+	}
