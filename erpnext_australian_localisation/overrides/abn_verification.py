@@ -6,7 +6,7 @@ from frappe import _
 
 
 @frappe.whitelist()
-def fetch_and_update_abn(tax_id):
+def fetch_and_update_abn(tax_id: str) -> None:
 	settings = frappe.get_single("AU Localisation Settings")
 	# no check in au localisation settings no api call
 	if not settings.is_verify_abn:
