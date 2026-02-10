@@ -49,7 +49,7 @@ def after_save(doc, methods=None):
 
 # ------------------------------------------------------template------------------------------------------------------------------------------------#
 @frappe.whitelist()
-def download_uploaded_csv_template(bank_account):
+def download_uploaded_csv_template(bank_account: str) -> None:
 	if not bank_account:
 		frappe.throw(_("Please select Bank Account"))
 
