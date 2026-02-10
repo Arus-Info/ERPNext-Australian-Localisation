@@ -3,15 +3,6 @@ frappe.ui.form.on("Bank Statement Import", {
 		frm.trigger("toggle_import_fields");
 		frm.trigger("update_import_file_label");
 	},
-	bank_account(frm) {
-		// Do NOT show bs_import_file immediately
-		frm.trigger("toggle_import_fields");
-		frm.trigger("update_import_file_label");
-	},
-	after_save(frm) {
-		// Re-evaluate AFTER save
-		frm.trigger("toggle_import_fields");
-	},
 	bs_download_template(frm) {
 		if (!frm.doc.bank_account) {
 			frappe.msgprint(__("Please select Bank Account first"));
@@ -38,12 +29,6 @@ frappe.ui.form.on("Bank Statement Import", {
 		});
 	},
 	toggle_import_fields(frm) {
-		// If bank not selected → hide everything
-		if (!frm.doc.bank_account) {
-			frm.set_df_property("bs_import_file", "hidden", 1);
-			return;
-		}
-
 		// If document NOT saved yet → hide custom field
 		if (frm.is_new()) {
 			frm.set_df_property("bs_import_file", "hidden", 1);
@@ -72,8 +57,6 @@ frappe.ui.form.on("Bank Statement Import", {
 		});
 	},
 	update_import_file_label(frm) {
-		// to update attch field labels when bank account changes
-		frm.set_df_property("bs_import_file", "label", "Import File");
 		// no bank account selected default label
 		if (!frm.doc.bank_account) return;
 		// fetches one field only

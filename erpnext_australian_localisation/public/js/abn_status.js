@@ -1,42 +1,29 @@
-frappe.ui.form.on("*", {
-	refresh(frm) {
-		if (["Supplier", "Customer"].includes(frm.doctype)) {
-			apply_abn_indicator(frm);
-		}
-	},
-});
-
-frappe.ui.form.on("*", {
-	refresh(frm) {
-		// Only for Supplier or Customer
-		if (["Supplier", "Customer"].includes(frm.doctype)) {
-			// Bind the blur event only once to avoid multiple blurs
-			if (!frm._tax_id_blur) {
-				// checks tax id field is tehre or not
-				if (frm.fields_dict.tax_id) {
-					frm.fields_dict.tax_id.$wrapper.find("input").on("blur", function () {
-						handle_tax_id_blur(frm);
-					});
-					frm._tax_id_blur = true;
-				}
-			}
-		}
-	},
+["Supplier", "Customer"].forEach((doctype) => {
+	frappe.ui.form.on(doctype, {
+		refresh(frm) {
+			if (!frm.fields_dict.tax_id) return;
+			frm.fields_dict.tax_id.$wrapper
+				.find("input")
+				.on("blur", () => handle_tax_id_blur(frm));
+			apply_abn_indicator(frm.fields_dict.abn_status.$wrapper, frm.doc.abn_status);
+		},
+	});
 });
 
 function handle_tax_id_blur(frm) {
 	// fires on blur after typing/paste
 	const tax_id = (frm.doc.tax_id || "").replace(/\D/g, "");
 
-	// 🔴 PARTIAL OR CLEARED TAX ID
+	//PARTIAL OR CLEARED TAX ID
 	if (tax_id.length !== 11) {
 		clear_tax_id_fields(frm);
-		frm._last_abn = null;
+		frm.last_abn = null;
 		return;
 	}
 	// Avoid duplicate calls for same value
-	if (frm._last_abn === tax_id) return;
-	frm._last_abn = tax_id;
+	if (frm.last_abn === tax_id) return;
+	// new abn value stored
+	frm.last_abn = tax_id;
 
 	frappe
 		.call({
@@ -48,7 +35,7 @@ function handle_tax_id_blur(frm) {
 			freeze_message: __("Validating Tax ID and GUID..."),
 		})
 		.then((r) => {
-			// 🔴 INVALID ABN (API returned nothing)
+			// INVALID ABN (API returned nothing)
 			if (!r.message) {
 				clear_tax_id_fields(frm);
 				return;
@@ -91,10 +78,8 @@ function show_tax_id_popup(frm, data) {
 
 	// ✅ APPLY GREEN / RED DOT INSIDE POPUP
 	setTimeout(() => {
-		const status_field = d.fields_dict.abn_status;
-		if (status_field && status_field.$wrapper) {
-			apply_abn_indicator_to_wrapper(status_field.$wrapper, data.abn_status);
-		}
+		// for popup abn status
+		apply_abn_indicator(d.fields_dict.abn_status.$wrapper, data.abn_status);
 	}, 0);
 }
 
@@ -105,8 +90,10 @@ function apply_tax_id_details(frm, data) {
 	frm.set_value("abn_effective_from", data.abn_effective_from);
 	frm.set_value("address_postcode", data.address_postcode);
 	frm.set_value("address_state", data.address_state);
-
-	frm.save();
+	// re-apply dot after values set
+	setTimeout(() => {
+		apply_abn_indicator(frm.fields_dict.abn_status.$wrapper, data.abn_status);
+	}, 0);
 }
 function clear_tax_id_fields(frm) {
 	frm.set_value({
@@ -118,57 +105,19 @@ function clear_tax_id_fields(frm) {
 		address_state: null,
 	});
 }
-// for pop up field
-function apply_abn_indicator_to_wrapper(wrapper, status) {
+
+function apply_abn_indicator(wrapper, status) {
+	if (!wrapper || !status) return;
+
 	const value_el = wrapper.find(".control-value.like-disabled-input");
 	if (!value_el.length) return;
 
-	const text = value_el.text().trim();
-	value_el.empty();
+	// 🔴 prevent duplicate dots
+	value_el.find(".abn-indicator").remove();
 
-	const static_area = $("<div>").addClass("static-area ellipsis");
-	const indicator_span = $("<span>").addClass("abn-indicator").text(text);
+	const indicator = $("<span>")
+		.addClass("indicator")
+		.addClass(status === "Active" ? "green" : "red");
 
-	if (status === "Active") {
-		indicator_span.addClass("green");
-	} else {
-		indicator_span.addClass("red");
-	}
-
-	static_area.append(indicator_span);
-	value_el.append(static_area);
-}
-// for read only field
-function apply_abn_indicator(frm) {
-	// frm.fields_dict(dictionary of all fields)
-	const field = frm.fields_dict.abn_status;
-	// if field does not exist it exits quitely
-	// .$wrapper jquery object of enitre field container
-	if (!field || !field.$wrapper) return;
-
-	// read only field will have this class we targetting here to make style
-	const value_el = field.$wrapper.find(".control-value.like-disabled-input");
-	if (!value_el.length) return;
-	// checks whether class already added or not
-	if (!value_el.find(".static-area").length) {
-		// grts current abn  status value
-		const text = value_el.text().trim();
-		// removes current text inside .control-value
-		value_el.empty();
-		// abn-indicator is my custom class
-		const static_area = $("<div>").addClass("static-area ellipsis");
-		const indicator_span = $("<span>").addClass("abn-indicator").text(text);
-
-		static_area.append(indicator_span);
-		value_el.append(static_area);
-	}
-	// abn indictor is standard class for orange and blue dots
-	const indicator_el = value_el.find(".abn-indicator");
-	indicator_el.removeClass("indicator green red");
-
-	if (frm.doc.abn_status === "Active") {
-		indicator_el.addClass("indicator green");
-	} else {
-		indicator_el.addClass("indicator red");
-	}
+	value_el.prepend(indicator);
 }
