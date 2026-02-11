@@ -65,10 +65,10 @@ def download_uploaded_csv_template(bank_account: str) -> None:
 	if not format_doc.sample_data:
 		frappe.throw(_("CSV Template not configured for this Bank Statement Format"))
 
-	return {
-		"filename": f"{bank_statement_format}.csv",
-		"filecontent": format_doc.sample_data,
-	}
+	# Set download response
+	frappe.response["filename"] = f"{bank_statement_format}.csv"
+	frappe.response["filecontent"] = format_doc.sample_data
+	frappe.response["type"] = "download"
 
 
 # -----------------------------------------------------------attach field validation in BSI----------------------------------------------------------

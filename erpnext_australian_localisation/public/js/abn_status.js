@@ -1,13 +1,12 @@
-["Supplier", "Customer"].forEach((doctype) => {
-	frappe.ui.form.on(doctype, {
-		refresh(frm) {
-			if (!frm.fields_dict.tax_id) return;
-			frm.fields_dict.tax_id.$wrapper
-				.find("input")
-				.on("blur", () => handle_tax_id_blur(frm));
-			apply_abn_indicator(frm.fields_dict.abn_status.$wrapper, frm.doc.abn_status);
-		},
-	});
+frappe.ui.form.on("*", {
+	refresh(frm) {
+		if (["Supplier", "Customer"].includes(frm.doctype));
+		frm.last_abn = (frm.doc.tax_id || "").replace(/\D/g, "");
+
+		if (!frm.fields_dict.tax_id) return;
+		frm.fields_dict.tax_id.$wrapper.find("input").on("blur", () => handle_tax_id_blur(frm));
+		apply_abn_indicator(frm.fields_dict.abn_status.$wrapper, frm.doc.abn_status);
+	},
 });
 
 function handle_tax_id_blur(frm) {
@@ -112,11 +111,11 @@ function apply_abn_indicator(wrapper, status) {
 	const value_el = wrapper.find(".control-value.like-disabled-input");
 	if (!value_el.length) return;
 
-	// 🔴 prevent duplicate dots
+	// prevent duplicate dots
 	value_el.find(".abn-indicator").remove();
 
 	const indicator = $("<span>")
-		.addClass("indicator")
+		.addClass("indicator abn-indicator")
 		.addClass(status === "Active" ? "green" : "red");
 
 	value_el.prepend(indicator);
