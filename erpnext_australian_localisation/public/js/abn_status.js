@@ -4,17 +4,20 @@ frappe.ui.form.on("*", {
 		frm.last_abn = (frm.doc.tax_id || "").replace(/\D/g, "");
 
 		if (!frm.fields_dict.tax_id) return;
-		frm.fields_dict.tax_id.$wrapper.find("input").on("blur", () => handle_tax_id_blur(frm));
+		frm.fields_dict.tax_id.$wrapper
+			.find("input")
+			.off("blur")
+			.on("blur", () => handle_tax_id_blur(frm));
 		apply_abn_indicator(frm.fields_dict.abn_status.$wrapper, frm.doc.abn_status);
 	},
 });
 
 function handle_tax_id_blur(frm) {
-	// fires on blur after typing/paste
+	// here tax id is taken and removes all non digit characters
 	const tax_id = (frm.doc.tax_id || "").replace(/\D/g, "");
-
-	//PARTIAL OR CLEARED TAX ID
+	//partial or cleared tax id it throws error
 	if (tax_id.length !== 11) {
+		frappe.msgprint(__("Invalid Tax ID. Please enter valid ABN number in the Tax ID field."));
 		clear_tax_id_fields(frm);
 		frm.last_abn = null;
 		return;
@@ -41,6 +44,11 @@ function handle_tax_id_blur(frm) {
 			}
 
 			show_tax_id_popup(frm, r.message);
+		})
+		.catch(() => {
+			// 🔥 IMPORTANT FIX
+			clear_tax_id_fields(frm);
+			frm.last_abn = null;
 		});
 }
 
@@ -69,13 +77,14 @@ function show_tax_id_popup(frm, data) {
 		primary_action() {
 			apply_tax_id_details(frm, data);
 			d.hide();
+			frm.save();
 		},
 	});
 
 	d.set_values(data);
 	d.show();
 
-	// ✅ APPLY GREEN / RED DOT INSIDE POPUP
+	//APPLY GREEN / RED DOT INSIDE POPUP
 	setTimeout(() => {
 		// for popup abn status
 		apply_abn_indicator(d.fields_dict.abn_status.$wrapper, data.abn_status);

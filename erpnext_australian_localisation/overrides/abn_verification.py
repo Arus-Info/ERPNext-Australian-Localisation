@@ -1,4 +1,5 @@
 import json
+import re
 
 import frappe
 import requests
@@ -16,20 +17,14 @@ def fetch_and_update_abn(tax_id: str) -> None:
 
 	guid = settings.abn_lookup_guid
 
-	# Normalize ABN
-	abn = "".join(ch for ch in (tax_id or "") if ch.isdigit())
-
-	if len(abn) != 11:
-		return {}
-
-		# api call
+	# api call
 
 	response = requests.get(
 		# this link gives value in jsonp format
 		"https://abr.business.gov.au/json/AbnDetails.aspx",
 		params={
 			# sends abn num
-			"abn": abn,
+			"abn": tax_id,
 			# sends guid and removes spaces
 			"guid": guid.strip(),
 			# tells abr to give jsonp format
@@ -38,7 +33,7 @@ def fetch_and_update_abn(tax_id: str) -> None:
 		},
 		timeout=20,
 	)
-	# handles http error
+	# throws http error when api fails it is an requests library in python
 	response.raise_for_status()
 
 	# reads api response as plain text
@@ -51,12 +46,19 @@ def fetch_and_update_abn(tax_id: str) -> None:
 	# json string to python dict
 	data = json.loads(raw)
 
-	# this is abr error thows when guid in wrong
-	message = (data.get("Message") or "").lower()
-
+	message = (data.get("Message") or "").strip()
+	abn = data.get("Abn")
 	# GUID problem → show error
-	if "guid" in message:
-		frappe.throw(_("The entered GUID is invalid. Unable to fetch ABN informations"))
+	if message:
+		frappe.throw(
+			_(
+				"The GUID entered in the <a href='/desk/au-localisation-settings/' target='_blank'>AU Localisation Settings</a> is invalid. Unable to fetch ABN informations"
+			)
+		)
+
+	# if invalid abn it throws error
+	if not abn:
+		frappe.throw(_("Invalid Tax ID. Please enter valid ABN number in the Tax ID field."))
 
 	# save values into document
 	return {

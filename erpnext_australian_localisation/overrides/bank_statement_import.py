@@ -188,7 +188,7 @@ def convert_using_child_mapping(content, format_doc, bank_account, currency):
 def normalize_date(value, row_no=None):
 	if not value:
 		frappe.throw(f"Missing Date at row {row_no}")
-
+	# value is date from csv
 	value = value.strip()
 
 	try:
