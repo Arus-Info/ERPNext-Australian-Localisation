@@ -125,15 +125,23 @@ GUID setup – Below information is mandatory for ABN Validation for Customers a
 <br><br>
 To get the GUID for your company, please apply it in ABR – Australian Business Register using this link [Click Here](https://abr.business.gov.au/Tools/WebServicesAgreement).
 <br><br>
-Enter the ABN number in the Tax ID field and click on save. Then the ABN information will be fetched. This information will be available for both Customer and Supplier master. 
+Enter the ABN number in the Tax ID field and click on save.
 <br><br>
-<img width="1889" height="672" alt="ABN 2" src="https://github.com/user-attachments/assets/23ed2301-7657-46e6-beb3-b10e0efc46c4" />
+<img width="1443" height="373" alt="ABN New 1" src="https://github.com/user-attachments/assets/9df91f26-b95a-4e7d-9c1f-927e8182ce58" />
+<br><br>
+Once you have entered the ABN number in the Tax ID field, a Pop-up message will show the ABN Information. Click “OK”. 
+<br><br>
+<img width="1567" height="693" alt="ABN New 2" src="https://github.com/user-attachments/assets/d1696714-277b-4824-bfff-420caec66c32" />
+<br><br>
+The above ABN information will be shown in both Customer and Supplier master. 
+<br><br>
+<img width="1702" height="712" alt="ABN New 3" src="https://github.com/user-attachments/assets/ee4e4c25-ce30-4e92-ad0d-6abaed8a898c" />
 <br><br>
 <ins>Bank Statement (Compatible for AU Banks CSV format) Import Functionality:</ins>
 <br><br>
 Bank Statement format setup – Below information is mandatory for importing the Bank Statement into the system. Please select your Bank in the field shown below. Currently all the big four Banks’ statement format is compatible with ERPNext’s AU Localisation app. 
 <br><br>
-<img width="1533" height="621" alt="BSI Func 1" src="https://github.com/user-attachments/assets/a77cfcae-bc2f-4257-b202-5637c8d4a431" />
+<img width="1898" height="756" alt="BSI 1 New" src="https://github.com/user-attachments/assets/bfed2df5-5495-456b-9fe4-3fb1625db600" />
 <br><br>
 You will be able to import the bank statements
 <br><br>
