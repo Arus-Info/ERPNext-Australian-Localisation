@@ -13,7 +13,7 @@ frappe.ui.form.on("Bank Statement Import", {
 			"/api/method/erpnext_australian_localisation.overrides.bank_statement_import.download_uploaded_csv_template",
 			{
 				bank_account: frm.doc.bank_account,
-			},
+			}
 		);
 	},
 
