@@ -8,7 +8,6 @@
   "make_tax_category_mandatory",
   "bas_reporting_period",
   "section_break_ichx",
-  "is_verify_abn",
   "abn_lookup_guid",
   "html_mdrh"
  ],
@@ -30,16 +29,9 @@
    "fieldtype": "Section Break"
   },
   {
-   "default": "0",
-   "fieldname": "is_verify_abn",
-   "fieldtype": "Check",
-   "label": "Verify ABN in Customer/Supplier Master"
-  },
-  {
    "fieldname": "abn_lookup_guid",
    "fieldtype": "Data",
-   "label": "ABN Lookup GUID",
-   "mandatory_depends_on": "eval: doc.is_verify_abn == 1"
+   "label": "ABN Lookup GUID"
   },
   {
    "fieldname": "html_mdrh",
@@ -51,7 +43,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-01-29 18:34:04.284020",
+ "modified": "2026-02-12 23:16:15.185384",
  "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
  "name": "AU Localisation Settings",

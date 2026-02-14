@@ -289,10 +289,16 @@ ABN_GUID_FIELDS = {
 			"insert_after": "tax_withholding_group",
 		},
 		{
+			"fieldname": "is_verify_abn",
+			"label": "Verify ABN",
+			"fieldtype": "Check",
+			"insert_after": "section_break_abn",
+		},
+		{
 			"fieldname": "entity_name",
 			"label": "Entity Name",
 			"fieldtype": "Data",
-			"insert_after": "section_break_abn",
+			"insert_after": "is_verify_abn",
 			"read_only": 1,
 		},
 		{
