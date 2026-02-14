@@ -2,10 +2,10 @@
   "env": {
     "browser": true,
     "node": true,
-    "es2022": true
+    "es2022": true,
   },
   "parserOptions": {
-    "sourceType": "module"
+    "sourceType": "module",
   },
   "extends": "eslint:recommended",
   "rules": {
@@ -21,7 +21,7 @@
     "no-unused-vars": "off",
     "no-console": ["warn"],
     "no-extra-boolean-cast": ["off"],
-    "no-control-regex": ["off"]
+    "no-control-regex": ["off"],
   },
   "root": true,
   "globals": {
@@ -121,6 +121,7 @@
     "localforage": true,
     "extend_cscript": true,
     "au_localisation_settings": true,
-    "erpnext": true
-  }
+    "erpnext": true,
+    "au_localisation": true,
+  },
 }

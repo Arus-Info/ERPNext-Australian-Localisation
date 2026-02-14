@@ -8,7 +8,7 @@ au_localisation.abn.setup = function (frm) {
 	if (frm.fields_dict.abn_status) {
 		au_localisation.abn.apply_indicator(
 			frm.fields_dict.abn_status.$wrapper,
-			frm.doc.abn_status,
+			frm.doc.abn_status
 		);
 	}
 	au_localisation.abn.bind_events(frm);
@@ -40,13 +40,14 @@ au_localisation.abn.handle_blur = function (frm) {
 	if (frm._last_abn === tax_id) return;
 	frm._last_abn = tax_id;
 
-	const guid = frappe.boot.au_localisation_settings.abn_lookup_guid;
+	const guid = au_localisation_settings.abn_lookup_guid;
+	console.log(guid);
 
 	if (!guid) {
 		frappe.msgprint(
 			__(
-				"Please enter GUID in <a href='/desk/au-localisation-settings/' target='_blank'>AU Localisation Settings</a>",
-			),
+				"Please enter GUID in <a href='/desk/au-localisation-settings/' target='_blank'>AU Localisation Settings</a>"
+			)
 		);
 		frm.trigger("clear_tax_id_fields");
 		frm.set_value("is_verify_abn", 0);
@@ -76,8 +77,8 @@ au_localisation.abn.handle_error = function (frm, error) {
 	if (error == "The GUID entered is not recognised as a Registered Party") {
 		frappe.throw(
 			__(
-				"The GUID entered in the <a href='/desk/au-localisation-settings/' target='_blank'>AU Localisation Settings</a> is invalid. Unable to fetch ABN informations",
-			),
+				"The GUID entered in the <a href='/desk/au-localisation-settings/' target='_blank'>AU Localisation Settings</a> is invalid. Unable to fetch ABN informations"
+			)
 		);
 	}
 
