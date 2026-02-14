@@ -6,7 +6,7 @@ from frappe import _
 
 
 @frappe.whitelist()
-def fetch_and_update_abn(tax_id, guid):
+def fetch_and_update_abn(tax_id: str, guid: str) -> dict:
 	response = requests.get(
 		"https://abr.business.gov.au/json/AbnDetails.aspx",
 		params={"abn": tax_id, "guid": guid},
