@@ -8,7 +8,7 @@ au_localisation.abn.setup = function (frm) {
 	if (frm.fields_dict.abn_status) {
 		au_localisation.abn.apply_indicator(
 			frm.fields_dict.abn_status.$wrapper,
-			frm.doc.abn_status
+			frm.doc.abn_status,
 		);
 	}
 	au_localisation.abn.bind_events(frm);
@@ -21,6 +21,7 @@ au_localisation.abn.bind_events = function (frm) {
 		.find("input")
 		.off("blur")
 		.on("blur", () => {
+			au_localisation.abn.clear_tax_id_fields(frm);
 			au_localisation.abn.handle_blur(frm);
 		});
 };
@@ -31,7 +32,7 @@ au_localisation.abn.handle_blur = function (frm) {
 	const tax_id = (frm.doc.tax_id || "").replace(/ /g, "");
 
 	if (!tax_id) {
-		frm.trigger("clear_tax_id_fields");
+		au_localisation.abn.clear_tax_id_fields(frm);
 		frm._last_abn = null;
 		frm._is_abn_changed = false;
 		return;
@@ -46,10 +47,10 @@ au_localisation.abn.handle_blur = function (frm) {
 	if (!guid) {
 		frappe.msgprint(
 			__(
-				"Please enter GUID in <a href='/desk/au-localisation-settings/' target='_blank'>AU Localisation Settings</a>"
-			)
+				"Please enter GUID in <a href='/desk/au-localisation-settings/' target='_blank'>AU Localisation Settings</a>",
+			),
 		);
-		frm.trigger("clear_tax_id_fields");
+		au_localisation.abn.clear_tax_id_fields(frm);
 		frm.set_value("is_verify_abn", 0);
 		return;
 	}
@@ -67,6 +68,7 @@ au_localisation.abn.handle_blur = function (frm) {
 			if (data.success) {
 				frm._is_abn_changed = false;
 				au_localisation.abn.show_popup(frm, data);
+				au_localisation.abn.apply_details(frm, data);
 			} else {
 				au_localisation.abn.handle_error(frm, data.error);
 			}
@@ -77,13 +79,13 @@ au_localisation.abn.handle_error = function (frm, error) {
 	if (error == "The GUID entered is not recognised as a Registered Party") {
 		frappe.throw(
 			__(
-				"The GUID entered in the <a href='/desk/au-localisation-settings/' target='_blank'>AU Localisation Settings</a> is invalid. Unable to fetch ABN informations"
-			)
+				"The GUID entered in the <a href='/desk/au-localisation-settings/' target='_blank'>AU Localisation Settings</a> is invalid. Unable to fetch ABN information",
+			),
 		);
 	}
 
 	if (error == "Search text is not a valid ABN or ACN") {
-		frm.trigger("clear_tax_id_fields");
+		au_localisation.abn.clear_tax_id_fields(frm);
 		frappe.throw(__("Invalid ABN ID. Please enter a valid ABN."));
 	}
 
@@ -113,7 +115,6 @@ au_localisation.abn.show_popup = function (frm, data) {
 		],
 		primary_action_label: __("OK"),
 		primary_action() {
-			au_localisation.abn.apply_details(frm, data);
 			d.hide();
 		},
 	});
@@ -136,6 +137,17 @@ au_localisation.abn.apply_details = function (frm, data) {
 	au_localisation.abn.apply_indicator(frm.fields_dict.abn_status.$wrapper, data.abn_status);
 
 	frm.save();
+};
+
+au_localisation.abn.clear_tax_id_fields = function (frm) {
+	frm.set_value({
+		entity_name: null,
+		business_name: null,
+		abn_status: null,
+		abn_effective_from: null,
+		address_postcode: null,
+		address_state: null,
+	});
 };
 
 au_localisation.abn.apply_indicator = function (wrapper, status) {

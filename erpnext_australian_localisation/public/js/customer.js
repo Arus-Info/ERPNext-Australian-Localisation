@@ -6,9 +6,9 @@ frappe.ui.form.on("Customer", {
 	},
 
 	tax_id(frm) {
-		if (!frm.doc.tax_id) {
-			frm.trigger("clear_tax_id_fields");
-		}
+		// if (!frm.doc.tax_id) {
+		// au_localisation.abn.clear_tax_id_fields(frm);
+		// }
 		if (frm.doc.is_verify_abn) {
 			frm._is_abn_changed = true;
 		}
@@ -18,17 +18,6 @@ frappe.ui.form.on("Customer", {
 		frm._last_abn = null;
 		frm._is_abn_changed = false;
 		au_localisation.abn.handle_blur(frm);
-	},
-
-	clear_tax_id_fields(frm) {
-		frm.set_value({
-			entity_name: null,
-			business_name: null,
-			abn_status: null,
-			abn_effective_from: null,
-			address_postcode: null,
-			address_state: null,
-		});
 	},
 
 	validate(frm) {
