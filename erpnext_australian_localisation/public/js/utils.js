@@ -81,7 +81,7 @@ au_localisation.abn.handle_error = function (frm, error) {
 
 	if (error == "Search text is not a valid ABN or ACN") {
 		au_localisation.abn.clear_tax_id_fields(frm);
-		frappe.throw(__("Invalid ABN ID. Please enter a valid ABN."));
+		frappe.throw(__("Invalid ABN number. Please enter a valid ABN number."));
 	}
 
 	frappe.throw(__("Unexpected Error: {0}", [error]));

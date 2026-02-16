@@ -35,7 +35,7 @@ frappe.ui.form.on("Bank Statement Import", {
 					frm.set_df_property(
 						"bs_import_file",
 						"label",
-						__("Import File {0}", [format])
+						__("Import File ({0})", [format])
 					);
 					frm.set_df_property("google_sheets_url", "hidden", 1);
 					frm.set_df_property("import_file", "hidden", 1);

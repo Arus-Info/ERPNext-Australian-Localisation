@@ -4,7 +4,6 @@ import re
 from datetime import datetime
 
 import frappe
-import pandas as pd
 from dateutil.parser import parse
 from frappe import _
 from frappe.utils.file_manager import save_file
