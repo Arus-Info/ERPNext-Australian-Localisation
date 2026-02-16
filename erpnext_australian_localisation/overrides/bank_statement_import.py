@@ -4,6 +4,7 @@ import re
 from datetime import datetime
 
 import frappe
+import pandas as pd
 from dateutil.parser import parse
 from frappe import _
 from frappe.utils.file_manager import save_file
@@ -59,7 +60,7 @@ def download_uploaded_csv_template(bank_account: str) -> None:
 		frappe.throw(_("Please set Bank Statement Format in Bank Account"))
 
 	format_doc = frappe.db.get_value(
-		"AU Bank Statement Format", bank_statement_format, ["name", "sample_data"], as_dict=1
+		"AU Bank Statement Format", bank_statement_format, ["sample_data"], as_dict=1
 	)
 
 	if not format_doc.sample_data:
@@ -213,7 +214,6 @@ def validate_account_and_branch(reader, format_doc, bank_account):
 	bank_acc_no, branch_code = frappe.db.get_value(
 		"Bank Account", bank_account, ["bank_account_no", "branch_code"]
 	)
-
 	# this is for csv header name(account number) there or not
 	acc_col = format_doc.acc_no_col
 	# if header not there exits silently
@@ -230,42 +230,38 @@ def validate_account_and_branch(reader, format_doc, bank_account):
 	# this is for empty csv file if there is
 	row_found = False
 
-	# iterates csv rows
+	# ANZ → branch + account must match
 	for row_no, row in enumerate(reader, start=2):
-		# this row_found insists that csv has atleast one row
 		row_found = True
-		# reads acc no from csv and removes spaces and values are configured
+
 		raw_val = (row.get(acc_col) or "").strip()
-		# csv acc no and entire col missing throws error
 		if not raw_val:
 			frappe.throw(_("Account Number is missing in CSV at row {0}").format(row_no))
+
 		validate_format(raw_val, row_no)
-		# Remove spaces ONLY (not hyphen)
-		csv_val = raw_val.replace(" ", "")
 
-		# ANZ → branch + account must match
+		result_acc_no = raw_val[8:14]
+
+		def throw_mismatch(expected, actual, label="Account Number"):
+			frappe.throw(
+				_(
+					"{0} mismatch at row {1}.<br><b>Bank Account Number in ERPNext:</b> {2}<br><b>Bank Account Number in Statement:</b> {3}"
+				).format(label, row_no, expected, actual)
+			)
+
 		if format_doc.name == "ANZ CSV Format":
-			if not branch_code:
-				frappe.throw(_("Branch Code is mandatory for ANZ bank accounts."))
+			if bank_acc_no:
+				expected = f"{branch_code}-{bank_acc_no}" if branch_code else bank_acc_no
+				actual = raw_val if branch_code else result_acc_no
 
-			expected = f"{branch_code}-{bank_acc_no}"
+				if actual != expected:
+					throw_mismatch(expected, raw_val if branch_code else result_acc_no)
 
-			if csv_val != expected:
-				frappe.throw(
-					_(
-						"Account Number mismatch at row {0}.<br><b>Bank Account Number in ERPNext:</b> {1}<br><b>Bank Account Number in Statement:</b> {2}"
-					).format(row_no, expected, raw_val)
-				)
-		# NAB / Westpac → only account number
+		elif bank_acc_no and raw_val != bank_acc_no:
+			throw_mismatch(bank_acc_no, raw_val)
+
 		else:
-			expected = bank_acc_no.replace(" ", "")
-
-			if csv_val != expected:
-				frappe.throw(
-					_(
-						"Account Number mismatch at row {0}.<br><b>Bank Account Number in ERPNext:</b> {1}<br><b>Bank Account Number in Statement:</b> {2}"
-					).format(row_no, expected, raw_val)
-				)
+			return
 
 	if not row_found:
 		frappe.throw(_("CSV file is empty"))

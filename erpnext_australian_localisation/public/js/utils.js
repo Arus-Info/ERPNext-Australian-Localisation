@@ -4,7 +4,6 @@ frappe.provide("au_localisation.abn");
 
 au_localisation.abn.setup = function (frm) {
 	frm._last_abn = (frm.doc.tax_id || "").replace(/ /g, "");
-
 	if (frm.fields_dict.abn_status) {
 		au_localisation.abn.apply_indicator(
 			frm.fields_dict.abn_status.$wrapper,
@@ -21,28 +20,24 @@ au_localisation.abn.bind_events = function (frm) {
 		.find("input")
 		.off("blur")
 		.on("blur", () => {
-			au_localisation.abn.clear_tax_id_fields(frm);
 			au_localisation.abn.handle_blur(frm);
 		});
 };
 
 au_localisation.abn.handle_blur = function (frm) {
-	if (!frm.doc.is_verify_abn) return;
-
 	const tax_id = (frm.doc.tax_id || "").replace(/ /g, "");
-
 	if (!tax_id) {
 		au_localisation.abn.clear_tax_id_fields(frm);
 		frm._last_abn = null;
 		frm._is_abn_changed = false;
 		return;
 	}
-
 	if (frm._last_abn === tax_id) return;
 	frm._last_abn = tax_id;
+	au_localisation.abn.clear_tax_id_fields(frm);
 
+	if (!frm.doc.is_verify_abn) return;
 	const guid = au_localisation_settings.abn_lookup_guid;
-	console.log(guid);
 
 	if (!guid) {
 		frappe.msgprint(
@@ -116,6 +111,7 @@ au_localisation.abn.show_popup = function (frm, data) {
 		primary_action_label: __("OK"),
 		primary_action() {
 			d.hide();
+			frm.save();
 		},
 	});
 
@@ -135,8 +131,6 @@ au_localisation.abn.apply_details = function (frm, data) {
 	frm.set_value("address_state", data.address_state);
 
 	au_localisation.abn.apply_indicator(frm.fields_dict.abn_status.$wrapper, data.abn_status);
-
-	frm.save();
 };
 
 au_localisation.abn.clear_tax_id_fields = function (frm) {
