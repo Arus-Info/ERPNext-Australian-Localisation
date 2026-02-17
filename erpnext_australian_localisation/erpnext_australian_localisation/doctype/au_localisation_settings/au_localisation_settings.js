@@ -8,7 +8,7 @@ frappe.ui.form.on("AU Localisation Settings", {
 			frappe.call({
 				method: "erpnext_australian_localisation.erpnext_australian_localisation.doctype.au_localisation_settings.au_localisation_settings.is_draft",
 				args: {
-					company: rp[i].company,
+					company: rp[i].company
 				},
 				callback: (r) => {
 					frappe.meta.get_docfield(
@@ -21,13 +21,13 @@ frappe.ui.form.on("AU Localisation Settings", {
 						"reporting_method",
 						rp[i].name
 					).read_only = r.message;
-				},
+				}
 			});
 		}
 
 		frm.set_query("company", "bas_reporting_period", () => {
 			return {
-				filters: { country: "Australia" },
+				filters: { country: "Australia" }
 			};
 		});
 	},
@@ -48,7 +48,7 @@ frappe.ui.form.on("AU Localisation Settings", {
 		// sets latest values in frappe.boot for current user
 		// other users will still need to refresh page
 		Object.assign(au_localisation_settings, frm.doc);
-	},
+	}
 });
 
 frappe.ui.form.on("AU BAS Reporting Period", {
@@ -56,14 +56,14 @@ frappe.ui.form.on("AU BAS Reporting Period", {
 		let row = locals[cdt][cdn];
 		await frappe.db
 			.get_list("AU BAS Report", {
-				filters: { company: row.company },
+				filters: { company: row.company }
 			})
 			.then((data) => {
 				if (data.length) {
 					frappe.throw(__("Sorry can't delete company"));
 				}
 			});
-	},
+	}
 });
 
 frappe.tour["AU Localisation Settings"] = [
@@ -72,13 +72,13 @@ frappe.tour["AU Localisation Settings"] = [
 		title: "Make Tax Category Mandatory",
 		description:
 			"Tax Category field in Supplier, Customer and Item (in Tax tab) Master will be mandatory to get the relevant AU Tax codes Updated",
-		position: "Right",
+		position: "Right"
 	},
 	{
 		fieldname: "bas_reporting_period",
 		title: "BAS Reporting Period",
 		description:
 			"BAS reports are configured to generate in a Monthly frequency. This can be changed to Quarterly frequency by changing it here",
-		position: "Bottom",
-	},
+		position: "Bottom"
+	}
 ];

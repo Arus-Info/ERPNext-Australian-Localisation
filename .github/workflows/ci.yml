@@ -34,7 +34,7 @@ jobs:
         ports:
           - 11000:6379
       mariadb:
-        image: mariadb:10.6
+        image: mariadb:11.8
         env:
           MYSQL_ROOT_PASSWORD: root
         ports:
@@ -43,7 +43,7 @@ jobs:
 
     steps:
       - name: Clone
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
 
       - name: Find tests
         run: |
@@ -74,7 +74,7 @@ jobs:
         id: yarn-cache-dir-path
         run: 'echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT'
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         id: yarn-cache
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
@@ -99,9 +99,9 @@ jobs:
         run: |
           bench get-app erpnext --branch "$BRANCH"
           bench get-app erpnext_australian_localisation $GITHUB_WORKSPACE
+          bench get-app payments --branch develop
           bench setup requirements --dev
           bench new-site --db-root-password root --admin-password admin test_site
-          bench get-app payments --branch develop
           bench --site test_site install-app erpnext
           bench --site test_site install-app payments
           bench --site test_site install-app erpnext_australian_localisation

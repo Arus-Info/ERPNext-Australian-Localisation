@@ -8,8 +8,8 @@ frappe.ui.form.on("AU BAS Report", {
 		frm.set_query("company", function () {
 			return {
 				filters: {
-					country: "Australia",
-				},
+					country: "Australia"
+				}
 			};
 		});
 
@@ -32,11 +32,11 @@ frappe.ui.form.on("AU BAS Report", {
 						frappe.call({
 							method: "erpnext_australian_localisation.erpnext_australian_localisation.doctype.au_bas_report.au_bas_report.get_gst",
 							args: {
-								name: frm.doc.name,
+								name: frm.doc.name
 							},
 							callback: function () {
 								frappe.dom.unfreeze();
-							},
+							}
 						});
 					} else {
 						frappe.throw(
@@ -152,7 +152,7 @@ frappe.ui.form.on("AU BAS Report", {
 										"Start date is changed to {0} to keep it in line with the {1} BAS setup",
 										[
 											moment(frm.doc.start_date).format("DD-MM-YY"),
-											reporting_period,
+											reporting_period
 										]
 									)
 								);
@@ -163,7 +163,7 @@ frappe.ui.form.on("AU BAS Report", {
 					frappe.call({
 						method: "erpnext_australian_localisation.erpnext_australian_localisation.doctype.au_bas_report.au_bas_report.get_quaterly_start_end_date",
 						args: {
-							start_date: frm.doc.start_date,
+							start_date: frm.doc.start_date
 						},
 						callback: async function (data) {
 							await frm.set_value("start_date", data.message[0]).then((e) => {
@@ -173,14 +173,14 @@ frappe.ui.form.on("AU BAS Report", {
 											"Start date is changed to {0} to keep it in line with the {1} BAS setup",
 											[
 												moment(frm.doc.start_date).format("DD-MM-YY"),
-												reporting_period,
+												reporting_period
 											]
 										)
 									);
 								}
 							});
 							frm.set_value("end_date", data.message[1]);
-						},
+						}
 					});
 				}
 			}
@@ -233,7 +233,7 @@ frappe.ui.form.on("AU BAS Report", {
 		}
 		msg = msg === "" ? " now" : msg + " ago";
 		frm.set_intro(__("BAS Report last updated{0}", [msg]), color);
-	},
+	}
 });
 
 frappe.tour["AU BAS Report"] = [
@@ -241,20 +241,20 @@ frappe.tour["AU BAS Report"] = [
 		fieldname: "company",
 		title: "Company Selection",
 		description: "Select the company for which BAS Report needs to be generated",
-		position: "Right",
+		position: "Right"
 	},
 	{
 		fieldname: "reporting_status",
 		title: "Reporting Status Selection",
 		description:
 			'Reporting status needs to be "In Review" while preparing the Report. BAS Report data can be recalculated till the Reporting Status is set to "Validated". Once BAS is lodged then BAS Report can be submitted. ',
-		position: "Bottom",
+		position: "Bottom"
 	},
 	{
 		fieldname: "start_date",
 		title: "Start Date Selection",
 		description:
 			"The BAS Reporting period start date needs to be selected. The system will update the reporting end date based on the frequency (Monthly/ Quarterly) in the AU Localisation Settings page",
-		position: "Right",
-	},
+		position: "Right"
+	}
 ];
