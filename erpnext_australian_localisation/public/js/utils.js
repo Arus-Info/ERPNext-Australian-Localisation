@@ -55,7 +55,7 @@ au_localisation.abn.handle_blur = function (frm) {
 			method: "erpnext_australian_localisation.overrides.abn_verification.fetch_and_update_abn",
 			args: { tax_id, guid },
 			freeze: true,
-			freeze_message: __("Validating Tax ID..."),
+			freeze_message: __("Validating Tax ID...")
 		})
 		.then((r) => {
 			const data = r.message;
@@ -96,23 +96,23 @@ au_localisation.abn.show_popup = function (frm, data) {
 				label: "Business Name",
 				fieldname: "business_name",
 				fieldtype: "Data",
-				read_only: 1,
+				read_only: 1
 			},
 			{ label: "Status", fieldname: "abn_status", fieldtype: "Data", read_only: 1 },
 			{
 				label: "Effective From",
 				fieldname: "abn_effective_from",
 				fieldtype: "Date",
-				read_only: 1,
+				read_only: 1
 			},
 			{ label: "Postcode", fieldname: "address_postcode", fieldtype: "Data", read_only: 1 },
-			{ label: "State", fieldname: "address_state", fieldtype: "Data", read_only: 1 },
+			{ label: "State", fieldname: "address_state", fieldtype: "Data", read_only: 1 }
 		],
 		primary_action_label: __("OK"),
 		primary_action() {
 			d.hide();
 			frm.save();
-		},
+		}
 	});
 
 	d.set_values(data);
@@ -140,7 +140,7 @@ au_localisation.abn.clear_tax_id_fields = function (frm) {
 		abn_status: null,
 		abn_effective_from: null,
 		address_postcode: null,
-		address_state: null,
+		address_state: null
 	});
 };
 
