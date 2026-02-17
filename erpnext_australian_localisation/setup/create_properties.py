@@ -2,12 +2,14 @@ import frappe
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 
 from erpnext_australian_localisation.setup.custom_fields import (
+	ABN_GUID_FIELDS,
+	BAI2_FIELDS,
 	CUSTOM_FIELDS,
 	CUSTOM_FIELDS_FOR_BANK_FILE,
 	EMPLOYEE_BANK_DETAILS,
 	HRMS_CUSTOM_FIELDS,
 )
-from erpnext_australian_localisation.setup.property_setters import PROPERTIES
+from erpnext_australian_localisation.setup.property_setters import ABN_PROPERTIES, PROPERTIES
 
 
 def create_property_setter(properties):
@@ -23,7 +25,8 @@ def initial_setup():
 	create_custom_fields(CUSTOM_FIELDS, update=1)
 	create_properties_for_bank_file()
 	create_property_setter(PROPERTIES)
-
+	create_properties_for_bai2_file()
+	create_properties_for_abn_guid()
 	installed_apps = frappe.get_installed_apps()
 	if "hrms" in installed_apps:
 		create_hrms_custom_fields()
@@ -36,3 +39,12 @@ def create_hrms_custom_fields():
 
 def create_properties_for_bank_file():
 	create_custom_fields(CUSTOM_FIELDS_FOR_BANK_FILE, update=1)
+
+
+def create_properties_for_bai2_file():
+	create_custom_fields(BAI2_FIELDS, update=1)
+
+
+def create_properties_for_abn_guid():
+	create_custom_fields(ABN_GUID_FIELDS, update=1)
+	create_property_setter(ABN_PROPERTIES)

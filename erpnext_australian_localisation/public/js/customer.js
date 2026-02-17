@@ -1,16 +1,13 @@
 frappe.provide("au_localisation.abn");
 
-frappe.ui.form.on("Supplier", {
-	country(frm) {
-		frm.set_value("is_allowed_in_pp", frm.doc.country === "Australia" ? 1 : 0);
-	},
+frappe.ui.form.on("Customer", {
 	refresh(frm) {
 		au_localisation.abn.setup(frm);
 	},
 
 	tax_id(frm) {
 		// if (!frm.doc.tax_id) {
-		// 	au_localisation.abn.clear_tax_id_fields(frm);
+		// au_localisation.abn.clear_tax_id_fields(frm);
 		// }
 		if (frm.doc.is_verify_abn) {
 			frm._is_abn_changed = true;

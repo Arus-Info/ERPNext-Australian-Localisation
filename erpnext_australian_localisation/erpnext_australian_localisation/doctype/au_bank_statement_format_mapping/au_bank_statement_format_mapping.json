@@ -1,0 +1,44 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-01-12 16:19:02.602578",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "erpnext_column",
+  "bank_statement_column"
+ ],
+ "fields": [
+  {
+   "fieldname": "erpnext_column",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "ERPNext Column",
+   "options": "Date\nDeposit\nWithdrawal\nDescription\nReference Number",
+   "read_only": 1
+  },
+  {
+   "fieldname": "bank_statement_column",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Bank Statement Column",
+   "read_only": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-01-13 16:59:05.798544",
+ "modified_by": "Administrator",
+ "module": "ERPNext Australian Localisation",
+ "name": "AU Bank Statement Format Mapping",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
