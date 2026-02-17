@@ -9,7 +9,7 @@ The ERPNext Australian Localisation app will install the necessary localisation 
 5. Payment Proposal functionality to match the Payment Run for local suppliers.
 6. Generate ABA (Specified by Australian Banking Association) file used to process electronic transactions for supplier payments through the internet banking system of Australian banks.
 7. Import of Bank Statements (CSV Format File) in the Bank Reconciliation function.
-8. ABN number validation for Customer and Supplier.
+8. ABN Number validation for Customer and Supplier.
 
 ### Prerequisites
 
@@ -123,7 +123,7 @@ ABA File generation functionality from the Payment Batch screen:
 <br><br>
 GUID setup – Below information is mandatory for ABN Validation for Customers and Suppliers.
 <br><br>
-<img width="1883" height="646" alt="ABN Up Prev" src="https://github.com/user-attachments/assets/45c315b4-99ed-42b3-94ba-fa88fd4f4c8e" />
+<img width="1896" height="682" alt="GUID Up" src="https://github.com/user-attachments/assets/4bbf0230-8685-44a3-b403-59f3a8b2b2b1" />
 <br><br>
 To get the GUID for your company, please apply it in ABR – Australian Business Register using this link [Click Here](https://abr.business.gov.au/Tools/WebServicesAgreement).
 <br><br>
