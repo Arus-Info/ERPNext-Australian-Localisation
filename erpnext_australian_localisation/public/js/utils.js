@@ -42,7 +42,7 @@ au_localisation.abn.handle_blur = function (frm) {
 	if (!guid) {
 		frappe.msgprint(
 			__(
-				"Please enter GUID in <a href='/desk/au-localisation-settings/' target='_blank'>AU Localisation Settings</a>"
+				"Please enter GUID in <a href='/desk/au-localisation-settings/' target='_blank'>AU Localisation Settings</a>."
 			)
 		);
 		au_localisation.abn.clear_tax_id_fields(frm);
@@ -74,7 +74,7 @@ au_localisation.abn.handle_error = function (frm, error) {
 	if (error == "The GUID entered is not recognised as a Registered Party") {
 		frappe.throw(
 			__(
-				"The GUID entered in the <a href='/desk/au-localisation-settings/' target='_blank'>AU Localisation Settings</a> is invalid. Unable to fetch ABN information"
+				"The GUID entered in the <a href='/desk/au-localisation-settings/' target='_blank'>AU Localisation Settings</a> is invalid. Unable to fetch ABN information."
 			)
 		);
 	}
