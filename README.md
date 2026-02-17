@@ -8,6 +8,8 @@ The ERPNext Australian Localisation app will install the necessary localisation 
 4. Generate the BAS report based on Simpler Reporting method with the amounts to be reported in each of the BAS Label (1A, 1B and G1).
 5. Payment Proposal functionality to match the Payment Run for local suppliers.
 6. Generate ABA (Specified by Australian Banking Association) file used to process electronic transactions for supplier payments through the internet banking system of Australian banks.
+7. Import of Bank Statements (CSV Format File) in the Bank Reconciliation function.
+8. ABN number validation for Customer and Supplier.
 
 ### Prerequisites
 
@@ -23,7 +25,7 @@ bench get-app https://github.com/Arus-Info/ERPNext-Australian-Localisation.git -
 bench install-app erpnext_australian_localisation
 ```
 
-<img width="1620" height="870" alt="image" src="https://github.com/user-attachments/assets/c4c9056b-3ca9-4933-ba13-9e63b2547d40" />
+<img width="1885" height="866" alt="Readme Up1" src="https://github.com/user-attachments/assets/61e43643-ac7a-4b03-9b52-c85172cca16d" />
 
 ### Features
 
@@ -121,21 +123,21 @@ ABA File generation functionality from the Payment Batch screen:
 <br><br>
 GUID setup – Below information is mandatory for ABN Validation for Customers and Suppliers.
 <br><br>
-<img width="1891" height="634" alt="ABN Validation 1" src="https://github.com/user-attachments/assets/bfa8089f-20a7-409f-b5ac-0a7566136d5e" />
+<img width="1883" height="646" alt="ABN Up Prev" src="https://github.com/user-attachments/assets/45c315b4-99ed-42b3-94ba-fa88fd4f4c8e" />
 <br><br>
 To get the GUID for your company, please apply it in ABR – Australian Business Register using this link [Click Here](https://abr.business.gov.au/Tools/WebServicesAgreement).
 <br><br>
 Enter the ABN number in the Tax ID field and click on save.
 <br><br>
-<img width="1443" height="373" alt="ABN New 1" src="https://github.com/user-attachments/assets/9df91f26-b95a-4e7d-9c1f-927e8182ce58" />
+<img width="1619" height="519" alt="ABN Up 1" src="https://github.com/user-attachments/assets/9475eece-14bc-44e6-9c79-7824176cd901" />
 <br><br>
 Once you have entered the ABN number in the Tax ID field, a Pop-up message will show the ABN Information. Click “OK”. 
 <br><br>
-<img width="1567" height="693" alt="ABN New 2" src="https://github.com/user-attachments/assets/d1696714-277b-4824-bfff-420caec66c32" />
+<img width="1377" height="811" alt="ABN Up2" src="https://github.com/user-attachments/assets/a4ae0dde-9ade-4030-bc74-085a5ba0324f" />
 <br><br>
 The above ABN information will be shown in both Customer and Supplier master. 
 <br><br>
-<img width="1702" height="712" alt="ABN New 3" src="https://github.com/user-attachments/assets/ee4e4c25-ce30-4e92-ad0d-6abaed8a898c" />
+<img width="1623" height="707" alt="ABN Up3" src="https://github.com/user-attachments/assets/a86666e4-2241-4a0f-b824-a8f3723d6060" />
 <br><br>
 <ins>Bank Statement (Compatible for AU Banks CSV format) Import Functionality:</ins>
 <br><br>
@@ -143,19 +145,18 @@ Bank Statement format setup – Below information is mandatory for importing the
 <br><br>
 <img width="1898" height="756" alt="BSI 1 New" src="https://github.com/user-attachments/assets/bfed2df5-5495-456b-9fe4-3fb1625db600" />
 <br><br>
-You will be able to import the bank statements
-<br><br>
 Below is the sample screenshot from NAB to download the CSV format of the Bank Statement. Please use similar options to download the CSV format of the bank statement of your banking online portal. 
 <br><br>
 <img width="1363" height="771" alt="BSI Func 2" src="https://github.com/user-attachments/assets/7acacded-8687-44b9-9ce1-94566afea0d7" />
 <br><br>
 Attach the CSV format bank statement file downloaded from the bank portal as detailed in the previous step 
 <br><br>
-<img width="1714" height="495" alt="BSI Func 3" src="https://github.com/user-attachments/assets/f68c492b-4e18-4773-8741-6d938613c70d" />
+<img width="1894" height="478" alt="BSI Up3" src="https://github.com/user-attachments/assets/b989c5d9-1c77-4a62-9ce7-975139bb6965" />
 <br><br>
 Once the attachment is imported, click on Start Import. This will convert the Bank statement CSV file to the ERPNext compatible format in the background and the transactions will be imported. 
 <br><br>
-<img width="1912" height="785" alt="BSI Func 4" src="https://github.com/user-attachments/assets/11166c45-ed5a-413d-b118-cff2a71652d0" />
+<img width="1898" height="758" alt="BSI Up4" src="https://github.com/user-attachments/assets/88c255ad-e7ef-4bda-aefa-f05af541d806" />
+
 
 
 ### License
