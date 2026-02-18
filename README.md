@@ -13,7 +13,7 @@ The ERPNext Australian Localisation app will install the necessary localisation 
 
 ### Prerequisites
 
-ERPNext v16.0.0 or above
+ERPNext v15.74.0 or above
 
 ### Installation
 
@@ -21,7 +21,7 @@ The AU Localisation app for ERPNext can be installed using the [bench](https://g
 
 ```bash
 cd $PATH_TO_YOUR_BENCH
-bench get-app https://github.com/Arus-Info/ERPNext-Australian-Localisation.git --branch version-16
+bench get-app https://github.com/Arus-Info/ERPNext-Australian-Localisation.git --branch version-15
 bench install-app erpnext_australian_localisation
 ```
 
@@ -131,33 +131,31 @@ Enter the ABN number in the Tax ID field and click on save.
 <br><br>
 <img width="1619" height="519" alt="ABN Up 1" src="https://github.com/user-attachments/assets/9475eece-14bc-44e6-9c79-7824176cd901" />
 <br><br>
-Once you have entered the ABN number in the Tax ID field, a Pop-up message will show the ABN Information. Click “OK”. 
+Once you have entered the ABN number in the Tax ID field, a Pop-up message will show the ABN Information. Click “OK”.
 <br><br>
 <img width="1377" height="811" alt="ABN Up2" src="https://github.com/user-attachments/assets/a4ae0dde-9ade-4030-bc74-085a5ba0324f" />
 <br><br>
-The above ABN information will be shown in both Customer and Supplier master. 
+The above ABN information will be shown in both Customer and Supplier master.
 <br><br>
 <img width="1623" height="707" alt="ABN Up3" src="https://github.com/user-attachments/assets/a86666e4-2241-4a0f-b824-a8f3723d6060" />
 <br><br>
 <ins>Bank Statement (Compatible for AU Banks CSV format) Import Functionality:</ins>
 <br><br>
-Bank Statement format setup – Below information is mandatory for importing the Bank Statement into the system. Please select your Bank in the field shown below. Currently all the big four Banks’ statement format is compatible with ERPNext’s AU Localisation app. 
+Bank Statement format setup – Below information is mandatory for importing the Bank Statement into the system. Please select your Bank in the field shown below. Currently all the big four Banks’ statement format is compatible with ERPNext’s AU Localisation app.
 <br><br>
 <img width="1898" height="756" alt="BSI 1 New" src="https://github.com/user-attachments/assets/bfed2df5-5495-456b-9fe4-3fb1625db600" />
 <br><br>
-Below is the sample screenshot from NAB to download the CSV format of the Bank Statement. Please use similar options to download the CSV format of the bank statement of your banking online portal. 
+Below is the sample screenshot from NAB to download the CSV format of the Bank Statement. Please use similar options to download the CSV format of the bank statement of your banking online portal.
 <br><br>
 <img width="1363" height="771" alt="BSI Func 2" src="https://github.com/user-attachments/assets/7acacded-8687-44b9-9ce1-94566afea0d7" />
 <br><br>
-Attach the CSV format bank statement file downloaded from the bank portal as detailed in the previous step 
+Attach the CSV format bank statement file downloaded from the bank portal as detailed in the previous step
 <br><br>
 <img width="1894" height="478" alt="BSI Up3" src="https://github.com/user-attachments/assets/b989c5d9-1c77-4a62-9ce7-975139bb6965" />
 <br><br>
-Once the attachment is imported, click on Start Import. This will convert the Bank statement CSV file to the ERPNext compatible format in the background and the transactions will be imported. 
+Once the attachment is imported, click on Start Import. This will convert the Bank statement CSV file to the ERPNext compatible format in the background and the transactions will be imported.
 <br><br>
 <img width="1898" height="758" alt="BSI Up4" src="https://github.com/user-attachments/assets/88c255ad-e7ef-4bda-aefa-f05af541d806" />
-
-
 
 ### License
 
