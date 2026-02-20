@@ -2,7 +2,7 @@ frappe.pages["payment-proposal"].on_page_load = function (wrapper) {
 	var page = frappe.ui.make_app_page({
 		parent: wrapper,
 		title: __("Payment Proposal"),
-		single_column: true,
+		single_column: true
 	});
 
 	page.set_secondary_action(__("Reset Filters"), () => {
@@ -21,7 +21,7 @@ frappe.pages["payment-proposal"].refresh = function (wrapper) {
 				fieldtype: "Link",
 				options: "Company",
 				reqd: 1,
-				filters: { default_currency: "AUD" },
+				filters: { default_currency: "AUD" }
 			},
 			{
 				fieldname: "party_type",
@@ -29,34 +29,34 @@ frappe.pages["payment-proposal"].refresh = function (wrapper) {
 				fieldtype: "Link",
 				options: "DocType",
 				reqd: 1,
-				link_filters: '[["DocType","name","in",["Supplier","Employee"]]]',
+				link_filters: '[["DocType","name","in",["Supplier","Employee"]]]'
 			},
 			{
 				label: __("Filters"),
-				fieldtype: "Section Break",
+				fieldtype: "Section Break"
 			},
 			{
 				fieldname: "created_by",
 				label: __("Document Created By User"),
 				fieldtype: "Link",
-				options: "User",
+				options: "User"
 			},
 			{
 				fieldname: "from_due_date",
 				label: __("Document Due / Posting Date On or After"),
-				fieldtype: "Date",
+				fieldtype: "Date"
 			},
 			{
 				fieldname: "to_due_date",
 				label: __("Document Due / Posting Date On or Before"),
-				fieldtype: "Date",
-			},
+				fieldtype: "Date"
+			}
 		],
 		primary_action_label: __("Continue with Payment Proposal"),
 		primary_action(values) {
 			new PaymentProposal(wrapper, values);
 			filter_dialog.hide();
-		},
+		}
 	});
 
 	filter_dialog.show();
@@ -85,7 +85,7 @@ class PaymentProposal {
 			fieldtype: "Link",
 			options: "Company",
 			read_only: 1,
-			default: this.filters.company,
+			default: this.filters.company
 		});
 		this.page.add_field({
 			fieldname: "party_type",
@@ -93,7 +93,7 @@ class PaymentProposal {
 			fieldtype: "Link",
 			options: "DocType",
 			read_only: 1,
-			default: this.filters.party_type,
+			default: this.filters.party_type
 		});
 		this.page.add_field({
 			fieldname: "reference_doctype",
@@ -101,7 +101,7 @@ class PaymentProposal {
 			fieldtype: "Link",
 			options: "DocType",
 			read_only: 1,
-			default: this.filters.reference_doctype,
+			default: this.filters.reference_doctype
 		});
 		this.page.add_field({
 			fieldname: "created_by",
@@ -109,21 +109,21 @@ class PaymentProposal {
 			fieldtype: "Link",
 			options: "User",
 			read_only: 1,
-			default: this.filters.created_by,
+			default: this.filters.created_by
 		});
 		this.page.add_field({
 			fieldname: "from_due_date",
 			label: __("Document Due Date On or After"),
 			fieldtype: "Date",
 			read_only: 1,
-			default: this.filters.from_due_date,
+			default: this.filters.from_due_date
 		});
 		this.page.add_field({
 			fieldname: "to_due_date",
 			label: __("Document Due Date On or Before"),
 			fieldtype: "Date",
 			read_only: 1,
-			default: this.filters.to_due_date,
+			default: this.filters.to_due_date
 		});
 
 		this.page.set_primary_action(__("Create Payment Batch"), () => {
@@ -144,8 +144,8 @@ class PaymentProposal {
 					party_type: this.filters.party_type,
 					from_due_date: this.filters.from_due_date ? this.filters.from_due_date : "",
 					to_due_date: this.filters.to_due_date ? this.filters.to_due_date : "",
-					created_by: this.filters.created_by ? this.filters.created_by : "",
-				},
+					created_by: this.filters.created_by ? this.filters.created_by : ""
+				}
 			},
 			callback: (data) => {
 				data = data.message;
@@ -163,7 +163,7 @@ class PaymentProposal {
 					}
 					this.create_fields(d);
 				}
-			},
+			}
 		});
 
 		this.fields.unshift(
@@ -173,7 +173,7 @@ class PaymentProposal {
 				fieldname: "total_paid_amount",
 				fieldtype: "Currency",
 				read_only: 1,
-				default: total_paid_amount,
+				default: total_paid_amount
 			},
 			{ fieldtype: "Column Break" },
 			{
@@ -181,13 +181,13 @@ class PaymentProposal {
 				fieldname: "total_number_of_entries_to_be_paid",
 				fieldtype: "Data",
 				read_only: 1,
-				default: total_number_of_entries_to_be_paid.toString(),
+				default: total_number_of_entries_to_be_paid.toString()
 			}
 		);
 
 		this.field_group = new frappe.ui.FieldGroup({
 			fields: this.fields,
-			body: this.body,
+			body: this.body
 		});
 
 		this.field_group.make();
@@ -203,7 +203,7 @@ class PaymentProposal {
 			{ fieldtype: "Section Break" },
 			{
 				fieldtype: "HTML",
-				options: "<hr/>",
+				options: "<hr/>"
 			},
 			{
 				fieldtype: "Section Break",
@@ -211,8 +211,8 @@ class PaymentProposal {
 				label: __("{0}s for {1} - {2}", [
 					this.filters.reference_doctype,
 					this.filters.party_type,
-					data.party_name,
-				]),
+					data.party_name
+				])
 			},
 			{
 				label: __("Party Warning"),
@@ -221,8 +221,8 @@ class PaymentProposal {
 				options: data.is_included
 					? ""
 					: __("<p style='color: #ff1a1a'>Please update bank details in the {0}.</p>", [
-							this.filters.party_type,
-					  ]),
+							this.filters.party_type
+					  ])
 			},
 			{
 				label: __("{0}s", [this.filters.reference_doctype]),
@@ -233,7 +233,7 @@ class PaymentProposal {
 				cannot_delete_all_rows: true,
 				data: data.outstanding_entries,
 				in_place_edit: true,
-				fields: entry_to_be_paid,
+				fields: entry_to_be_paid
 			},
 			{ fieldtype: "Section Break" },
 			{
@@ -241,7 +241,7 @@ class PaymentProposal {
 				fieldname: "reference_no_" + data.party,
 				fieldtype: "Data",
 				reqd: data.is_included,
-				default: data.lodgement_reference,
+				default: data.lodgement_reference
 			},
 			{ fieldtype: "Column Break" },
 			{
@@ -265,13 +265,13 @@ class PaymentProposal {
 					this.field_group.fields_dict["total_number_of_entries_to_be_paid"].set_value(
 						total_number_of_entries_to_be_paid.toString()
 					);
-				},
+				}
 			},
 			{ fieldtype: "Column Break" },
 			{
 				label: __("Amount to be Paid for {0} - {1}", [
 					this.filters.party_type,
-					data.party_name,
+					data.party_name
 				]),
 				fieldname: "paid_to_party_" + data.party,
 				fieldtype: "Currency",
@@ -287,8 +287,8 @@ class PaymentProposal {
 						}
 					}
 					this.field_group.fields_dict["total_paid_amount"].set_value(total_paid_amount);
-				},
-			},
+				}
+			}
 		];
 		if (data.reference_entries) {
 			party_fields.splice(
@@ -304,9 +304,9 @@ class PaymentProposal {
 							frappe.utils.icon("lock", "md"),
 							this.filters.reference_doctype,
 							this.filters.party_type,
-							data.party_name,
+							data.party_name
 						]
-					),
+					)
 				},
 				{
 					fieldname: "references_" + data.party,
@@ -316,7 +316,7 @@ class PaymentProposal {
 					cannot_delete_all_rows: true,
 					data: data.reference_entries,
 					in_place_edit: true,
-					fields: entries_in_payment_entry,
+					fields: entries_in_payment_entry
 				}
 			);
 		}
@@ -332,7 +332,7 @@ class PaymentProposal {
 				in_list_view: 1,
 				label: __("{0} ", [this.filters.reference_doctype]),
 				read_only: 1,
-				columns: 2,
+				columns: 2
 			},
 			{
 				fieldname: "outstanding_amount",
@@ -340,7 +340,7 @@ class PaymentProposal {
 				in_list_view: 1,
 				columns: 1,
 				label: __("Outstanding Amount"),
-				read_only: 1,
+				read_only: 1
 			},
 			{
 				fieldname: "rounded_total",
@@ -348,7 +348,7 @@ class PaymentProposal {
 				in_list_view: 1,
 				columns: 1,
 				label: __("Total Amount"),
-				read_only: 1,
+				read_only: 1
 			},
 			{
 				fieldname: "allocated_amount",
@@ -384,8 +384,8 @@ class PaymentProposal {
 					this.field_group.fields_dict["entries_" + party].refresh_input();
 
 					this.update_total_paid_to_party(party);
-				},
-			},
+				}
+			}
 		];
 
 		if (this.filters.party_type === "Supplier") {
@@ -398,7 +398,7 @@ class PaymentProposal {
 					in_list_view: 1,
 					label: __("Due Date"),
 					columns: 1,
-					read_only: 1,
+					read_only: 1
 				},
 				{
 					fieldname: "invoice_amount",
@@ -407,14 +407,14 @@ class PaymentProposal {
 					options: "invoice_currency",
 					label: __("Invoice Amount"),
 					read_only: 1,
-					columns: 1,
+					columns: 1
 				},
 				{
 					fieldname: "invoice_currency",
 					fieldtype: "Link",
 					options: "Currency",
 					label: __("Invoice Currency"),
-					read_only: 1,
+					read_only: 1
 				}
 			);
 		}
@@ -426,21 +426,21 @@ class PaymentProposal {
 				options: this.filters.reference_doctype,
 				in_list_view: 1,
 				label: __("{0} ", [this.filters.reference_doctype]),
-				read_only: 1,
+				read_only: 1
 			},
 			{
 				fieldname: "rounded_total",
 				fieldtype: "Currency",
 				in_list_view: 1,
 				label: __("Grand Total"),
-				read_only: 1,
+				read_only: 1
 			},
 			{
 				fieldname: "outstanding_amount",
 				fieldtype: "Currency",
 				in_list_view: 1,
 				label: __("Outstanding Amount"),
-				read_only: 1,
+				read_only: 1
 			},
 			{
 				fieldname: "payment_entry",
@@ -448,20 +448,20 @@ class PaymentProposal {
 				options: "Payment Entry",
 				in_list_view: 1,
 				label: __("Payment Entry not Submitted"),
-				read_only: 1,
+				read_only: 1
 			},
 			{
 				fieldname: "allocated_amount",
 				fieldtype: "Currency",
 				in_list_view: 1,
 				label: __("Allocated Amount"),
-				read_only: 1,
-			},
+				read_only: 1
+			}
 		];
 
 		return {
 			entry_to_be_paid: entry_to_be_paid,
-			entries_in_payment_entry: entries_in_payment_entry,
+			entries_in_payment_entry: entries_in_payment_entry
 		};
 	}
 
@@ -547,7 +547,7 @@ class PaymentProposal {
 						frappe.throw(
 							__("Reference Number not found for {0} {1}", [
 								this.filters.party_type,
-								d.party,
+								d.party
 							])
 						);
 					}
@@ -569,7 +569,7 @@ class PaymentProposal {
 				{
 					is_company_account: 1,
 					company: this.page.fields_dict.company.value,
-					currency: "AUD",
+					currency: "AUD"
 				},
 				"name"
 			)
@@ -585,7 +585,7 @@ class PaymentProposal {
 					fieldtype: "Link",
 					options: "Company",
 					read_only: 1,
-					default: this.filters.company,
+					default: this.filters.company
 				},
 				{
 					fieldname: "party_type",
@@ -593,7 +593,7 @@ class PaymentProposal {
 					fieldtype: "Link",
 					options: "DocType",
 					read_only: 1,
-					default: this.filters.party_type,
+					default: this.filters.party_type
 				},
 				{
 					label: __("Bank Account"),
@@ -607,30 +607,30 @@ class PaymentProposal {
 						branch_code: ["!=", ""],
 						bank_account_no: ["!=", ""],
 						apca_number: ["!=", ""],
-						currency: "AUD",
+						currency: "AUD"
 					},
-					default: bank_account.name,
+					default: bank_account.name
 				},
 				{
 					label: __("Posting Date"),
 					fieldname: "posting_date",
 					fieldtype: "Date",
 					default: "Today",
-					reqd: 1,
+					reqd: 1
 				},
 				{
 					label: __("Reference Date"),
 					fieldname: "reference_date",
 					fieldtype: "Date",
 					default: "Today",
-					reqd: 1,
+					reqd: 1
 				},
 				{
 					label: __("Amount to be Paid"),
 					fieldname: "total_paid_amount",
 					fieldtype: "Currency",
 					default: this.field_group.fields_dict["total_paid_amount"].get_value(),
-					read_only: 1,
+					read_only: 1
 				},
 				{
 					fieldname: "mode_of_payment",
@@ -638,8 +638,8 @@ class PaymentProposal {
 					fieldtype: "Link",
 					options: "Mode of Payment",
 					filters: {
-						type: "Bank",
-					},
+						type: "Bank"
+					}
 				},
 				{
 					label: __("Number of {0}s to be Paid", [this.filters.reference_doctype]),
@@ -649,8 +649,8 @@ class PaymentProposal {
 						this.field_group.fields_dict[
 							"total_number_of_entries_to_be_paid"
 						].get_value(),
-					read_only: 1,
-				},
+					read_only: 1
+				}
 			],
 			primary_action_label: __("Create Payment Batch"),
 			primary_action: (values) => {
@@ -660,16 +660,16 @@ class PaymentProposal {
 						method: "erpnext_australian_localisation.erpnext_australian_localisation.page.payment_proposal.payment_proposal.create_payment_batch",
 						args: {
 							party_entries: party_entries,
-							data: values,
+							data: values
 						},
 						callback(data) {
 							Dialog.hide();
 							frappe.set_route("payment-batch", data.message);
 							window.location.reload();
-						},
+						}
 					});
 				}
-			},
+			}
 		});
 
 		Dialog.show();

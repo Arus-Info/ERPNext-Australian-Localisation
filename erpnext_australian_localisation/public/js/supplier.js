@@ -30,5 +30,5 @@ frappe.ui.form.on("Supplier", {
 			frm._last_abn = null;
 			au_localisation.abn.handle_blur(frm);
 		}
-	},
+	}
 });
