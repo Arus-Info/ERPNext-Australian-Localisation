@@ -15,8 +15,8 @@ frappe.ui.form.on("Payment Batch", {
 					["branch_code", "!=", ""],
 					["bank_account_no", "!=", ""],
 					["apca_number", "!=", ""],
-					["currency", "=", "AUD"],
-				],
+					["currency", "=", "AUD"]
+				]
 			};
 		});
 
@@ -44,7 +44,7 @@ frappe.ui.form.on("Payment Batch", {
 										[url.message]
 									)
 								);
-							},
+							}
 						});
 					} else {
 						frappe.throw(
@@ -61,7 +61,7 @@ frappe.ui.form.on("Payment Batch", {
 		if (frm.doc.bank_file_url) {
 			frm.add_custom_button(
 				__("<a style='padding-left: 8px' href={0}>Download Bank File</a>", [
-					frm.doc.bank_file_url,
+					frm.doc.bank_file_url
 				]),
 				() => null,
 				"Bank File"
@@ -73,11 +73,11 @@ frappe.ui.form.on("Payment Batch", {
 				frappe.call({
 					method: "erpnext_australian_localisation.erpnext_australian_localisation.doctype.payment_batch.payment_batch.create_payment_batch_again",
 					args: {
-						doc: frm.doc,
+						doc: frm.doc
 					},
 					callback: (data) => {
 						frappe.set_route("payment-batch", data.message);
-					},
+					}
 				});
 			});
 		}
@@ -89,7 +89,7 @@ frappe.ui.form.on("Payment Batch", {
 			total_paid_amount += frm.doc.payment_created[i].amount;
 		}
 		frm.set_value("total_paid_amount", total_paid_amount);
-	},
+	}
 });
 
 frappe.ui.form.on("Payment Batch Item", {
@@ -102,7 +102,7 @@ frappe.ui.form.on("Payment Batch Item", {
 	},
 	payment_created_remove(frm) {
 		frm.trigger("update_total_paid_amount");
-	},
+	}
 });
 
 function get_items(frm) {
@@ -115,23 +115,23 @@ function get_items(frm) {
 			{
 				fieldname: "party_name",
 				label: __(frm.doc.type),
-				fieldtype: "Data",
+				fieldtype: "Data"
 			},
 			{
 				fieldname: "base_paid_amount",
 				label: __("Amount"),
 				fieldtype: "Currency",
-				hidden: 1,
-			},
+				hidden: 1
+			}
 		],
 		get_query_filters: {
 			docstatus: 0,
 			company: frm.doc.company,
 			bank_account: frm.doc.bank_account,
-			party_type: frm.doc.party_type,
+			party_type: frm.doc.party_type
 		},
 		get_query_method:
-			"erpnext_australian_localisation.erpnext_australian_localisation.doctype.payment_batch.payment_batch.get_payment_entry",
+			"erpnext_australian_localisation.erpnext_australian_localisation.doctype.payment_batch.payment_batch.get_payment_entry"
 	});
 
 	setTimeout(() => {

@@ -27,5 +27,5 @@ frappe.ui.form.on("Customer", {
 			frm._last_abn = null;
 			au_localisation.abn.handle_blur(frm);
 		}
-	},
+	}
 });
