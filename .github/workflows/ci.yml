@@ -3,7 +3,8 @@ name: CI
 on:
   push:
     branches:
-      - version-15-hotfix
+      - version-1*
+      - develop
 
   pull_request:
     branches:

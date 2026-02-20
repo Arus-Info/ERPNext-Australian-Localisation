@@ -9,7 +9,7 @@ frappe.ui.form.on("Item", {
 				}
 			}
 		}
-	},
+	}
 });
 
 frappe.ui.form.on("Item Tax", {
@@ -27,5 +27,5 @@ frappe.ui.form.on("Item Tax", {
 			tax_category = "Domestic GST Supplier";
 		}
 		frappe.model.set_value(cdt, cdn, "tax_category", tax_category);
-	},
+	}
 });
