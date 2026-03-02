@@ -29,6 +29,55 @@ frappe.ui.form.on("Payment Batch", {
 				__("Get Items From")
 			);
 		}
+		if (frm.doc.docstatus === 1) {
+			frm.add_custom_button(__("Send remittance"), () => {
+				console.log("hiii");
+				let rows = frm.doc.payment_created;
+				rows.forEach((row) => {
+					console.log(row.payment_entry);
+					console.log(row.party_name);
+					if (row.party_name) {
+						frappe.db
+							.get_list("Contact", {
+								fields: ["email_id"],
+								filters: [
+									["Dynamic Link", "link_doctype", "=", "Supplier"],
+									["Dynamic Link", "link_name", "=", row.party_name]
+								],
+								limit: 1
+							})
+							.then((r) => {
+								const email = r;
+								console.log(email);
+								if (email) {
+									console.log(email);
+									frappe.call({
+										method: "frappe.core.doctype.communication.email.make",
+										args: {
+											doctype: "Payment Entry",
+											recipients: ["email"],
+											content: "fine",
+											// name: frm.doc.name,
+											send_email: 1,
+											print_format: "Payment Entry",
+											attachments: [],
+											subject: "bye bye "
+										},
+										callback(r) {
+											if (r.message) {
+												console.log(r.message);
+												console.log("Mail sent successfully:", r.message);
+											} else {
+												console.error("Mail sending failed");
+											}
+										}
+									});
+								}
+							});
+					}
+				});
+			});
+		}
 		if (frm.doc.payment_created.length) {
 			frm.add_custom_button(
 				__("Generate Bank File"),
@@ -139,3 +188,24 @@ function get_items(frm) {
 		$(".filter-area").hide();
 	}, 700);
 }
+
+// function send_details(frm) {
+// 	frappe.throw("hiii");
+// 	for (pay in doc.payment_created) {
+// 		if (pay.payment_entry) {
+// 			console.log(frm.doc.payment_entry);
+// 			// // frappe.db.get_value = ("Payment Entry", "party_name");
+// 			// email = frappe.get_list(
+// 			// 	"Contact",
+// 			// 	(fields = ["`tabContact Email`.email_id"]),
+// 			// 	(filters = [
+// 			// 		["Dynamic Link", "link_doctype", "=", "Supplier"],
+// 			// 		["Dynamic Link", "link_name", "=", pay.party_name]
+// 			// 	]),
+// 			// 	(limit = 1)
+// 			// );
+// 			// console.log("hello");
+// 			console.log(email);
+// 		}
+// 	}
+// }
