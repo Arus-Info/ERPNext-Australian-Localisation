@@ -11,7 +11,8 @@
   "party_type",
   "party",
   "party_name",
-  "amount"
+  "amount",
+  "preview"
  ],
  "fields": [
   {
@@ -56,13 +57,18 @@
    "in_list_view": 1,
    "label": "Party Name",
    "read_only": 1
+  },
+  {
+   "fieldname": "preview",
+   "fieldtype": "Button",
+   "label": "Preview"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-09-26 14:00:02.630812",
+ "modified": "2026-03-02 22:40:21.481890",
  "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
  "name": "Payment Batch Item",
