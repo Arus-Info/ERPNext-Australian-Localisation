@@ -94,7 +94,6 @@ frappe.ui.form.on("Payment Batch", {
 							fieldname: "count_display",
 							fieldtype: "Small Text",
 							label: __("No of Rows in Payment Created"),
-							// any value
 							default: frm.doc.payment_created.length,
 							read_only: 1
 						}
@@ -103,8 +102,6 @@ frappe.ui.form.on("Payment Batch", {
 					primary_action() {
 						let rows = frm.doc.payment_created;
 						rows.forEach((row) => {
-							console.log(row.payment_entry);
-							console.log(row.party_name);
 							if (row.party_name) {
 								frappe.db
 									.get_list("Contact", {
@@ -117,33 +114,30 @@ frappe.ui.form.on("Payment Batch", {
 									})
 									.then((r) => {
 										const email = r;
-										console.log(email);
 										if (email) {
-											console.log(email);
 											frappe.call({
 												method: "frappe.core.doctype.communication.email.make",
 												args: {
 													doctype: "Payment Entry",
 													recipients: r[0].email_id,
-													content: "fine",
+													content:
+														"Here I have attached the print format",
 													name: row.payment_entry,
 													send_email: 1,
-													print_format: "Payment Entry",
+													print_format: "Remittance advise",
 													print_letterhead: 1,
 													print_language: "en",
 													add_css: 1,
 													attachments: [],
-													subject: "bye bye "
+													subject: "Payment Entry Print Format"
 												},
 												callback(r) {
 													if (r.message) {
-														console.log(r.message);
-														console.log(
-															"Mail sent successfully:",
-															r.message
+														frappe.msgprint(
+															__("Mail sent successfully")
 														);
 													} else {
-														console.error("Mail sending failed");
+														frappe.msgprint(__("Mail sending failed"));
 													}
 												}
 											});
