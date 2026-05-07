@@ -229,8 +229,6 @@ doc_events = {
 # 	],
 # }
 
-scheduler_events = {"monthly": ["erpnext_australian_localisation.tasks.bas_report.create_bas_report"]}
-
 # Testing
 # -------
 
