@@ -99,7 +99,7 @@ jobs:
         run: |
           bench get-app erpnext --branch "$BRANCH"
           bench get-app erpnext_australian_localisation $GITHUB_WORKSPACE
-          bench get-app payments --branch develop
+          bench get-app payments --branch version-15
           bench setup requirements --dev
           bench new-site --db-root-password root --admin-password admin test_site
           bench --site test_site install-app erpnext
