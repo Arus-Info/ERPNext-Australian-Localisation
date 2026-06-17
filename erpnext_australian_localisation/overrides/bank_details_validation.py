@@ -14,9 +14,9 @@ def validate(doc, event):
 			doc.branch_code = branch_code[0:3] + "-" + branch_code[3:]
 
 	if doc.get("bank_account_no"):
-		pattern = re.compile(r"^\d{9}$")
+		pattern = re.compile(r"^\d{6,9}$")
 		if not pattern.match(doc.bank_account_no):
-			frappe.throw(_("Only 9-digit numbers are allowed in Bank Account Number."))
+			frappe.throw(_("Only 6 to 9 digit numbers are allowed in Bank Account Number."))
 
 
 def bank_account_validation(doc, event):
