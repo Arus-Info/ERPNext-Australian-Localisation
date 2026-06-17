@@ -20,8 +20,6 @@ def after_save(doc, methods=None):
 	if not bank_statement_format:
 		frappe.throw(_("Please set Bank Statement Format in Bank Account"))
 
-	format_doc = frappe.get_doc("AU Bank Statement Format", bank_statement_format)
-
 	if not currency:
 		frappe.throw(_("Currency is missing in Bank Account"))
 
@@ -29,6 +27,7 @@ def after_save(doc, methods=None):
 	content = file_doc.get_content()
 
 	# csv validation in bank statement import attach field
+	format_doc = frappe.get_doc("AU Bank Statement Format", bank_statement_format)
 	validate_csv_for_bank_format(content, format_doc)
 
 	# pass bank_account & currency
@@ -47,9 +46,11 @@ def after_save(doc, methods=None):
 	doc.db_set("import_file", new_file.file_url)
 
 
-# ------------------------------------------------------template------------------------------------------------------------------------------------#
 @frappe.whitelist()
 def download_uploaded_csv_template(bank_account: str) -> None:
+	"""
+	Download the CSV template based on the Bank Statement Format set in the selected Bank Account.
+	"""
 	if not bank_account:
 		frappe.throw(_("Please select Bank Account"))
 
@@ -183,12 +184,9 @@ def convert_using_child_mapping(content, format_doc, bank_account, currency):
 	return output.getvalue()
 
 
-# DATE
-# --------------------------------------------------
 def normalize_date(value, row_no=None):
 	if not value:
 		frappe.throw(f"Missing Date at row {row_no}")
-	# value is date from csv
 	value = value.strip()
 
 	try:
@@ -203,10 +201,6 @@ def normalize_date(value, row_no=None):
 
 	except Exception:
 		frappe.throw(f"Invalid date '{value}' at row {row_no}")
-
-
-# ----------------------------------------------------Branch code and account number validation---------------------------------------------------------------------
-# For branch code and bank account number validation
 
 
 def validate_account_and_branch(reader, format_doc, bank_account):
@@ -239,8 +233,6 @@ def validate_account_and_branch(reader, format_doc, bank_account):
 
 		validate_format(raw_val, row_no)
 
-		result_acc_no = raw_val[8:14]
-
 		def throw_mismatch(expected, actual, label="Account Number"):
 			frappe.throw(
 				_(
@@ -249,12 +241,20 @@ def validate_account_and_branch(reader, format_doc, bank_account):
 			)
 
 		if format_doc.name == "ANZ CSV Format":
+			result_acc_no = raw_val[8:14]
 			if bank_acc_no:
 				expected = f"{branch_code}-{bank_acc_no}" if branch_code else bank_acc_no
 				actual = raw_val if branch_code else result_acc_no
 
 				if actual != expected:
 					throw_mismatch(expected, raw_val if branch_code else result_acc_no)
+
+		elif format_doc.name == "Westpac CSV Format":
+			# contains BSB (6 digits) + account number concatenated
+			if bank_acc_no and not raw_val.endswith(bank_acc_no):
+				throw_mismatch(bank_acc_no, raw_val)
+			else:
+				return
 
 		elif bank_acc_no and raw_val != bank_acc_no:
 			throw_mismatch(bank_acc_no, raw_val)
