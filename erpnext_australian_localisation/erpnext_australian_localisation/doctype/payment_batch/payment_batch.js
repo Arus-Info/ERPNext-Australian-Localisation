@@ -100,54 +100,87 @@ frappe.ui.form.on("Payment Batch", {
 					],
 					primary_action_label: __("OK"),
 					primary_action() {
-						let rows = frm.doc.payment_created;
-						rows.forEach((row) => {
-							if (row.party_name) {
-								frappe.db
-									.get_list("Contact", {
-										fields: ["email_id"],
-										filters: [
-											["Dynamic Link", "link_doctype", "=", "Supplier"],
-											["Dynamic Link", "link_name", "=", row.party_name]
-										],
-										limit: 1
-									})
-									.then((r) => {
-										const email = r;
-										if (email) {
-											frappe.call({
-												method: "frappe.core.doctype.communication.email.make",
-												args: {
-													doctype: "Payment Entry",
-													recipients: r[0].email_id,
-													content:
-														"Here I have attached the print format",
-													name: row.payment_entry,
-													send_email: 1,
-													print_format: "Remittance advise",
-													print_letterhead: 1,
-													print_language: "en",
-													add_css: 1,
-													attachments: [],
-													subject: "Payment Entry Print Format"
-												},
-												callback(r) {
-													if (r.message) {
-														frappe.msgprint(
-															__("Mail sent successfully")
-														);
-													} else {
-														frappe.msgprint(__("Mail sending failed"));
-													}
-												}
-											});
-										}
-									});
-							}
-						});
-						d.hide();
+						frappe.db
+							.get_single_value("AU Localisation Settings", "remittance_template")
+							.then((template) => {
+								if (!template) {
+									frappe.msgprint(
+										__(
+											"Please set a Remittance Email Template in AU Localisation Settings"
+										)
+									);
+									return;
+								}
+
+								let rows = frm.doc.payment_created || [];
+
+								rows.forEach((row) => {
+									if (!row.party_name) return;
+
+									frappe.db
+										.get_list("Contact", {
+											fields: ["email_id"],
+											filters: [
+												["Dynamic Link", "link_doctype", "=", "Supplier"],
+												["Dynamic Link", "link_name", "=", row.party_name]
+											],
+											limit: 1
+										})
+										.then((r) => {
+											frappe.db
+												.get_doc("Payment Entry", row.payment_entry)
+												.then((payment_entry) => {
+													frappe.call({
+														method: "frappe.email.doctype.email_template.email_template.get_email_template",
+														args: {
+															template_name: template,
+															doc: JSON.stringify(payment_entry)
+														},
+														callback(template_res) {
+															if (!template_res.message) return;
+
+															frappe.call({
+																method: "frappe.core.doctype.communication.email.make",
+																args: {
+																	doctype: "Payment Entry",
+																	name: row.payment_entry,
+																	recipients: r[0].email_id,
+																	subject:
+																		template_res.message
+																			.subject,
+																	content:
+																		template_res.message
+																			.message,
+																	send_email: 1,
+																	print_format:
+																		"Remittance advise",
+																	print_letterhead: 1,
+																	print_language: "en",
+																	add_css: 1
+																},
+																callback(r) {
+																	if (r.message) {
+																		frappe.show_alert({
+																			message:
+																				__(
+																					"Mail sent successfully"
+																				),
+																			indicator: "green"
+																		});
+																	}
+																}
+															});
+														}
+													});
+												});
+										});
+								});
+
+								d.hide();
+							});
 					}
 				});
+
 				d.show();
 			});
 		}

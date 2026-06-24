@@ -9,7 +9,9 @@
   "bas_reporting_period",
   "section_break_ichx",
   "abn_lookup_guid",
-  "html_mdrh"
+  "html_mdrh",
+  "section_break_lmnb",
+  "remittance_template"
  ],
  "fields": [
   {
@@ -37,13 +39,23 @@
    "fieldname": "html_mdrh",
    "fieldtype": "HTML",
    "options": "<p>\nTo get the GUID for your company, please apply it in ABR \u2013 Australian Business Register using this link\n<a href=\"https://abr.business.gov.au/Tools/WebServicesAgreement\" target=\"_blank\">Click Here</a>.\n</p>"
+  },
+  {
+   "fieldname": "section_break_lmnb",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "remittance_template",
+   "fieldtype": "Link",
+   "label": "Remittance Template",
+   "options": "Email Template"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-02-12 23:16:15.185384",
+ "modified": "2026-06-24 15:46:15.666815",
  "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
  "name": "AU Localisation Settings",
