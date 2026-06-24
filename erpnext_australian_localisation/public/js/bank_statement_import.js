@@ -28,7 +28,8 @@ frappe.ui.form.on("Bank Statement Import", {
 		frappe.db
 			.get_value("Bank Account", frm.doc.bank_account, "bank_statement_format")
 			.then((r) => {
-				const format = r.message;
+				const format = r.message.bank_statement_format;
+
 				if (format) {
 					// If any bank statement format exists
 					frm.set_df_property(
