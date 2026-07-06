@@ -119,7 +119,7 @@
 									<tbody>
 										{% for ref in doc.references %}
 										<tr class="item-row">
-											<td>{{ doc.name }}</td>
+											<td>{{ ref.reference_name }}</td>
 											<td>
 												<!-- prettier-ignore -->
 												{% set po_date = frappe.db.get_value( "Sales Invoice",ref.reference_name, "posting_date") %} 

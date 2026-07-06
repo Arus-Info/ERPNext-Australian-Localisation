@@ -25,7 +25,7 @@ frappe.ui.form.on("Payment Entry", {
 			frm.add_custom_button(__("Send Remittance"), () => {
 				frappe.confirm(__("Send remittance advice email to the supplier"), () => {
 					frappe.call({
-						method: "erpnext_australian_localisation.overrides.payment_receipt.send_remittance_email",
+						method: "erpnext_australian_localisation.overrides.payment_receipt.send_remittance_email_from_pe",
 						args: { docname: frm.doc.name },
 						freeze: true,
 						freeze_message: __("Sending remittance email..."),
