@@ -10,7 +10,8 @@
   "section_break_ichx",
   "abn_lookup_guid",
   "section_break_lmnb",
-  "remittance_template"
+  "remittance_advice_template",
+  "payment_receipt_template"
  ],
  "fields": [
   {
@@ -40,9 +41,15 @@
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "remittance_template",
+   "fieldname": "remittance_advice_template",
    "fieldtype": "Link",
-   "label": "Remittance Template",
+   "label": "Remittance Advice Template",
+   "options": "Email Template"
+  },
+  {
+   "fieldname": "payment_receipt_template",
+   "fieldtype": "Link",
+   "label": "Payment Receipt Template",
    "options": "Email Template"
   }
  ],
@@ -50,7 +57,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-06-30 20:06:14.413025",
+ "modified": "2026-07-06 14:23:29.474315",
  "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
  "name": "AU Localisation Settings",

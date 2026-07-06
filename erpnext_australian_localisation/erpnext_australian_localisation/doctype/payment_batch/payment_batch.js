@@ -85,105 +85,29 @@ frappe.ui.form.on("Payment Batch", {
 		}
 	},
 	print_format_view(frm) {
-		if (frm.doc.docstatus === 1) {
-			frm.add_custom_button(__("Send remittance"), () => {
-				const d = new frappe.ui.Dialog({
-					title: __("Payment"),
-					fields: [
-						{
-							fieldname: "count_display",
-							fieldtype: "Small Text",
-							label: __("No of Rows in Payment Created"),
-							default: frm.doc.payment_created.length,
-							read_only: 1
-						}
-					],
-					primary_action_label: __("OK"),
-					primary_action() {
-						frappe.db
-							.get_single_value("AU Localisation Settings", "remittance_template")
-							.then((template) => {
-								if (!template) {
-									frappe.msgprint(
-										__(
-											"Please set a Remittance Email Template in AU Localisation Settings"
-										)
-									);
-									return;
-								}
+		if (frm.doc.docstatus !== 1) return;
 
-								let rows = frm.doc.payment_created || [];
-
-								rows.forEach((row) => {
-									if (!row.party_name) return;
-
-									frappe.db
-										.get_list("Contact", {
-											fields: ["email_id"],
-											filters: [
-												["Dynamic Link", "link_doctype", "=", "Supplier"],
-												["Dynamic Link", "link_name", "=", row.party_name]
-											],
-											limit: 1
-										})
-										.then((r) => {
-											frappe.db
-												.get_doc("Payment Entry", row.payment_entry)
-												.then((payment_entry) => {
-													frappe.call({
-														method: "frappe.email.doctype.email_template.email_template.get_email_template",
-														args: {
-															template_name: template,
-															doc: JSON.stringify(payment_entry)
-														},
-														callback(template_res) {
-															if (!template_res.message) return;
-
-															frappe.call({
-																method: "frappe.core.doctype.communication.email.make",
-																args: {
-																	doctype: "Payment Entry",
-																	name: row.payment_entry,
-																	recipients: r[0].email_id,
-																	subject:
-																		template_res.message
-																			.subject,
-																	content:
-																		template_res.message
-																			.message,
-																	send_email: 1,
-																	print_format:
-																		"Remittance advise",
-																	print_letterhead: 1,
-																	print_language: "en",
-																	add_css: 1
-																},
-																callback(r) {
-																	if (r.message) {
-																		frappe.show_alert({
-																			message:
-																				__(
-																					"Mail sent successfully"
-																				),
-																			indicator: "green"
-																		});
-																	}
-																}
-															});
-														}
-													});
-												});
-										});
+		frm.add_custom_button(__("Send Remittance"), () => {
+			frappe.confirm(
+				__("Are you sure you want to send the remittance advice PDF to the supplier?"),
+				() => {
+					frappe.call({
+						method: "erpnext_australian_localisation.overrides.payment_batch.send_remittance_emails",
+						args: { docname: frm.doc.name },
+						freeze: true,
+						freeze_message: __("Sending remittance emails..."),
+						callback(r) {
+							if (r.message) {
+								frappe.show_alert({
+									message: __("Remittance emails sent successfully"),
+									indicator: "green"
 								});
-
-								d.hide();
-							});
-					}
-				});
-
-				d.show();
-			});
-		}
+							}
+						}
+					});
+				}
+			);
+		});
 	},
 
 	update_total_paid_amount(frm) {
