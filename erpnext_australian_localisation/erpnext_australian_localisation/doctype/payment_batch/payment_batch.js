@@ -126,8 +126,8 @@ frappe.ui.form.on("Payment Batch", {
 						);
 						if (row && row.payment_entry) open_remittance_print(row.payment_entry);
 					});
-					const $target = $row.find('[data-fieldname="amount"]');
-					($target.length ? $target : $row).after($btn);
+					const $amount_col = $row.find('[data-fieldname="amount"]');
+					$amount_col.after($btn);
 				});
 		}
 
