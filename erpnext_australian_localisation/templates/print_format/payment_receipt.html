@@ -122,7 +122,7 @@
 											<td>{{ ref.reference_name }}</td>
 											<td>
 												<!-- prettier-ignore -->
-												{% set po_date = frappe.db.get_value( "Sales Invoice",ref.reference_name, "posting_date") %} 
+												{% set po_date = frappe.db.get_value( "Sales Invoice",ref.reference_name, "posting_date") %}
 												{{ frappe.format(po_date, {"fieldtype":"Date"}) if po_date else "-" }}
 											</td>
 											<td class="right">

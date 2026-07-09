@@ -55,7 +55,6 @@
 								<div>
 									<!-- prettier-ignore -->
 									{% set payment_batch = frappe.db.get_value("Payment Batch Item",{"payment_entry": doc.name},"parent") %}
-									
 									{% if payment_batch %}
 										{% set pb_date = frappe.db.get_value("Payment Batch",payment_batch,"posting_date") %}
    										{{ frappe.format(pb_date, {"fieldtype": "Date"}) }}
@@ -126,7 +125,7 @@
 											<td>{{ loop.index }}</td>
 											<td>
 												<!-- prettier-ignore -->
-												{% set bill_no = frappe.db.get_value( "Purchase Invoice",ref.reference_name, "bill_no" ) %} 
+												{% set bill_no = frappe.db.get_value( "Purchase Invoice",ref.reference_name, "bill_no" ) %}
 													 {{ bill_no or "None"}}
 											</td>
 											<td class="right">
