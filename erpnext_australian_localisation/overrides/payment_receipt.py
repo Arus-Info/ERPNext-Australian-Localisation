@@ -5,7 +5,7 @@ from erpnext_australian_localisation.overrides.payment_batch import send_remitta
 
 
 @frappe.whitelist()
-def send_payment_receipt(docname):
+def send_payment_receipt(docname: str):
 	doc = frappe.get_doc("Payment Entry", docname)
 
 	template = frappe.db.get_single_value("AU Localisation Settings", "payment_receipt_template")
@@ -57,7 +57,7 @@ def send_payment_receipt(docname):
 
 
 @frappe.whitelist()
-def send_remittance_email_from_pe(docname):
+def send_remittance_email_from_pe(docname: str):
 	doc = frappe.get_doc("Payment Entry", docname)
 
 	template = frappe.db.get_single_value("AU Localisation Settings", "remittance_advice_template")

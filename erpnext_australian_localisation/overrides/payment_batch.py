@@ -3,7 +3,7 @@ from frappe import _
 
 
 @frappe.whitelist()
-def send_remittance_emails(docname):
+def send_remittance_emails(docname: str):
 	doc = frappe.get_doc("Payment Batch", docname)
 
 	template = frappe.db.get_single_value(
