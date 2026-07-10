@@ -1,6 +1,32 @@
 // Copyright (c) 2025, frappe.dev@arus.co.in and contributors
 // For license information, please see license.txt
 
+function render_preview(frm) {
+	frm.$wrapper.find('[data-fieldname="payment_created"] .grid-body .data-row').each(function () {
+		const $row = $(this);
+		if ($row.find(".btn-preview-pe").length) return;
+		const $btn = $(
+			'<div class="col grid-static-col" style="flex:0 0 80px;max-width:80px;text-align:center;">' +
+				'<button class="btn btn-xs btn-default btn-preview-pe">' +
+				__("Preview") +
+				"</button>" +
+				"</div>"
+		);
+		$btn.on("click", function (e) {
+			e.stopPropagation();
+			e.preventDefault();
+			const row = frappe.get_doc(
+				"Payment Batch Item",
+				$row.closest("[data-name]").attr("data-name")
+			);
+
+			if (row.payment_entry) frappe.set_route("print", "Payment Entry", row.payment_entry);
+		});
+		const $target = $row.find('[data-fieldname="amount"]');
+		($target.length ? $target : $row).after($btn);
+	});
+}
+
 frappe.ui.form.on("Payment Batch", {
 	refresh(frm) {
 		frm.trigger("print_format_view");
@@ -83,6 +109,13 @@ frappe.ui.form.on("Payment Batch", {
 				});
 			});
 		}
+
+		setTimeout(() => render_preview(frm), 0);
+		$(frm.wrapper)
+			.off("grid-row-render.au_preview")
+			.on("grid-row-render.au_preview", function (_e, grid_row) {
+				if (grid_row.doctype === "Payment Batch Item") render_preview(frm);
+			});
 	},
 	print_format_view(frm) {
 		if (frm.doc.docstatus !== 1) return;
@@ -129,10 +162,6 @@ frappe.ui.form.on("Payment Batch Item", {
 	},
 	payment_created_remove(frm) {
 		frm.trigger("update_total_paid_amount");
-	},
-	preview(_frm, cdt, cdn) {
-		const row = locals[cdt][cdn];
-		if (row.payment_entry) frappe.set_route("print", "Payment Entry", row.payment_entry);
 	}
 });
 
