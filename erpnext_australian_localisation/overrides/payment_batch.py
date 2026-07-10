@@ -43,7 +43,6 @@ def send_remittance_email_from_pb(docname: str):
 
 
 def _send_remittance_email(payment_entry, email, template, payment_batch=None):
-
 	pe_dict = payment_entry.as_dict()
 	pe_dict["payment_batch"] = payment_batch.as_dict() if payment_batch else {}
 
