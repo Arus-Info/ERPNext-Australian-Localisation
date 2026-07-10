@@ -1,25 +1,5 @@
 // Copyright (c) 2025, frappe.dev@arus.co.in and contributors
 // For license information, please see license.txt
-// to open print format
-function open_remittance_print(pe_name) {
-	// if pe doc loaded ok otherwise fetcrhd from server
-	frappe.model.with_doc("Payment Entry", pe_name, function () {
-		// loads doctypes metadata
-		frappe.model.with_doctype("Payment Entry", function () {
-			const f_meta = Object.create(frappe.get_meta("Payment Entry"));
-			f_meta.default_print_format = "Remittance Advise";
-			frappe.route_options = {
-				frm: {
-					doctype: "Payment Entry",
-					docname: pe_name,
-					doc: frappe.get_doc("Payment Entry", pe_name),
-					meta: f_meta
-				}
-			};
-			frappe.set_route("print", "Payment Entry", pe_name);
-		});
-	});
-}
 
 frappe.ui.form.on("Payment Batch", {
 	refresh(frm) {
@@ -103,40 +83,6 @@ frappe.ui.form.on("Payment Batch", {
 				});
 			});
 		}
-
-		function au_inject_preview() {
-			frm.$wrapper
-				.find('[data-fieldname="payment_created"] .grid-body .data-row')
-				.each(function () {
-					const $row = $(this);
-					if ($row.find(".btn-preview-pe").length) return;
-					const $btn = $(
-						'<div class="col grid-static-col au-preview-col" style="flex:0 0 80px;max-width:80px;text-align:center;">' +
-							'<button class="btn btn-xs btn-default btn-preview-pe">' +
-							__("Preview") +
-							"</button>" +
-							"</div>"
-					);
-					$btn.on("click", function (e) {
-						e.stopPropagation();
-						e.preventDefault();
-						const row = frappe.get_doc(
-							"Payment Batch Item",
-							$row.closest("[data-name]").attr("data-name")
-						);
-						if (row && row.payment_entry) open_remittance_print(row.payment_entry);
-					});
-					const $amount_col = $row.find('[data-fieldname="amount"]');
-					$amount_col.after($btn);
-				});
-		}
-
-		setTimeout(au_inject_preview, 0);
-		$(frm.wrapper)
-			.off("grid-row-render.au_preview")
-			.on("grid-row-render.au_preview", function (_e, grid_row) {
-				if (grid_row.doctype === "Payment Batch Item") au_inject_preview();
-			});
 	},
 	print_format_view(frm) {
 		if (frm.doc.docstatus !== 1) return;
@@ -146,7 +92,7 @@ frappe.ui.form.on("Payment Batch", {
 				__("Are you sure you want to send the remittance advice PDF to the supplier?"),
 				() => {
 					frappe.call({
-						method: "erpnext_australian_localisation.overrides.payment_batch.send_remittance_emails",
+						method: "erpnext_australian_localisation.overrides.payment_batch.send_remittance_email_from_pb",
 						args: { docname: frm.doc.name },
 						freeze: true,
 						freeze_message: __("Sending remittance emails..."),
@@ -183,6 +129,10 @@ frappe.ui.form.on("Payment Batch Item", {
 	},
 	payment_created_remove(frm) {
 		frm.trigger("update_total_paid_amount");
+	},
+	preview(_frm, cdt, cdn) {
+		const row = locals[cdt][cdn];
+		if (row.payment_entry) frappe.set_route("print", "Payment Entry", row.payment_entry);
 	}
 });
 

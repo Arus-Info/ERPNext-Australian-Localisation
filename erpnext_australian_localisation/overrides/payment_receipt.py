@@ -1,7 +1,7 @@
 import frappe
 from frappe import _
 
-from erpnext_australian_localisation.overrides.payment_batch import send_remittance_email
+from erpnext_australian_localisation.overrides.payment_batch import _send_remittance_email
 
 
 @frappe.whitelist()
@@ -24,13 +24,6 @@ def send_payment_receipt(docname: str):
 		frappe.throw(_("No email found for {0} {1}").format(doc.party_type, doc.party))
 
 	pe_dict = doc.as_dict()
-
-	sales_invoice = {}
-	for ref in doc.references or []:
-		if ref.reference_doctype == "Sales Invoice":
-			sales_invoice = frappe.get_doc("Sales Invoice", ref.reference_name).as_dict()
-
-	pe_dict["sales_invoice"] = sales_invoice
 
 	template_data = frappe.get_attr("frappe.email.doctype.email_template.email_template.get_email_template")(
 		template_name=template,
@@ -57,7 +50,7 @@ def send_payment_receipt(docname: str):
 
 
 @frappe.whitelist()
-def send_remittance_email_from_pe(docname: str):
+def send_remittance_email(docname: str):
 	doc = frappe.get_doc("Payment Entry", docname)
 
 	template = frappe.db.get_single_value("AU Localisation Settings", "remittance_advice_template")
@@ -78,7 +71,7 @@ def send_remittance_email_from_pe(docname: str):
 	payment_entry = frappe.get_doc("Payment Entry", doc.name)
 
 	if email:
-		send_remittance_email(
+		_send_remittance_email(
 			payment_entry=payment_entry,
 			email=email,
 			template=template,

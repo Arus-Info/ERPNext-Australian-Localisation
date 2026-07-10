@@ -3,14 +3,7 @@
 </style>
 {% if doc.docstatus == 0 %}
 <div class="watermark">DRAFT</div>
-{% endif %} {% if doc.payment_type == "Pay" %}
-<style>
-	body {
-		display: none;
-	}
-</style>
-{% endif %}
-
+{% endif %} {% if doc.payment_type == "Receive" %}
 <table>
 	<thead>
 		<tr>
@@ -188,3 +181,4 @@
 		</tr>
 	</tbody>
 </table>
+{% endif %}

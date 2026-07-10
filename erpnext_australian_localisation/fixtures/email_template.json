@@ -2,9 +2,9 @@
  {
   "docstatus": 0,
   "doctype": "Email Template",
-  "modified": "2026-07-06 19:07:31.037849",
+  "modified": "2026-07-09 16:33:35.662587",
   "name": "Payment Receipt Template",
-  "response": "<div class=\"ql-editor read-mode\"><p>Dear {{ party_name }}</p><p><br></p><p><span style=\"color:rgb(85, 85, 85)\">Thank you for your payment. It was a pleasure doing business with you. We look forward to work together again!</span></p><p><br></p><p>Invoice No : {{ sales_invoice.name }}</p><p>Payment Date : {{ frappe.utils.formatdate(posting_date) }}</p><p>Payment Received : {{ paid_amount }}</p><p><br></p><p>Regards,</p><p>{{ company }}</p></div>",
+  "response": "<div class=\"ql-editor read-mode\"><p>Dear {{ party_name }}</p><p><br></p><p><span style=\"color:rgb(85, 85, 85)\">Thank you for your payment. It was a pleasure doing business with you. We look forward to work together again!</span></p><p><br></p><p>Invoice No : {% for ref in references %}{% if ref.reference_doctype == \"Sales Invoice\" %}{{ ref.reference_name }}{% endif %}{% endfor %}</p><p>Payment Date : {{ frappe.utils.formatdate(posting_date) }}</p><p>Payment Received : {{ paid_amount }}</p><p><br></p><p>Regards,</p><p>{{ company }}</p></div>",
   "response_html": null,
   "subject": "Payment Received",
   "use_html": 0
