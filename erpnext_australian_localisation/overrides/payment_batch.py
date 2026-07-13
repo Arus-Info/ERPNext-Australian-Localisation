@@ -22,11 +22,10 @@ def send_remittance_email_from_pb(docname: str):
 			"Contact",
 			{
 				"link_doctype": "Supplier",
-				"link_name": row.party_name,
+				"link_name": row.party,
 			},
 			"email_id",
 		)
-
 		if not email:
 			continue
 

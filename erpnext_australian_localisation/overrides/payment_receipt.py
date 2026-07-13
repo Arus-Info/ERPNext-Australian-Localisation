@@ -16,7 +16,7 @@ def send_payment_receipt(docname: str):
 		"Contact",
 		{
 			"link_doctype": "Customer",
-			"link_name": doc.party_name,
+			"link_name": doc.party,
 		},
 		"email_id",
 	)
@@ -61,7 +61,7 @@ def send_remittance_email(docname: str):
 		"Contact",
 		{
 			"link_doctype": "Supplier",
-			"link_name": doc.party_name,
+			"link_name": doc.party,
 		},
 		"email_id",
 	)
