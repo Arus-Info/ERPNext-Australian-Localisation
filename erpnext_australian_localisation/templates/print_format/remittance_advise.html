@@ -1,10 +1,10 @@
 <style>
 	{% include "templates/includes/au_print_format.css" %}
 </style>
-{% if doc.docstatus == 0 %}
-<div class="watermark">DRAFT</div>
-{% endif %} {% if doc.payment_type == "Pay" %}
 
+{% if doc.payment_type == "Pay" and doc.party_type != "Employee" %} {% if doc.docstatus == 0 %}
+<div class="watermark">DRAFT</div>
+{% endif %}
 <table>
 	<thead>
 		<tr>

@@ -3,6 +3,23 @@ from frappe import _
 
 
 @frappe.whitelist()
+def get_missing_email_suppliers(docname: str):
+	doc = frappe.get_doc("Payment Batch", docname)
+	no_email = []
+	for row in doc.payment_created or []:
+		if not row.party:
+			continue
+		email = frappe.db.get_value(
+			"Contact",
+			{"link_doctype": "Supplier", "link_name": row.party},
+			"email_id",
+		)
+		if not email:
+			no_email.append(row.party_name or row.party)
+	return no_email
+
+
+@frappe.whitelist()
 def send_remittance_email_from_pb(docname: str):
 	doc = frappe.get_doc("Payment Batch", docname)
 
@@ -15,7 +32,7 @@ def send_remittance_email_from_pb(docname: str):
 		frappe.throw(_("Please set a Remittance Email Template in AU Localisation Settings"))
 
 	for row in doc.payment_created or []:
-		if not row.party_name:
+		if not row.party:
 			continue
 
 		email = frappe.db.get_value(
@@ -26,8 +43,6 @@ def send_remittance_email_from_pb(docname: str):
 			},
 			"email_id",
 		)
-		if not email:
-			continue
 
 		payment_entry = frappe.get_doc("Payment Entry", row.payment_entry)
 
@@ -51,7 +66,7 @@ def _send_remittance_email(payment_entry, email, template, payment_batch=None):
 	)
 
 	if not template_data:
-		return
+		frappe.throw(_("Could not render email template"))
 
 	frappe.get_attr("frappe.core.doctype.communication.email.make")(
 		doctype="Payment Entry",

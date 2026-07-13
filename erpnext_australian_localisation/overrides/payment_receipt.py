@@ -68,11 +68,9 @@ def send_remittance_email(docname: str):
 	if not email:
 		frappe.throw(_("No email found for {0} {1}").format(doc.party_type, doc.party))
 
-	payment_entry = frappe.get_doc("Payment Entry", doc.name)
-
 	if email:
 		_send_remittance_email(
-			payment_entry=payment_entry,
+			payment_entry=doc,
 			email=email,
 			template=template,
 		)

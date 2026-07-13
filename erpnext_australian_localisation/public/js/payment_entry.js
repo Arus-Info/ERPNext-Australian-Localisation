@@ -1,6 +1,7 @@
 frappe.ui.form.on("Payment Entry", {
 	refresh(frm) {
 		if (frm.doc.docstatus !== 1) return;
+		if (frm.doc.party_type === "Employee") return;
 
 		if (frm.doc.payment_type === "Receive") {
 			frm.add_custom_button(__("Send Payment Receipt"), () => {
