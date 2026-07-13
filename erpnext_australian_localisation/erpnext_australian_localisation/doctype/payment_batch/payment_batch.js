@@ -114,7 +114,7 @@ function get_items(frm) {
 		setters: [
 			{
 				fieldname: "party_name",
-				label: __(frm.doc.type),
+				label: __("Party Name"),
 				fieldtype: "Data"
 			},
 			{
