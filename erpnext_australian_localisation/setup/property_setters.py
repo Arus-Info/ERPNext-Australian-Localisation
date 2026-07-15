@@ -31,12 +31,6 @@ PROPERTIES = [
 	},
 	{
 		"doctype": "Payment Entry",
-		"fieldname": "bank_account",
-		"property": "reqd",
-		"value": "1",
-	},
-	{
-		"doctype": "Payment Entry",
 		"fieldname": "paid_from",
 		"property": "read_only",
 		"value": "1",
