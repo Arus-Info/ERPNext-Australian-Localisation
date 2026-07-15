@@ -24,20 +24,20 @@ def on_update(doc, event):
 	Note: This Control is only applicable for Payment Entries and Purchase Invoices which are included in Payment Batch
 
 	Check whether the Payment Entry is linked to any Payment Batch.
-	If it is linked, verify that the Payment Entry has the same Bank Account as the Payment Batch.
+	If it is linked, verify that the Payment Entry is drawn from the same account (account code level) as the Payment Batch's Bank Account.
 	Next, check whether any Payment Entry References included in this Payment Entry is already present in any other Payment Entry.
 	If it is not linked, check whether the Payment Entry References included here is not linked to any other Payment Batch Invoice
 	"""
 	if doc.payment_type == "Pay":
 		payment_batch = frappe.db.get_value("Payment Batch Item", {"payment_entry": doc.name}, "parent")
 		if payment_batch:
-			if doc.has_value_changed("bank_account"):
-				bank_account = frappe.db.get_value("Payment Batch", payment_batch, "bank_account")
-				if doc.bank_account != bank_account:
+			if doc.has_value_changed("paid_from"):
+				account = frappe.db.get_value("Payment Batch", payment_batch, "bank_account.account")
+				if doc.paid_from != account:
 					frappe.throw(
 						_(
-							"Payment Entry is linked with Payment Batch <a href='/app/payment-batch/{0}'>{0}</a> which has Bank Account <a href='/app/bank-account/{1}'>{1}</a>."
-						).format(payment_batch, bank_account)
+							"Payment Entry is linked with Payment Batch <a href='/app/payment-batch/{0}'>{0}</a> which is drawn from Account <a href='/app/account/{1}'>{1}</a>."
+						).format(payment_batch, account)
 					)
 			for reference in doc.references:
 				is_payment_entry_references_exists(doc.name, reference)

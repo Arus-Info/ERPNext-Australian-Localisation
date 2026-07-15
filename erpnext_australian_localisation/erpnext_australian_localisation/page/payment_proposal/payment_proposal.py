@@ -106,7 +106,7 @@ def get_query_for_supplier_outstanding_entries(filters):
 			pi.supplier_name as party_name,
 			pi.supplier as party,
 			s.lodgement_reference,
-			SUM(case when s.is_included then pi.outstanding_amount else 0 end) as total_outstanding,
+			SUM(case when s.is_included and per.reference_name IS NULL then pi.outstanding_amount else 0 end) as total_outstanding,
 			s.is_included,
 			JSON_ARRAYAGG(
 				if(
@@ -174,7 +174,7 @@ def get_query_for_employee_outstanding_expense(filters):
 			ec.employee_name as party_name,
 			ec.employee as party,
 			e.lodgement_reference,
-			SUM(case when e.is_included then ec.grand_total - ec.total_amount_reimbursed else 0 end) as total_outstanding,
+			SUM(case when e.is_included and per.reference_name IS NULL then ec.grand_total - ec.total_amount_reimbursed else 0 end) as total_outstanding,
 			e.is_included,
 			JSON_ARRAYAGG(
 				if(

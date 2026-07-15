@@ -13,6 +13,12 @@ frappe.pages["payment-proposal"].on_page_load = function (wrapper) {
 };
 
 frappe.pages["payment-proposal"].refresh = function (wrapper) {
+	// Employee is only a valid party type when HRMS (and its bank detail fields) is installed
+	const party_types = ["Supplier"];
+	if (frappe.boot.versions.hrms) {
+		party_types.push("Employee");
+	}
+
 	const filter_dialog = new frappe.ui.Dialog({
 		fields: [
 			{
@@ -29,7 +35,7 @@ frappe.pages["payment-proposal"].refresh = function (wrapper) {
 				fieldtype: "Link",
 				options: "DocType",
 				reqd: 1,
-				link_filters: '[["DocType","name","in",["Supplier","Employee"]]]'
+				link_filters: JSON.stringify([["DocType", "name", "in", party_types]])
 			},
 			{
 				label: __("Filters"),
