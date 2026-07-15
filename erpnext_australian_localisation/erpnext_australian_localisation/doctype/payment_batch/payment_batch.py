@@ -48,7 +48,7 @@ class PaymentBatch(Document):
 
 @frappe.whitelist()
 @frappe.validate_and_sanitize_search_inputs
-def get_payment_entry(doctype, txt, searchfield, start, page_len, filters):
+def get_payment_entry(doctype: str, txt: str, searchfield: str, start: int, page_len: int, filters: dict):
 	"""
 	Return Payment Entries that are drawn from the same account (account code level) as the
 	Payment Batch's Bank Account and are in draft state, except those that are already
