@@ -219,23 +219,9 @@ doc_events = {
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"all": [
-# 		"erpnext_australian_localisation.tasks.all"
-# 	],
-# 	"daily": [
-# 		"erpnext_australian_localisation.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"erpnext_australian_localisation.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"erpnext_australian_localisation.tasks.weekly"
-# 	],
-# 	"monthly": [
-# 		"erpnext_australian_localisation.tasks.monthly"
-# 	],
-# }
+scheduler_events = {
+	"monthly": ["erpnext_australian_localisation.tasks.bas_report.create_scheduled_bas_reports"],
+}
 
 # Testing
 # -------

@@ -9,6 +9,16 @@ frappe.ui.form.on("Payment Batch", {
 		frm.$wrapper.find(".grid-add-row").hide();
 		frm.$wrapper.find(".grid-body").css({ "overflow-y": "scroll", "max-height": "400px" });
 
+		frm.set_query("party_type", () => {
+			const party_types = ["Supplier"];
+			if (frappe.boot.versions.hrms) {
+				party_types.push("Employee");
+			}
+			return {
+				filters: [["name", "in", party_types]]
+			};
+		});
+
 		frm.set_query("bank_account", () => {
 			return {
 				filters: [
@@ -203,7 +213,7 @@ function get_items(frm) {
 		setters: [
 			{
 				fieldname: "party_name",
-				label: __(frm.doc.type),
+				label: __("Party Name"),
 				fieldtype: "Data"
 			},
 			{

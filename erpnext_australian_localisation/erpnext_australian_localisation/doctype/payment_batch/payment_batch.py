@@ -48,22 +48,24 @@ class PaymentBatch(Document):
 
 @frappe.whitelist()
 @frappe.validate_and_sanitize_search_inputs
-def get_payment_entry(doctype, txt, searchfield, start, page_len, filters):
+def get_payment_entry(doctype: str, txt: str, searchfield: str, start: int, page_len: int, filters: dict):
 	"""
-	Return Payment Entries that are posted in the given Bank Account and are in draft state,
-	except those that are already included in another Payment Batch
+	Return Payment Entries that are drawn from the same account (account code level) as the
+	Payment Batch's Bank Account and are in draft state, except those that are already
+	included in another Payment Batch
 	"""
 	if filters.get("party_name"):
 		filters["party_name"] += "%"
 	else:
 		filters["party_name"] = "%"
+	filters["paid_from"] = frappe.db.get_value("Bank Account", filters.pop("bank_account"), "account")
 
 	return frappe.db.sql(
 		"""
 		select
 			name, party_name, base_paid_amount
 		from `tabPayment Entry`
-		where docstatus=0 and party_type =%(party_type)s and company=%(company)s and party_name like %(party_name)s and bank_account=%(bank_account)s
+		where docstatus=0 and party_type =%(party_type)s and company=%(company)s and party_name like %(party_name)s and paid_from=%(paid_from)s
 
 		EXCEPT
 		select payment_entry, party_name, amount from `tabPayment Batch Item`
