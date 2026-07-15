@@ -97,49 +97,55 @@ frappe.ui.form.on("Payment Batch", {
 	},
 	send_remittance_action(frm) {
 		if (frm.doc.docstatus !== 1) return;
-		if (frm.doc.party_type === "Employee") return;
+		if (frm.doc.party_type === "Supplier") {
+			frm.add_custom_button(__("Send Remittance"), () => {
+				frappe.call({
+					method: "erpnext_australian_localisation.overrides.payment_batch.get_missing_email_suppliers",
+					args: { docname: frm.doc.name },
+					callback(r) {
+						const missing = [...new Set(r.message || [])];
+						const total = frm.doc.payment_created.filter((row) => row.party).length;
 
-		frm.add_custom_button(__("Send Remittance"), () => {
-			frappe.call({
-				method: "erpnext_australian_localisation.overrides.payment_batch.get_missing_email_suppliers",
-				args: { docname: frm.doc.name },
-				callback(r) {
-					const missing = r.message || [];
-					const total = frm.doc.payment_created.filter((row) => row.party).length;
+						const do_send = () => {
+							frappe.call({
+								method: "erpnext_australian_localisation.overrides.payment_batch.send_remittance_email_from_pb",
+								args: { docname: frm.doc.name },
+								freeze: true,
+								freeze_message: __("Sending remittance emails..."),
+								callback() {
+									frappe.show_alert({
+										message: __("Remittance emails sent successfully"),
+										indicator: "green"
+									});
+								}
+							});
+						};
 
-					const do_send = () => {
-						frappe.call({
-							method: "erpnext_australian_localisation.overrides.payment_batch.send_remittance_email_from_pb",
-							args: { docname: frm.doc.name },
-							freeze: true,
-							freeze_message: __("Sending remittance emails..."),
-							callback() {
-								frappe.show_alert({
-									message: __("Remittance emails sent successfully"),
-									indicator: "green"
-								});
-							}
-						});
-					};
-
-					if (missing.length === total) {
-						frappe.throw(__("No email found for any supplier in this batch"));
-					} else if (missing.length > 0) {
-						frappe.confirm(
-							__("No email found for: {0}", [missing]) +
-								"<br><br>" +
-								__("Send remittance to the rest only?"),
-							do_send
-						);
-					} else {
-						frappe.confirm(
-							__("Send remittance advice email to the supplier"),
-							do_send
-						);
+						if (missing.length === total) {
+							frappe.throw(
+								__(
+									"No valid supplier email addresses found for the selected batch."
+								)
+							);
+						} else if (missing.length > 0) {
+							frappe.confirm(
+								__("No email address was found for supplier :  {0}", [missing]) +
+									"<br><br>" +
+									__("Send remittance advice to the remaining suppliers only?"),
+								do_send
+							);
+						} else {
+							frappe.confirm(
+								__(
+									"Do you want to send the remittance advice email to the supplier?"
+								),
+								do_send
+							);
+						}
 					}
-				}
+				});
 			});
-		});
+		}
 	},
 
 	update_total_paid_amount(frm) {

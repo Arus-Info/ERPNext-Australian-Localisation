@@ -5,6 +5,19 @@ from erpnext_australian_localisation.overrides.payment_batch import _send_remitt
 
 
 @frappe.whitelist()
+def check_party_email(docname: str, party_type: str):
+	doc = frappe.get_doc("Payment Entry", docname)
+	email = frappe.db.get_value(
+		"Contact",
+		{"link_doctype": party_type, "link_name": doc.party},
+		"email_id",
+	)
+	if not email:
+		frappe.throw(_("No email found for {0} {1}").format(party_type, doc.party))
+	return True
+
+
+@frappe.whitelist()
 def send_payment_receipt(docname: str):
 	doc = frappe.get_doc("Payment Entry", docname)
 
@@ -20,8 +33,6 @@ def send_payment_receipt(docname: str):
 		},
 		"email_id",
 	)
-	if not email:
-		frappe.throw(_("No email found for {0} {1}").format(doc.party_type, doc.party))
 
 	pe_dict = doc.as_dict()
 
@@ -65,8 +76,6 @@ def send_remittance_email(docname: str):
 		},
 		"email_id",
 	)
-	if not email:
-		frappe.throw(_("No email found for {0} {1}").format(doc.party_type, doc.party))
 
 	if email:
 		_send_remittance_email(

@@ -6,9 +6,8 @@ from frappe import _
 def get_missing_email_suppliers(docname: str):
 	doc = frappe.get_doc("Payment Batch", docname)
 	no_email = []
-	for row in doc.payment_created or []:
-		if not row.party:
-			continue
+
+	for row in doc.payment_created:
 		email = frappe.db.get_value(
 			"Contact",
 			{"link_doctype": "Supplier", "link_name": row.party},
@@ -31,10 +30,7 @@ def send_remittance_email_from_pb(docname: str):
 	if not template:
 		frappe.throw(_("Please set a Remittance Email Template in AU Localisation Settings"))
 
-	for row in doc.payment_created or []:
-		if not row.party:
-			continue
-
+	for row in doc.payment_created:
 		email = frappe.db.get_value(
 			"Contact",
 			{
