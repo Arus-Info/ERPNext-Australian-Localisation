@@ -63,7 +63,6 @@ def send_payment_receipt(docname: str):
 
 @frappe.whitelist()
 def send_remittance_email(docname: str):
-
 	template = frappe.db.get_single_value("AU Localisation Settings", "remittance_advice_template")
 	if not template:
 		frappe.throw(_("Please set a Remittance Advice Template in AU Localisation Settings"))
