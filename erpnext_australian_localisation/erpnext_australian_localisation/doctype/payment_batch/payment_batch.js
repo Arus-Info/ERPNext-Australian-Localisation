@@ -104,7 +104,7 @@ frappe.ui.form.on("Payment Batch", {
 					args: { docname: frm.doc.name },
 					callback(r) {
 						const missing = [...new Set(r.message || [])];
-						const total = frm.doc.payment_created.filter((row) => row.party).length;
+						const total = frm.doc.payment_created.length;
 
 						const do_send = () => {
 							frappe.call({
@@ -164,7 +164,6 @@ function render_preview(frm) {
 	const $rows = frm.$wrapper.find('[data-fieldname="payment_created"] .grid-body .data-row');
 
 	if (!$rows.length) {
-		setTimeout(() => render_preview(frm), 50);
 		return;
 	}
 	$rows.each(function () {

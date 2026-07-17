@@ -4,17 +4,24 @@ from frappe import _
 
 @frappe.whitelist()
 def get_missing_email_suppliers(docname: str):
-	doc = frappe.get_doc("Payment Batch", docname)
 	no_email = []
 
-	for row in doc.payment_created:
+	payment_rows = frappe.get_all(
+		"Payment Batch Item",
+		filters={"parent": docname},
+		fields=["party"],
+		limit_page_length=0,
+		ignore_permissions=True,
+	)
+
+	for row in payment_rows:
 		email = frappe.db.get_value(
 			"Contact",
 			{"link_doctype": "Supplier", "link_name": row.party},
 			"email_id",
 		)
 		if not email:
-			no_email.append(row.party_name or row.party)
+			no_email.append(row.party)
 	return no_email
 
 
@@ -40,10 +47,8 @@ def send_remittance_email_from_pb(docname: str):
 			"email_id",
 		)
 
-		payment_entry = frappe.get_doc("Payment Entry", row.payment_entry)
-
 		_send_remittance_email(
-			payment_entry=payment_entry,
+			payment_entry=row.payment_entry,
 			email=email,
 			template=template,
 			payment_batch=doc,
@@ -53,7 +58,9 @@ def send_remittance_email_from_pb(docname: str):
 
 
 def _send_remittance_email(payment_entry, email, template, payment_batch=None):
-	pe_dict = payment_entry.as_dict()
+	payment = frappe.get_doc("Payment Entry", payment_entry)
+
+	pe_dict = payment.as_dict()
 	pe_dict["payment_batch"] = payment_batch.as_dict() if payment_batch else {}
 
 	template_data = frappe.get_attr("frappe.email.doctype.email_template.email_template.get_email_template")(
@@ -66,7 +73,7 @@ def _send_remittance_email(payment_entry, email, template, payment_batch=None):
 
 	frappe.get_attr("frappe.core.doctype.communication.email.make")(
 		doctype="Payment Entry",
-		name=payment_entry.name,
+		name=payment.name,
 		recipients=email,
 		subject=template_data.get("subject"),
 		content=template_data.get("message"),

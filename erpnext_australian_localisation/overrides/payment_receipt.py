@@ -6,14 +6,15 @@ from erpnext_australian_localisation.overrides.payment_batch import _send_remitt
 
 @frappe.whitelist()
 def check_party_email(docname: str, party_type: str):
-	doc = frappe.get_doc("Payment Entry", docname)
+	party = frappe.db.get_value("Payment Entry", docname, "party")
+
 	email = frappe.db.get_value(
 		"Contact",
-		{"link_doctype": party_type, "link_name": doc.party},
+		{"link_doctype": party_type, "link_name": party},
 		"email_id",
 	)
 	if not email:
-		frappe.throw(_("No email found for {0} {1}").format(party_type, doc.party))
+		frappe.throw(_("No email found for {0} {1}").format(party_type, party))
 	return True
 
 
@@ -62,24 +63,28 @@ def send_payment_receipt(docname: str):
 
 @frappe.whitelist()
 def send_remittance_email(docname: str):
-	doc = frappe.get_doc("Payment Entry", docname)
 
 	template = frappe.db.get_single_value("AU Localisation Settings", "remittance_advice_template")
 	if not template:
 		frappe.throw(_("Please set a Remittance Advice Template in AU Localisation Settings"))
+	party = frappe.db.get_value(
+		"Payment Entry",
+		docname,
+		"party",
+	)
 
 	email = frappe.db.get_value(
 		"Contact",
 		{
 			"link_doctype": "Supplier",
-			"link_name": doc.party,
+			"link_name": party,
 		},
 		"email_id",
 	)
 
 	if email:
 		_send_remittance_email(
-			payment_entry=doc,
+			payment_entry=docname,
 			email=email,
 			template=template,
 		)
