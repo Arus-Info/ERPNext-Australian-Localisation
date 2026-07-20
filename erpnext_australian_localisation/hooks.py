@@ -65,6 +65,7 @@ doctype_js = {
 	"Supplier": "public/js/supplier.js",
 	"Customer": "public/js/customer.js",
 	"Bank Statement Import": "public/js/bank_statement_import.js",
+	"Bank Account": "public/js/bank_account.js",
 }
 
 # include js in doctype views

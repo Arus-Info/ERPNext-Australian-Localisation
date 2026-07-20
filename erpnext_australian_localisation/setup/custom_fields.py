@@ -280,6 +280,43 @@ BAI2_FIELDS = {
 		},
 	],
 }
+OPEN_BANKING_FIELDS = {
+	"Bank Account": [
+		{
+			"fieldname": "section_break_open_banking",
+			"label": "Open Banking",
+			"fieldtype": "Section Break",
+			"insert_after": "bank_statement_format",
+			"module": "ERPNext Australian Localisation",
+		},
+		{
+			"fieldname": "enable_transaction_import",
+			"label": "Enable Transaction Import",
+			"fieldtype": "Check",
+			"insert_after": "section_break_open_banking",
+			"module": "ERPNext Australian Localisation",
+		},
+		{
+			"fieldname": "basiq_account_id",
+			"label": "Basiq Account ID",
+			"fieldtype": "Data",
+			"read_only": 1,
+			"no_copy": 1,
+			"insert_after": "enable_transaction_import",
+			"module": "ERPNext Australian Localisation",
+		},
+		{
+			"fieldname": "last_sync",
+			"label": "Last Sync",
+			"fieldtype": "Datetime",
+			"read_only": 1,
+			"no_copy": 1,
+			"insert_after": "basiq_account_id",
+			"module": "ERPNext Australian Localisation",
+		},
+	],
+}
+
 ABN_GUID_FIELDS = {
 	("Supplier", "Customer"): [
 		{
