@@ -17,8 +17,6 @@ class BasiqConnector:
 		self.access_token = self.get_access_token()
 
 	def get_access_token(self):
-		# This connector only runs once a day from the cron job, so we just
-		# fetch a fresh token every time instead of caching/checking expiry.
 		response = requests.post(
 			f"{BASIQ_API_BASE}/token",
 			headers={
@@ -45,35 +43,13 @@ class BasiqConnector:
 
 	def get_accounts(self):
 		url = f"{BASIQ_API_BASE}/users/{self.user_id}/accounts"
-		accounts = []
-
-		while url:
-			response = requests.get(
-				url,
-				headers=self.get_headers(),
-				timeout=60,
-			)
-			response.raise_for_status()
-			payload = response.json()
-
-			accounts.extend(payload.get("data", []))
-
-			url = payload.get("links", {}).get("next")
-
-		return accounts
-
-	def get_institution(self, institution_id):
-		response = requests.get(
-			f"{BASIQ_API_BASE}/institutions/{institution_id}",
-			headers=self.get_headers(),
-			timeout=30,
-		)
+		response = requests.get(url, headers=self.get_headers(), timeout=30)
 		response.raise_for_status()
 
-		return response.json()
+		return response.json().get("data", [])
 
-	def get_transactions(self, basiq_account_id, sync_date=None):
-		filter_expr = f"account.id.eq('{basiq_account_id}')"
+	def get_transactions(self, provider_account_id, sync_date=None):
+		filter_expr = f"account.id.eq('{provider_account_id}')"
 		if sync_date:
 			filter_expr += f",transaction.postDate.gteq('{sync_date.strftime('%Y-%m-%d')}')"
 

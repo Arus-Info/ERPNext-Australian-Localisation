@@ -1,0 +1,78 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "creation": "2026-07-21 16:10:03.207271",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "transaction_creation_at",
+  "status",
+  "column_break_svlx",
+  "bank_account",
+  "section_break_bqmr",
+  "error_message"
+ ],
+ "fields": [
+  {
+   "fieldname": "transaction_creation_at",
+   "fieldtype": "Datetime",
+   "label": "Transaction Creation At",
+   "read_only": 1
+  },
+  {
+   "fieldname": "bank_account",
+   "fieldtype": "Data",
+   "label": "Bank Account",
+   "read_only": 1
+  },
+  {
+   "fieldname": "error_message",
+   "fieldtype": "Small Text",
+   "label": "Error Message",
+   "read_only": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Success\nFailed",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_svlx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_bqmr",
+   "fieldtype": "Section Break"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-07-21 19:06:37.141330",
+ "modified_by": "Administrator",
+ "module": "ERPNext Australian Localisation",
+ "name": "AU Bank Statement Import Log",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}
