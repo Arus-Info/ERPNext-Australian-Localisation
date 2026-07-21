@@ -2,9 +2,9 @@
  {
   "docstatus": 0,
   "doctype": "Email Template",
-  "modified": "2026-07-09 16:33:35.662587",
+  "modified": "2026-07-21 21:05:35.684074",
   "name": "Payment Receipt Template",
-  "response": "<div class=\"ql-editor read-mode\"><p>Dear {{ party_name }}</p><p><br></p><p><span style=\"color:rgb(85, 85, 85)\">Thank you for your payment. It was a pleasure doing business with you. We look forward to work together again!</span></p><p><br></p><p>Invoice No : {% for ref in references %}{% if ref.reference_doctype == \"Sales Invoice\" %}{{ ref.reference_name }}{% endif %}{% endfor %}</p><p>Payment Date : {{ frappe.utils.formatdate(posting_date) }}</p><p>Payment Received : {{ paid_amount }}</p><p><br></p><p>Regards,</p><p>{{ company }}</p></div>",
+  "response": "<div class=\"ql-editor read-mode\"><p>Dear {{ party }}</p><p><br></p><p><span style=\"color:rgb(85, 85, 85)\">Thank you for your payment. It was a pleasure doing business with you. We look forward to work together again!</span></p><p><br></p><p>Invoice No : {% for ref in references %}{% if ref.reference_doctype == \"Sales Invoice\" %}{{ ref.reference_name }}{% endif %}{% endfor %}</p><p>Payment Date : {{ frappe.utils.formatdate(posting_date) }}</p><p>Payment Received : {{ frappe.format(paid_amount or \" - \",{\"fieldtype\":\"Currency\"}) }}</p><p><br></p><p>Regards,</p><p>{{ company }}</p></div>",
   "response_html": null,
   "subject": "Payment Received",
   "use_html": 0
@@ -12,9 +12,9 @@
  {
   "docstatus": 0,
   "doctype": "Email Template",
-  "modified": "2026-07-06 17:24:01.509716",
+  "modified": "2026-07-21 21:05:23.788998",
   "name": "Remittance Advice Template",
-  "response": "<div class=\"ql-editor read-mode\"><p>Dear {{ party_name }}</p><p>Please find attached the remittance advice PDF for your reference.</p><p><br></p><p>Payment Date : {{ frappe.utils.formatdate(posting_date) }}</p><p>Mode Of Payment : {{ mode_of_payment }}</p><p>Paid Amount : {{ paid_amount }}</p><p>Reference No : {{ reference_no or \"-\" }}</p><p><br></p><p>Regards,</p><p>{{ company }}</p></div>",
+  "response": "<div class=\"ql-editor read-mode\"><p>Dear {{ party }}</p><p>Please find attached the remittance advice PDF for your reference.</p><p><br></p><p>Payment Date : {{ frappe.utils.formatdate(posting_date) }}</p><p>Mode Of Payment : {{ mode_of_payment or \"-\" }}</p><p>Paid Amount : {{ frappe.format(paid_amount or \" - \",{\"fieldtype\":\"Currency\"}) }}</p><p>Reference No : {{ reference_no or \"-\" }}</p><p><br></p><p>Regards,</p><p>{{ company }}</p></div>",
   "response_html": null,
   "subject": "Remittance Advice - {{ company }} - {{ frappe.utils.formatdate(payment_batch.posting_date or posting_date) }}",
   "use_html": 0

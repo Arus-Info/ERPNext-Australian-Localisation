@@ -103,13 +103,13 @@
 												Invoice No
 											</td>
 											<td class="section-title center" style="width: 90px">
-												Amount
+												Amount<br />({{doc.paid_from_account_currency}})
 											</td>
 											<td class="section-title center" style="width: 90px">
-												Paid
+												Paid<br />({{doc.paid_from_account_currency}})
 											</td>
 											<td class="section-title center" style="width: 90px">
-												Remaining
+												Remaining<br />({{doc.paid_from_account_currency}})
 											</td>
 										</tr>
 									</thead>
@@ -120,7 +120,7 @@
 											<td>
 												<!-- prettier-ignore -->
 												{% set bill_no = frappe.db.get_value( "Purchase Invoice",ref.reference_name, "bill_no" ) %}
-													 {{ bill_no or "None"}}
+													 {{ bill_no or "-"}}
 											</td>
 											<td class="right">
 												{{frappe.format(ref.total_amount,{"fieldtype":"Currency"})
@@ -171,21 +171,17 @@
 												column-gap: 3px;
 											"
 										>
-											{% if doc.mode_of_payment %}
 											<div><b>Payment Method</b></div>
-											<div>: {{ doc.mode_of_payment }}</div>
-											{% endif %} {% if doc.mode_of_payment %}
+											<div>: {{ doc.mode_of_payment or "-" }}</div>
+
 											<div><b>Payment Date</b></div>
 											<div>
-												: {{
-												frappe.format(doc.posting_date,{"fieldtype":"Date"})
-												}}
+												: {{ frappe.format(doc.posting_date or
+												"-",{"fieldtype":"Date"}) }}
 											</div>
-											{% endif %} {% if doc.mode_of_payment %}
-											<div><b>Payment Ref</b></div>
 
-											<div>: {{ doc.reference_no }}</div>
-											{% endif %}
+											<div><b>Payment Ref</b></div>
+											<div>: {{ doc.reference_no or "-" }}</div>
 										</div>
 									</div>
 								</div>

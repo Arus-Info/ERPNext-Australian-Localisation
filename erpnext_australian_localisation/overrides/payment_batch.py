@@ -16,7 +16,7 @@ def get_missing_email_suppliers(docname: str):
 
 	for row in payment_rows:
 		email = frappe.db.get_value(
-			"Contact",
+			"Address",
 			{"link_doctype": "Supplier", "link_name": row.party},
 			"email_id",
 		)
@@ -39,7 +39,7 @@ def send_remittance_email_from_pb(docname: str):
 
 	for row in doc.payment_created:
 		email = frappe.db.get_value(
-			"Contact",
+			"Address",
 			{
 				"link_doctype": "Supplier",
 				"link_name": row.party,

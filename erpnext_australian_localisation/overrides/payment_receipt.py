@@ -9,7 +9,7 @@ def check_party_email(docname: str, party_type: str):
 	party = frappe.db.get_value("Payment Entry", docname, "party")
 
 	email = frappe.db.get_value(
-		"Contact",
+		"Address",
 		{"link_doctype": party_type, "link_name": party},
 		"email_id",
 	)
@@ -27,7 +27,7 @@ def send_payment_receipt(docname: str):
 		frappe.throw(_("Please set a Payment Receipt Template in AU Localisation Settings"))
 
 	email = frappe.db.get_value(
-		"Contact",
+		"Address",
 		{
 			"link_doctype": "Customer",
 			"link_name": doc.party,
@@ -73,7 +73,7 @@ def send_remittance_email(docname: str):
 	)
 
 	email = frappe.db.get_value(
-		"Contact",
+		"Address",
 		{
 			"link_doctype": "Supplier",
 			"link_name": party,
