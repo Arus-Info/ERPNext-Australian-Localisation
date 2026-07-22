@@ -544,7 +544,7 @@ def get_default_email_templates():
 			"response": """
 				Dear {{ party }} <br>
 				Please find attached the remittance advice PDF for your reference.<br><br>
-				
+
 				Payment Date : {{ frappe.utils.formatdate(posting_date) }}<br>
 				Mode Of Payment : {{ mode_of_payment or "-" }}<br>
 				Paid Amount : {{ frappe.format(paid_amount or " - ",{"fieldtype":"Currency"}) }}<br>
