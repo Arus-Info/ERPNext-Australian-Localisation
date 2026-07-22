@@ -18,7 +18,7 @@ def check_party_email(docname: str, party_type: str):
 	if not email:
 		frappe.throw(
 			_(
-				"Please set a Primary Email in the {0} [{1}] contact details before sending the remittance advice "
+				"Please set a Primary Email in the {0} [{1}] contact details before sending the remittance advice"
 			).format(party_type, party)
 		)
 	return True
