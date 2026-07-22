@@ -542,15 +542,15 @@ def get_default_email_templates():
 			"name": "Remittance Advice Template",
 			"subject": "Remittance Advice - {{ company }} - {{ frappe.utils.formatdate(payment_batch.posting_date or posting_date) }}",
 			"response": """
-				Dear {{ party }}
-				Please find attached the remittance advice PDF for your reference.
+				Dear {{ party }} <br>
+				Please find attached the remittance advice PDF for your reference.<br><br>
+				
+				Payment Date : {{ frappe.utils.formatdate(posting_date) }}<br>
+				Mode Of Payment : {{ mode_of_payment or "-" }}<br>
+				Paid Amount : {{ frappe.format(paid_amount or " - ",{"fieldtype":"Currency"}) }}<br>
+				Reference No : {{ reference_no or "-" }}<br><br>
 
-				Payment Date : {{ frappe.utils.formatdate(posting_date) }}
-				Mode Of Payment : {{ mode_of_payment or "-" }}
-				Paid Amount : {{ frappe.format(paid_amount or " - ",{"fieldtype":"Currency"}) }}
-				Reference No : {{ reference_no or "-" }}
-
-				Regards,
+				Regards,<br>
 				{{ company }}
  			""",
 		},
@@ -559,15 +559,14 @@ def get_default_email_templates():
 			"name": "Payment Receipt Template",
 			"subject": "Payment Received",
 			"response": """
-				Dear {{ party }}
+				Dear {{ party }}<br>
+				Thank you for your payment. It was a pleasure doing business with you. We look forward to work together again!<br><br>
 
-				Thank you for your payment. It was a pleasure doing business with you. We look forward to work together again!
+				Invoice No : {% for ref in references %}{% if ref.reference_doctype == "Sales Invoice" %}{{ ref.reference_name }}{% endif %}{% endfor %}<br>
+				Payment Date : {{ frappe.utils.formatdate(posting_date) }}<br>
+				Payment Received : {{ frappe.format(paid_amount or " - ",{"fieldtype":"Currency"}) }}<br><br>
 
-				Invoice No : {% for ref in references %}{% if ref.reference_doctype == "Sales Invoice" %}{{ ref.reference_name }}{% endif %}{% endfor %}
-				Payment Date : {{ frappe.utils.formatdate(posting_date) }}
-				Payment Received : {{ frappe.format(paid_amount or " - ",{"fieldtype":"Currency"}) }}
-
-				Regards,
+				Regards,<br>
 				{{ company }}
 
 			""",

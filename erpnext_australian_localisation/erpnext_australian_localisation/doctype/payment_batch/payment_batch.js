@@ -100,7 +100,7 @@ frappe.ui.form.on("Payment Batch", {
 		if (frm.doc.party_type === "Supplier") {
 			frm.add_custom_button(__("Send Remittance"), () => {
 				frappe.call({
-					method: "erpnext_australian_localisation.overrides.payment_batch.get_missing_email_suppliers",
+					method: "erpnext_australian_localisation.erpnext_australian_localisation.doctype.payment_batch.payment_batch.get_missing_email_suppliers",
 					args: { docname: frm.doc.name },
 					callback(r) {
 						const missing = [...new Set(r.message || [])];
@@ -108,7 +108,7 @@ frappe.ui.form.on("Payment Batch", {
 
 						const do_send = () => {
 							frappe.call({
-								method: "erpnext_australian_localisation.overrides.payment_batch.send_remittance_email_from_pb",
+								method: "erpnext_australian_localisation.erpnext_australian_localisation.doctype.payment_batch.payment_batch.send_remittance_email_from_pb",
 								args: { docname: frm.doc.name },
 								freeze: true,
 								freeze_message: __("Sending remittance emails..."),
@@ -124,12 +124,16 @@ frappe.ui.form.on("Payment Batch", {
 						if (missing.length === total) {
 							frappe.throw(
 								__(
-									"No valid supplier email addresses found for the selected batch."
+									"Please set a Primary Email in the supplier [{0}] contact details before sending the remittance advice",
+									[missing]
 								)
 							);
 						} else if (missing.length > 0) {
 							frappe.confirm(
-								__("No email address was found for supplier :  {0}", [missing]) +
+								__(
+									"Please set a Primary Email in the supplier [{0}] contact details before sending the remittance advice",
+									[missing]
+								) +
 									"<br><br>" +
 									__("Send remittance advice to the remaining suppliers only?"),
 								do_send

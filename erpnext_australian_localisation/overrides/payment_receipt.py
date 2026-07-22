@@ -1,7 +1,9 @@
 import frappe
 from frappe import _
 
-from erpnext_australian_localisation.overrides.payment_batch import _send_remittance_email
+from erpnext_australian_localisation.erpnext_australian_localisation.doctype.payment_batch.payment_batch import (
+	_send_remittance_email,
+)
 
 
 @frappe.whitelist()
@@ -9,12 +11,16 @@ def check_party_email(docname: str, party_type: str):
 	party = frappe.db.get_value("Payment Entry", docname, "party")
 
 	email = frappe.db.get_value(
-		"Address",
-		{"link_doctype": party_type, "link_name": party},
+		"Contact",
+		{"link_doctype": party_type, "link_name": party, "is_primary_contact": 1},
 		"email_id",
 	)
 	if not email:
-		frappe.throw(_("No email found for {0} {1}").format(party_type, party))
+		frappe.throw(
+			_(
+				"Please set a Primary Email in the {0} [{1}] contact details before sending the remittance advice "
+			).format(party_type, party)
+		)
 	return True
 
 
@@ -27,11 +33,8 @@ def send_payment_receipt(docname: str):
 		frappe.throw(_("Please set a Payment Receipt Template in AU Localisation Settings"))
 
 	email = frappe.db.get_value(
-		"Address",
-		{
-			"link_doctype": "Customer",
-			"link_name": doc.party,
-		},
+		"Contact",
+		{"link_doctype": "Customer", "link_name": doc.party, "is_primary_contact": 1},
 		"email_id",
 	)
 
@@ -73,11 +76,8 @@ def send_remittance_email(docname: str):
 	)
 
 	email = frappe.db.get_value(
-		"Address",
-		{
-			"link_doctype": "Supplier",
-			"link_name": party,
-		},
+		"Contact",
+		{"link_doctype": "Supplier", "link_name": party, "is_primary_contact": 1},
 		"email_id",
 	)
 
