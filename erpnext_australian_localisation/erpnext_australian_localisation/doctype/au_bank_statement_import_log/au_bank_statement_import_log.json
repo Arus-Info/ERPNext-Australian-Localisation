@@ -50,8 +50,13 @@
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2026-07-21 19:06:37.141330",
+ "links": [
+  {
+   "link_doctype": "Bank Transaction",
+   "link_fieldname": "au_bank_statement_import_log"
+  }
+ ],
+ "modified": "2026-07-21 20:31:04.365233",
  "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
  "name": "AU Bank Statement Import Log",

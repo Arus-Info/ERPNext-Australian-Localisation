@@ -1,6 +1,16 @@
 frappe.ui.form.on("Bank Account", {
 	refresh(frm) {
-		frm.add_custom_button(__("Fetch Account ID"), () => {
+		if (!frm.doc.enable_transaction_import) {
+			return;
+		}
+
+		const fetch_account_btn = frm.add_custom_button(__("Fetch Account ID"), () => {
+			if (frm.__fetching_provider_accounts) {
+				return;
+			}
+			frm.__fetching_provider_accounts = true;
+			fetch_account_btn.prop("disabled", true);
+
 			frappe.call({
 				method: "erpnext_australian_localisation.integration.import_transaction.get_provider_accounts",
 
@@ -12,10 +22,21 @@ frappe.ui.form.on("Bank Account", {
 					}
 					show_provider_account_dialog(frm, accounts);
 				},
+
+				always() {
+					frm.__fetching_provider_accounts = false;
+					fetch_account_btn.prop("disabled", false);
+				},
 			});
 		});
 
-		frm.add_custom_button(__("Sync Now"), () => {
+		const sync_now_btn = frm.add_custom_button(__("Sync Now"), () => {
+			if (frm.__syncing_account_transactions) {
+				return;
+			}
+			frm.__syncing_account_transactions = true;
+			sync_now_btn.prop("disabled", true);
+
 			frappe.call({
 				method: "erpnext_australian_localisation.integration.import_transaction.sync_account_transactions",
 				args: { bank_account: frm.doc.name },
@@ -28,8 +49,17 @@ frappe.ui.form.on("Bank Account", {
 					});
 					frm.reload_doc();
 				},
+
+				always() {
+					frm.__syncing_account_transactions = false;
+					sync_now_btn.prop("disabled", false);
+				},
 			});
 		});
+	},
+
+	enable_transaction_import(frm) {
+		frm.refresh();
 	},
 });
 

@@ -319,10 +319,10 @@ OPEN_BANKING_FIELDS = {
 	],
 	"Bank Transaction": [
 		{
-			"fieldname": "au_bank_sync_import_log",
-			"label": "Bank Sync Import Log",
+			"fieldname": "au_bank_statement_import_log",
+			"label": "Bank Statement Import Log",
 			"fieldtype": "Link",
-			"options": "AU Bank Sync Import Log",
+			"options": "AU Bank Statement Import Log",
 			"read_only": 1,
 			"no_copy": 1,
 			"insert_after": "transaction_id",

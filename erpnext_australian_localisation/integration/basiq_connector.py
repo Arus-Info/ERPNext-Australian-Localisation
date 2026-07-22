@@ -1,6 +1,3 @@
-# Copyright (c) 2026, Adhi and contributors
-# For license information, please see license.txt
-
 import frappe
 import requests
 from frappe import _
@@ -17,6 +14,12 @@ class BasiqConnector:
 		self.access_token = self.get_access_token()
 
 	def get_access_token(self):
+		cache = frappe.cache()
+
+		token = cache.get_value("basiq_access_token")
+		if token:
+			return token
+
 		response = requests.post(
 			f"{BASIQ_API_BASE}/token",
 			headers={
@@ -29,9 +32,18 @@ class BasiqConnector:
 			timeout=30,
 		)
 		response.raise_for_status()
-		token = response.json()["access_token"]
-		frappe.db.commit()
 
+		data = response.json()
+		token = data["access_token"]
+
+		expires_in = data.get("expires_in", 3600)
+
+		# Store slightly less than actual expiry
+		cache.set_value(
+			"basiq_access_token",
+			token,
+			expires_in_sec=expires_in - 60,
+		)
 		return token
 
 	def get_headers(self):

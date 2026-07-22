@@ -1,4 +1,5 @@
 import frappe
+from frappe import _
 from frappe.utils import add_to_date, get_datetime, getdate, now_datetime
 
 from erpnext_australian_localisation.integration.basiq_connector import (
@@ -8,38 +9,54 @@ from erpnext_australian_localisation.integration.basiq_connector import (
 
 @frappe.whitelist()
 def sync_account_transactions(bank_account, provider_account_id=None, sync_date=None):
+    if not frappe.db.get_value("Bank Account", bank_account, "enable_transaction_import"):
+        frappe.throw(_("Enable Transaction Import for {0} before syncing transactions").format(bank_account))
 
-    connector = BasiqConnector()
-    provider_account_id = provider_account_id or frappe.db.get_value(
-        "Bank Account", bank_account, "provider_account_id"
-    )
-    transactions = connector.get_transactions(provider_account_id, sync_date=sync_date)
+    log = frappe.get_doc({
+        "doctype": "AU Bank Statement Import Log",
+        "transaction_creation_at": now_datetime(),
+        "bank_account": bank_account,
+        "status": "Success",
+    }).insert(ignore_permissions=True)
 
-    for txn in transactions:
-        transaction_id = txn.get("id")
+    try:
+        connector = BasiqConnector()
+        provider_account_id = provider_account_id or frappe.db.get_value(
+            "Bank Account", bank_account, "provider_account_id"
+        )
+        transactions = connector.get_transactions(provider_account_id, sync_date=sync_date)
 
-        if frappe.db.exists(
-            "Bank Transaction",
-            {"transaction_id": transaction_id},
-        ):
-            continue
+        for txn in transactions:
+            transaction_id = txn.get("id")
 
-        amount = float(txn.get("amount", 0))
+            if frappe.db.exists(
+                "Bank Transaction",
+                {"transaction_id": transaction_id},
+            ):
+                continue
 
-        doc = frappe.get_doc({
-            "doctype": "Bank Transaction",
-            "bank_account": bank_account,
-            "date": getdate(txn.get("postDate")),
-            "deposit": max(amount, 0.0),
-            "withdrawal": abs(min(amount, 0.0)),
-            "description": txn.get("description"),
-            "transaction_id": transaction_id,
-        })
+            amount = float(txn.get("amount", 0))
 
-        doc.insert(ignore_permissions=True)
-        doc.submit()
+            doc = frappe.get_doc({
+                "doctype": "Bank Transaction",
+                "bank_account": bank_account,
+                "date": getdate(txn.get("postDate")),
+                "deposit": max(amount, 0.0),
+                "withdrawal": abs(min(amount, 0.0)),
+                "description": txn.get("description"),
+                "transaction_id": transaction_id,
+                "au_bank_statement_import_log": log.name,
+            })
 
-    frappe.db.set_value("Bank Account", bank_account, "last_sync", now_datetime())
+            doc.insert(ignore_permissions=True)
+            doc.submit()
+
+        frappe.db.set_value("Bank Account", bank_account, "last_sync", now_datetime())
+    except Exception as e:
+        frappe.log_error(f"Bank Transaction Sync Error: {e!s}")
+        log.status = "Failed"
+        log.error_message = str(e)
+        log.save(ignore_permissions=True)
 
 
 def fetch_transactions():
