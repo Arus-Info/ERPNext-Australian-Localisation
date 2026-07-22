@@ -46,11 +46,12 @@ def delete_property_setter(properties):
 		frappe.db.delete("Property Setter", property_setter)
 
 
-def delete_email_templates():
-	frappe.db.delete(
-		"Email Template",
-		{"name": ("in", [record["name"] for record in get_default_email_templates()])},
-	)
+def delete_records(records):
+	for record in records:
+		frappe.db.delete(
+			record["doctype"],
+			{"name": record["name"]},
+		)
 
 
 def remove_setup():
@@ -62,7 +63,7 @@ def remove_setup():
 		delete_hrms_custom_fields()
 	delete_property_setter(PROPERTIES)
 	delete_property_setter(ABN_PROPERTIES)
-	delete_email_templates()
+	delete_records(get_default_email_templates())
 
 
 def delete_hrms_custom_fields():
