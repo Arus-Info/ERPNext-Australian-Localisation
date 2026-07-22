@@ -558,7 +558,7 @@ def get_default_email_templates():
 			"doctype": "Email Template",
 			"name": "Payment Receipt Template",
 			"subject": "Payment Received",
-			"response": """ 
+			"response": """
 				Dear {{ party }}
 
 				Thank you for your payment. It was a pleasure doing business with you. We look forward to work together again!
@@ -568,7 +568,7 @@ def get_default_email_templates():
 				Payment Received : {{ frappe.format(paid_amount or " - ",{"fieldtype":"Currency"}) }}
 
 				Regards,
-				{{ company }} 
+				{{ company }}
 
 			""",
 		},
