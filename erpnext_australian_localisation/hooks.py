@@ -12,10 +12,6 @@ app_include_js = "australian_localisation.bundle.js"
 
 fixtures = [
 	{"dt": "Custom HTML Block", "filters": {"name": "Australian Localisation"}},
-	{
-		"doctype": "Email Template",
-		"filters": [["name", "in", ["Remittance Advice Template", "Payment Receipt Template"]]],
-	},
 ]
 
 

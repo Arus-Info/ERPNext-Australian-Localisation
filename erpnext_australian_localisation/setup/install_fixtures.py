@@ -9,6 +9,7 @@ def create_default_records():
 	records.extend(get_au_bas_labels())
 	records.extend(get_au_bas_label_setup())
 	records.extend(get_au_bank_statement_format())
+	records.extend(get_default_email_templates())
 
 	make_records(records)
 
@@ -529,6 +530,47 @@ def get_au_bank_statement_format():
 				"04-01-2025,200,Refund,15004.5\n"
 				"05-01-2025,-200,Grocery shopping,14804.5\n"
 			),
+		},
+	]
+	return records
+
+
+def get_default_email_templates():
+	records = [
+		{
+			"doctype": "Email Template",
+			"name": "Remittance Advice Template",
+			"subject": "Remittance Advice - {{ company }} - {{ frappe.utils.formatdate(payment_batch.posting_date or posting_date) }}",
+			"response": """
+				Dear {{ party }}
+				Please find attached the remittance advice PDF for your reference.
+
+				Payment Date : {{ frappe.utils.formatdate(posting_date) }}
+				Mode Of Payment : {{ mode_of_payment or "-" }}
+				Paid Amount : {{ frappe.format(paid_amount or " - ",{"fieldtype":"Currency"}) }}
+				Reference No : {{ reference_no or "-" }}
+
+				Regards,
+				{{ company }}
+ 			""",
+		},
+		{
+			"doctype": "Email Template",
+			"name": "Payment Receipt Template",
+			"subject": "Payment Received",
+			"response": """ 
+				Dear {{ party }}
+
+				Thank you for your payment. It was a pleasure doing business with you. We look forward to work together again!
+
+				Invoice No : {% for ref in references %}{% if ref.reference_doctype == "Sales Invoice" %}{{ ref.reference_name }}{% endif %}{% endfor %}
+				Payment Date : {{ frappe.utils.formatdate(posting_date) }}
+				Payment Received : {{ frappe.format(paid_amount or " - ",{"fieldtype":"Currency"}) }}
+
+				Regards,
+				{{ company }} 
+
+			""",
 		},
 	]
 	return records

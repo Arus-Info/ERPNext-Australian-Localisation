@@ -8,6 +8,7 @@ from erpnext_australian_localisation.setup.custom_fields import (
 	EMPLOYEE_BANK_DETAILS,
 	HRMS_CUSTOM_FIELDS,
 )
+from erpnext_australian_localisation.setup.install_fixtures import get_default_email_templates
 from erpnext_australian_localisation.setup.property_setters import ABN_PROPERTIES, PROPERTIES
 
 
@@ -45,6 +46,13 @@ def delete_property_setter(properties):
 		frappe.db.delete("Property Setter", property_setter)
 
 
+def delete_email_templates():
+	frappe.db.delete(
+		"Email Template",
+		{"name": ("in", [record["name"] for record in get_default_email_templates()])},
+	)
+
+
 def remove_setup():
 	delete_custom_field(CUSTOM_FIELDS)
 	delete_custom_field(CUSTOM_FIELDS_FOR_BANK_FILE)
@@ -54,6 +62,7 @@ def remove_setup():
 		delete_hrms_custom_fields()
 	delete_property_setter(PROPERTIES)
 	delete_property_setter(ABN_PROPERTIES)
+	delete_email_templates()
 
 
 def delete_hrms_custom_fields():
