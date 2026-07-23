@@ -124,14 +124,14 @@ frappe.ui.form.on("Payment Batch", {
 						if (missing.length === total) {
 							frappe.throw(
 								__(
-									"Please set a Primary Email in the supplier [{0}] contact details before sending the remittance advice",
+									"Please set a Primary Contact in the supplier [{0}] details before sending the remittance advice",
 									[missing]
 								)
 							);
 						} else if (missing.length > 0) {
 							frappe.confirm(
 								__(
-									"Please set a Primary Email in the supplier [{0}] contact details before sending the remittance advice",
+									"Please set a Primary Contact in the supplier [{0}] details before sending the remittance advice",
 									[missing]
 								) +
 									"<br><br>" +

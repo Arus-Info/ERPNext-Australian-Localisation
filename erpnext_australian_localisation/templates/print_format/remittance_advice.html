@@ -52,6 +52,9 @@
 									{% if payment_batch %}
 										{% set pb_date = frappe.db.get_value("Payment Batch",payment_batch,"posting_date") %}
    										{{ frappe.format(pb_date or "-", {"fieldtype": "Date"}) }}
+									{% else %}
+										{{ frappe.format(doc.posting_date, {"fieldtype": "Date"}) }}
+
 									{% endif %}
 								</div>
 								<div><b>Reference No:</b></div>
