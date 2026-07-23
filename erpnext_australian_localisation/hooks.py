@@ -10,7 +10,10 @@ required_apps = ["erpnext"]
 # ------------------
 app_include_js = "australian_localisation.bundle.js"
 
-fixtures = [{"dt": "Custom HTML Block", "filters": {"name": "Australian Localisation"}}]
+fixtures = [
+	{"dt": "Custom HTML Block", "filters": {"name": "Australian Localisation"}},
+]
+
 
 company_data_to_be_ignored = ["Tax Rule"]
 
@@ -65,6 +68,7 @@ doctype_js = {
 	"Supplier": "public/js/supplier.js",
 	"Customer": "public/js/customer.js",
 	"Bank Statement Import": "public/js/bank_statement_import.js",
+	"Payment Entry": "public/js/payment_entry.js",
 }
 
 # include js in doctype views

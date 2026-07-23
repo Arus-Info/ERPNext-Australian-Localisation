@@ -1,0 +1,181 @@
+<style>
+	{% include "templates/includes/au_print_format.css" %}
+</style>
+{% if doc.payment_type == "Receive" and doc.party_type == "Customer" %} {% if doc.docstatus == 0 %}
+<div class="watermark">DRAFT</div>
+{% endif %}
+<table>
+	<thead>
+		<tr>
+			<td>
+				<div>
+					<div class="pf-header">
+						<div class="company-header">
+							<div>
+								{% set company =
+								frappe.db.get_value("Company",doc.company,["company_name","company_logo","email","phone_no","tax_id"],
+								as_dict=true) %}
+
+								<div class="logo">
+									<img
+										src="{{company.company_logo}}"
+										alt="{{company.company_name}}"
+									/>
+								</div>
+							</div>
+							<div style="width: 284px">
+								<b>{{ doc.company }}</b><br />
+								{% if company.tax_id %} ABN :{{company.tax_id}}<br />
+								{% endif %}
+								<!-- prettier-ignore -->
+								{% set address_list = frappe.get_list("Address", filters=[["Dynamic Link","link_doctype","=","Company"],["Dynamic Link","link_name","=",doc.company]],limit=1) %}
+								{% if address_list %} {% set addr = frappe.get_doc("Address", address_list[0]) %}
+								{{ frappe.render_template("/templates/print_format/au_address.html",{"address": addr}) }}
+								<br />
+								{% endif %}
+								<!-- prettier-ignore -->
+								{% set email = frappe.get_list("Contact", fields=["`tabContact Email`.email_id"],
+								filters= [["Dynamic Link", "link_doctype","=","Company"],["Dynamic Link", "link_name","=",doc.company]], limit=1) %}
+								{% if email %} {{ email[0].email_id }} <br />
+								{% endif %} {% if company.phone_no %} Ph.No: {{ company.phone_no }}
+								{% endif %}
+							</div>
+						</div>
+						<div>
+							<div class="pf-heading">Payment Receipt</div>
+							<div class="grid">
+								<div><b>Payment Date:</b></div>
+								<div>
+									: {{ frappe.format(doc.posting_date,{"fieldtype":"Date"}) }}
+								</div>
+								<div><b>Reference No:</b></div>
+								<div>{{ doc.name }}</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</td>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>
+				<table style="width: 100%">
+					<thead>
+						<tr>
+							<td>
+								<div class="body">
+									<div class="half">
+										<div class="box-size">
+											<div class="section-title">Received From</div>
+											<div class="start-container" style="height: 100%">
+												<b>{{ doc.party_name }}</b><br />
+												{% if doc.tax_id %} ABN: {{ doc.tax_id }} <br />
+												{% endif %}
+												<!-- prettier-ignore -->
+												{% set address_list = frappe.get_list("Address", filters=[["Dynamic Link","link_doctype","=","Customer"],["Dynamic Link","link_name","=",doc.party_name]],limit=1) %}
+												{% if address_list %} {% set addr = frappe.get_doc("Address", address_list[0]) %}
+												{{ frappe.render_template("/templates/print_format/au_address.html",{"address": addr}) }}
+												<br />
+												{% endif %}
+											</div>
+										</div>
+									</div>
+									<div class="half"></div>
+								</div>
+							</td>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>
+								<table style="width: 100%">
+									<thead>
+										<tr class="item-row">
+											<td class="section-title" style="width: 130px">
+												Invoice No
+											</td>
+											<td class="section-title" style="width: 80px">
+												Invoice Date
+											</td>
+											<td class="section-title center" style="width: 90px">
+												Invoice Amount<br />({{doc.paid_from_account_currency}})
+											</td>
+											<td class="section-title center" style="width: 90px">
+												Payment Amount<br />({{doc.paid_from_account_currency}})
+											</td>
+											<td class="section-title center" style="width: 90px">
+												Remaining Amount<br />({{doc.paid_from_account_currency}})
+											</td>
+										</tr>
+									</thead>
+									<tbody>
+										{% for ref in doc.references %}
+										<tr class="item-row">
+											<td>{{ ref.reference_name }}</td>
+											<td>
+												<!-- prettier-ignore -->
+												{% set po_date = frappe.db.get_value( "Sales Invoice",ref.reference_name, "posting_date") %}
+												{{ frappe.format(po_date, {"fieldtype":"Date"}) if po_date else "-" }}
+											</td>
+											<td class="right">
+												{{frappe.format(ref.total_amount,{"fieldtype":"Currency"})
+												}}
+											</td>
+											<td class="right">
+												{{frappe.format(ref.allocated_amount,{"fieldtype":"Currency"})
+												}}
+											</td>
+											<td class="right">
+												{{frappe.format(ref.outstanding_amount,{"fieldtype":"Currency"})
+												}}
+											</td>
+										</tr>
+										{% endfor %} {% if doc.unallocated_amount %}
+										<tr class="item-row">
+											<td colspan="3">Unallocated</td>
+											<td class="right">
+												{{frappe.format(doc.unallocated_amount,{"fieldtype":"Currency"})
+												}}
+											</td>
+										</tr>
+										{% endif %}
+									</tbody>
+								</table>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<div>
+									<div class="table-start">
+										<div
+											style="
+												text-align: left;
+												display: grid;
+												grid-template-columns: 0.22fr max-content;
+												column-gap: 3px;
+											"
+										>
+											<div><b>Payment Method</b></div>
+											<div>: {{ doc.mode_of_payment or "-" }}</div>
+
+											<div><b>Payment Ref Date</b></div>
+											<div>
+												: {{ frappe.format(doc.reference_date or
+												"-",{"fieldtype":"Date"}) }}
+											</div>
+
+											<div><b>Payment Ref No</b></div>
+											<div>: {{ doc.reference_no or "-" }}</div>
+										</div>
+									</div>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</td>
+		</tr>
+	</tbody>
+</table>
+{% endif %}
