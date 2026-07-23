@@ -3,6 +3,8 @@
 
 frappe.ui.form.on("Payment Batch", {
 	refresh(frm) {
+		render_preview(frm);
+		frm.trigger("send_remittance_action");
 		$('[data-fieldname="paid_invoices"]').find(".grid-remove-rows").hide();
 		frm.$wrapper.find(".grid-add-row").hide();
 		frm.$wrapper.find(".grid-body").css({ "overflow-y": "scroll", "max-height": "400px" });
@@ -39,6 +41,7 @@ frappe.ui.form.on("Payment Batch", {
 				__("Get Items From")
 			);
 		}
+
 		if (frm.doc.payment_created.length) {
 			frm.add_custom_button(
 				__("Generate Bank File"),
@@ -92,6 +95,62 @@ frappe.ui.form.on("Payment Batch", {
 			});
 		}
 	},
+	send_remittance_action(frm) {
+		if (frm.doc.docstatus !== 1) return;
+		if (frm.doc.party_type === "Supplier") {
+			frm.add_custom_button(__("Send Remittance"), () => {
+				frappe.call({
+					method: "erpnext_australian_localisation.erpnext_australian_localisation.doctype.payment_batch.payment_batch.get_missing_email_suppliers",
+					args: { docname: frm.doc.name },
+					callback(r) {
+						const missing = [...new Set(r.message || [])];
+						const total = frm.doc.payment_created.length;
+
+						const do_send = () => {
+							frappe.call({
+								method: "erpnext_australian_localisation.erpnext_australian_localisation.doctype.payment_batch.payment_batch.send_remittance_email_from_pb",
+								args: { docname: frm.doc.name },
+								freeze: true,
+								freeze_message: __("Sending remittance emails..."),
+								callback() {
+									frappe.show_alert({
+										message: __("Remittance emails sent successfully"),
+										indicator: "green"
+									});
+								}
+							});
+						};
+
+						if (missing.length === total) {
+							frappe.throw(
+								__(
+									"Please set a Primary Contact in the supplier [{0}] details before sending the remittance advice",
+									[missing]
+								)
+							);
+						} else if (missing.length > 0) {
+							frappe.confirm(
+								__(
+									"Please set a Primary Contact in the supplier [{0}] details before sending the remittance advice",
+									[missing]
+								) +
+									"<br><br>" +
+									__("Send remittance advice to the remaining suppliers only?"),
+								do_send
+							);
+						} else {
+							frappe.confirm(
+								__(
+									"Do you want to send the remittance advice email to the supplier?"
+								),
+								do_send
+							);
+						}
+					}
+				});
+			});
+		}
+	},
 
 	update_total_paid_amount(frm) {
 		let total_paid_amount = 0;
@@ -99,9 +158,48 @@ frappe.ui.form.on("Payment Batch", {
 			total_paid_amount += frm.doc.payment_created[i].amount;
 		}
 		frm.set_value("total_paid_amount", total_paid_amount);
+	},
+	onload_post_render(frm) {
+		render_preview(frm);
 	}
 });
 
+function render_preview(frm) {
+	const $rows = frm.$wrapper.find('[data-fieldname="payment_created"] .grid-body .data-row');
+
+	if (!$rows.length) {
+		return;
+	}
+	$rows.each(function () {
+		const $row = $(this);
+		if ($row.find(".btn-preview-pe").length) return;
+		const $btn = $(
+			'<div class="col grid-static-col" style="flex:0 0 80px;max-width:80px;text-align:center;">' +
+				'<button class="btn btn-xs btn-default btn-preview-pe">' +
+				__("Preview") +
+				"</button>" +
+				"</div>"
+		);
+
+		$btn.on("click", function (e) {
+			e.stopPropagation();
+			e.preventDefault();
+			const row_name = $row.closest("[data-name]").attr("data-name");
+
+			const payment_entry = frappe.model.get_value(
+				"Payment Batch Item",
+				row_name,
+				"payment_entry"
+			);
+
+			if (payment_entry) {
+				frappe.set_route("print", "Payment Entry", payment_entry);
+			}
+		});
+		const $target = $row.find('[data-fieldname="amount"]');
+		($target.length ? $target : $row).after($btn);
+	});
+}
 frappe.ui.form.on("Payment Batch Item", {
 	before_payment_created_remove(frm, cdt, cdn) {
 		let row = locals[cdt][cdn];
