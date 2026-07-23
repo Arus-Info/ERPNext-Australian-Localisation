@@ -243,7 +243,6 @@ def get_missing_email_suppliers(docname: str):
 		filters={"parent": docname},
 		fields=["party"],
 		limit_page_length=0,
-		ignore_permissions=True,
 	)
 
 	for row in payment_rows:
@@ -307,7 +306,7 @@ def _send_remittance_email(payment_entry, email, template, payment_batch=None):
 		subject=template_data.get("subject"),
 		content=template_data.get("message"),
 		send_email=1,
-		print_format="Remittance advise",
+		print_format="Remittance Advice",
 		print_letterhead=1,
 		print_language="en",
 		add_css=1,
