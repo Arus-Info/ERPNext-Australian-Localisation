@@ -1,0 +1,5 @@
+{% if address %} {{address.address_line1}}, {% if address.address_line2 %}
+{{address.address_line2}} {% endif %}
+<br />
+{{address.city}}, {% if address.state %} {{address.state}}{% endif %} {% if address.pincode
+%}{{address.pincode}}, {% endif %}{{address.country}} {% endif %}

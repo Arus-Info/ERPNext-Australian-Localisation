@@ -9,7 +9,10 @@
   "bas_reporting_period",
   "section_break_ichx",
   "abn_lookup_guid",
-  "html_mdrh",
+  "section_break_lmnb",
+  "remittance_advice_template",
+  "column_break_qoxu",
+  "payment_receipt_template",
   "open_banking_integration_section",
   "provider",
   "column_break_wfua",
@@ -34,14 +37,10 @@
    "fieldtype": "Section Break"
   },
   {
+   "description": "<p>\nTo get the GUID for your company, please apply it in ABR \u2013 Australian Business Register using this link\n<a href=\"https://abr.business.gov.au/Tools/WebServicesAgreement\" target=\"_blank\" rel=\"noopener noreferrer\">Click Here</a>.\n</p>",
    "fieldname": "abn_lookup_guid",
    "fieldtype": "Data",
    "label": "ABN Lookup GUID"
-  },
-  {
-   "fieldname": "html_mdrh",
-   "fieldtype": "HTML",
-   "options": "<p>\nTo get the GUID for your company, please apply it in ABR \u2013 Australian Business Register using this link\n<a href=\"https://abr.business.gov.au/Tools/WebServicesAgreement\" target=\"_blank\">Click Here</a>.\n</p>"
   },
   {
    "fieldname": "open_banking_integration_section",
@@ -52,7 +51,7 @@
    "fieldname": "provider",
    "fieldtype": "Select",
    "label": "Provider",
-   "options": "Basiq"
+   "options": "\nBasiq"
   },
   {
    "fieldname": "user_id",
@@ -67,13 +66,33 @@
   {
    "fieldname": "column_break_wfua",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_lmnb",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "remittance_advice_template",
+   "fieldtype": "Link",
+   "label": "Remittance Advice Template",
+   "options": "Email Template"
+  },
+  {
+   "fieldname": "payment_receipt_template",
+   "fieldtype": "Link",
+   "label": "Payment Receipt Template",
+   "options": "Email Template"
+  },
+  {
+   "fieldname": "column_break_qoxu",
+   "fieldtype": "Column Break"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-07-20 15:20:22.624230",
+ "modified": "2026-07-23 21:40:31.822400",
  "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
  "name": "AU Localisation Settings",
