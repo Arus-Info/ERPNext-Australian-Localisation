@@ -4,11 +4,9 @@ frappe.ui.form.on("Bank Account", {
 			return;
 		}
 
+		frm.set_df_property("last_sync", "read_only", frm.doc.last_sync ? 1 : 0);
+
 		const fetch_account_btn = frm.add_custom_button(__("Fetch Account ID"), () => {
-			if (frm.__fetching_provider_accounts) {
-				return;
-			}
-			frm.__fetching_provider_accounts = true;
 			fetch_account_btn.prop("disabled", true);
 
 			frappe.call({
@@ -24,17 +22,12 @@ frappe.ui.form.on("Bank Account", {
 				},
 
 				always() {
-					frm.__fetching_provider_accounts = false;
 					fetch_account_btn.prop("disabled", false);
 				},
 			});
 		});
 
 		const sync_now_btn = frm.add_custom_button(__("Sync Now"), () => {
-			if (frm.__syncing_account_transactions) {
-				return;
-			}
-			frm.__syncing_account_transactions = true;
 			sync_now_btn.prop("disabled", true);
 
 			frappe.call({
@@ -51,7 +44,6 @@ frappe.ui.form.on("Bank Account", {
 				},
 
 				always() {
-					frm.__syncing_account_transactions = false;
 					sync_now_btn.prop("disabled", false);
 				},
 			});
@@ -67,15 +59,17 @@ function show_provider_account_dialog(frm, accounts) {
 	const rows = accounts
 		.map(
 			(account, i) => `
-				<tr data-value="${frappe.utils.escape_html(account.id)}">
+				<tr data-value="${(account.id)}">
 					<td style="width: 40px; text-align: center;">
-						<input type="radio" name="provider_account" value="${frappe.utils.escape_html(account.id)}" ${
+						<input type="radio" name="provider_account" value="${(account.id)}" ${
 				i === 0 ? "checked" : ""
 			}>
 					</td>
-					<td>${frappe.utils.escape_html(account.name || "")}<br><small class="text-muted">${frappe.utils.escape_html(account.display_name || "")}</small></td>
-					<td>${frappe.utils.escape_html(account.account_no || "")}</td>
-					<td>${frappe.utils.escape_html(account.id || "")}</td>
+					<td>${(account.name)}
+						<br><small class="text-muted">${(account.display_name)}</small>
+					</td>
+					<td>${(account.account_no)}</td>
+					<td>${(account.id)}</td>
 				</tr>`
 		)
 		.join("");
@@ -108,10 +102,6 @@ function show_provider_account_dialog(frm, accounts) {
 			frm.set_value("provider_account_id", selected);
 			dialog.hide();
 		},
-	});
-
-	dialog.$wrapper.find("tbody tr").on("click", function () {
-		$(this).find('input[type="radio"]').prop("checked", true);
 	});
 
 	dialog.show();

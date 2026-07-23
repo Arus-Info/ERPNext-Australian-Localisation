@@ -304,6 +304,7 @@ OPEN_BANKING_FIELDS = {
 			"no_copy": 1,
 			"insert_after": "enable_transaction_import",
 			"depends_on": "eval: doc.enable_transaction_import",
+			"mandatory_depends_on": "eval: doc.enable_transaction_import",
 			"module": "ERPNext Australian Localisation",
 		},
 		{
@@ -314,6 +315,7 @@ OPEN_BANKING_FIELDS = {
 			"no_copy": 1,
 			"insert_after": "provider_account_id",
 			"depends_on": "eval: doc.enable_transaction_import",
+			"mandatory_depends_on": "eval: doc.enable_transaction_import",
 			"module": "ERPNext Australian Localisation",
 		},
 	],

@@ -2,15 +2,11 @@ import frappe
 from frappe import _
 from frappe.utils import add_to_date, get_datetime, getdate, now_datetime
 
-from erpnext_australian_localisation.integration.basiq_connector import (
-    BasiqConnector,
-)
+from erpnext_australian_localisation.integration import basiq_connector
 
 
 @frappe.whitelist()
 def sync_account_transactions(bank_account, provider_account_id=None, sync_date=None):
-    if not frappe.db.get_value("Bank Account", bank_account, "enable_transaction_import"):
-        frappe.throw(_("Enable Transaction Import for {0} before syncing transactions").format(bank_account))
 
     log = frappe.get_doc({
         "doctype": "AU Bank Statement Import Log",
@@ -20,11 +16,10 @@ def sync_account_transactions(bank_account, provider_account_id=None, sync_date=
     }).insert(ignore_permissions=True)
 
     try:
-        connector = BasiqConnector()
         provider_account_id = provider_account_id or frappe.db.get_value(
             "Bank Account", bank_account, "provider_account_id"
         )
-        transactions = connector.get_transactions(provider_account_id, sync_date=sync_date)
+        transactions = basiq_connector.get_transactions(provider_account_id, sync_date=sync_date)
 
         for txn in transactions:
             transaction_id = txn.get("id")
@@ -68,6 +63,7 @@ def fetch_transactions():
 
     for account in accounts:
         sync_date = get_datetime(account.last_sync) if account.last_sync else None
+        # 30mins buffer to avoid missing transactions due to time zone differences
         if sync_date:
             sync_date = add_to_date(sync_date, minutes=-30)
 
@@ -77,21 +73,18 @@ def fetch_transactions():
             sync_date=sync_date,
         )
 
-    frappe.db.commit()
-
     return "Transactions Imported"
 
 @frappe.whitelist()
 def get_provider_accounts():
-	connector = BasiqConnector()
-	accounts = connector.get_accounts()
-	return [
-		{
-			"id": account.get("id"),
-			"name": account.get("name"),
-			"display_name": account.get("displayName"),
-			"account_no": account.get("accountNo"),
-			"balance": account.get("balance"),
-		}
-		for account in accounts
-	]
+    accounts = basiq_connector.get_accounts()
+    result = []
+    for account in accounts:
+        result.append({
+            "id": account.get("id"),
+            "name": account.get("name"),
+            "display_name": account.get("displayName"),
+            "account_no": account.get("accountNo"),
+            "balance": account.get("balance"),
+        })
+    return result
