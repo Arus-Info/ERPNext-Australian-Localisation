@@ -303,6 +303,7 @@ OPEN_BANKING_FIELDS = {
 			"fieldtype": "Data",
 			"read_only": 1,
 			"no_copy": 1,
+            "unique": 1,
 			"insert_after": "enable_transaction_import",
 			"depends_on": "eval: doc.enable_transaction_import",
 			"mandatory_depends_on": "eval: doc.enable_transaction_import",

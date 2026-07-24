@@ -49,7 +49,7 @@ frappe.ui.form.on("Bank Account", {
 		}
 
 		frappe.validated = false;
-		fetch_provider_accounts(frm);
+		fetch_provider_accounts(frm, { save_on_select: true });
 	},
 });
 
@@ -63,14 +63,14 @@ function fetch_provider_accounts(frm, opts = {}) {
 				frappe.msgprint(__("No accounts found"));
 				return;
 			}
-			show_provider_account_dialog(frm, accounts);
+			show_provider_account_dialog(frm, accounts, { save_on_select: opts.save_on_select });
 		},
 
 		always: opts.always,
 	});
 }
 
-function show_provider_account_dialog(frm, accounts) {
+function show_provider_account_dialog(frm, accounts, opts = {}) {
 	const rows = accounts
 		.map(
 			(account, i) => `
@@ -114,8 +114,12 @@ function show_provider_account_dialog(frm, accounts) {
 		primary_action_label: __("OK"),
 		primary_action() {
 			const selected = dialog.$wrapper.find('input[name="provider_account"]:checked').val();
-			frm.set_value("provider_account_id", selected);
-			dialog.hide();
+			frm.set_value("provider_account_id", selected).then(() => {
+				dialog.hide();
+				if (opts.save_on_select) {
+					frm.save();
+				}
+			});
 		},
 	});
 
