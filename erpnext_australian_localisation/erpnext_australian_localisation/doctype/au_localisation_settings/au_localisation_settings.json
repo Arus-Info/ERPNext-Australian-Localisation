@@ -48,20 +48,26 @@
    "label": "Open Banking Integration"
   },
   {
+   "default": "Choose a Provider",
    "fieldname": "provider",
    "fieldtype": "Select",
    "label": "Provider",
-   "options": "\nBasiq"
+   "options": "Choose a Provider\nBasiq"
   },
   {
+   "depends_on": "eval:doc.provider != \"Choose a Provider\"",
    "fieldname": "user_id",
    "fieldtype": "Data",
-   "label": "User ID"
+   "in_list_view": 1,
+   "label": "User ID",
+   "mandatory_depends_on": "eval:doc.provider != \"Choose a Provider\""
   },
   {
+   "depends_on": "eval:doc.provider != \"Choose a Provider\"",
    "fieldname": "api_key",
    "fieldtype": "Password",
-   "label": "API Key"
+   "label": "API Key",
+   "mandatory_depends_on": "eval:doc.provider != \"Choose a Provider\""
   },
   {
    "fieldname": "column_break_wfua",
@@ -92,7 +98,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-07-23 21:40:31.822400",
+ "modified": "2026-07-24 16:52:48.073694",
  "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
  "name": "AU Localisation Settings",

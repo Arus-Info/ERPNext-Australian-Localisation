@@ -9,18 +9,7 @@ frappe.ui.form.on("Bank Account", {
 		const fetch_account_btn = frm.add_custom_button(__("Fetch Account ID"), () => {
 			fetch_account_btn.prop("disabled", true);
 
-			frappe.call({
-				method: "erpnext_australian_localisation.integration.import_transaction.get_provider_accounts",
-
-				callback(r) {
-					const accounts = r.message || [];
-					if (!accounts.length) {
-						frappe.msgprint(__("No accounts found"));
-						return;
-					}
-					show_provider_account_dialog(frm, accounts);
-				},
-
+			fetch_provider_accounts(frm, {
 				always() {
 					fetch_account_btn.prop("disabled", false);
 				},
@@ -53,7 +42,33 @@ frappe.ui.form.on("Bank Account", {
 	enable_transaction_import(frm) {
 		frm.refresh();
 	},
+
+	validate(frm) {
+		if (!frm.doc.enable_transaction_import || frm.doc.provider_account_id) {
+			return;
+		}
+
+		frappe.validated = false;
+		fetch_provider_accounts(frm);
+	},
 });
+
+function fetch_provider_accounts(frm, opts = {}) {
+	frappe.call({
+		method: "erpnext_australian_localisation.integration.import_transaction.get_provider_accounts",
+
+		callback(r) {
+			const accounts = r.message || [];
+			if (!accounts.length) {
+				frappe.msgprint(__("No accounts found"));
+				return;
+			}
+			show_provider_account_dialog(frm, accounts);
+		},
+
+		always: opts.always,
+	});
+}
 
 function show_provider_account_dialog(frm, accounts) {
 	const rows = accounts
