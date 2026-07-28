@@ -266,7 +266,7 @@ def send_remittance_email_from_pb(docname: str):
 	)
 
 	if not template:
-		frappe.throw(_("Please set a Remittance Email Template in AU Localisation Settings"))
+		frappe.throw(_("Please set a Remittance Advice Template in AU Localisation Settings"))
 
 	for row in doc.payment_created:
 		email = frappe.db.get_value(

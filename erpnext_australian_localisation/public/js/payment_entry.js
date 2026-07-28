@@ -1,5 +1,16 @@
 frappe.ui.form.on("Payment Entry", {
 	refresh(frm) {
+		frm.print_doc = () => {
+			const format = get_print_format(frm);
+			if (format) {
+				frm.meta.default_print_format = format;
+
+				$(".print-preview-sidebar").find('[data-fieldname="print_format"] input').val("");
+			}
+			frappe.route_options = { frm };
+			frappe.set_route("print", frm.doctype, frm.doc.name);
+		};
+
 		if (frm.doc.docstatus !== 1) return;
 
 		if (frm.doc.party_type === "Customer") {
@@ -61,3 +72,9 @@ frappe.ui.form.on("Payment Entry", {
 		}
 	}
 });
+
+function get_print_format(frm) {
+	if (frm.doc.payment_type === "Pay") return "Remittance Advice";
+	if (frm.doc.payment_type === "Receive") return "Payment Receipt";
+	return null;
+}

@@ -16,11 +16,11 @@ def check_party_email(docname: str, party_type: str):
 		"email_id",
 	)
 	if not email:
-		action = _("remittance advice") if party_type == "Supplier" else _("payment receipt")
+		action = _("Remittance Advice") if party_type == "Supplier" else _("Payment Receipt")
 		frappe.throw(
-			_("Please set a Primary Contact in the {0} [{1}] details before sending the {2}").format(
-				party_type, party, action
-			)
+			_(
+				"Please set a Primary Contact with email address in the {0} master for [{1}] to send the {2}"
+			).format(party_type, party, action)
 		)
 	return True
 

@@ -540,9 +540,9 @@ def get_default_email_templates():
 		{
 			"doctype": "Email Template",
 			"name": "Remittance Advice Template",
-			"subject": "Remittance Advice - {{ company }} - {{ frappe.utils.formatdate(payment_batch.posting_date or posting_date) }}",
+			"subject": "{{ company }} - Remittance Advice",
 			"response": """
-				Dear {{ party }},<br>
+				Dear {{ party_name }},<br><br>
 				Please find attached the remittance advice PDF for your reference.<br><br>
 
 				Payment Date : {{ frappe.utils.formatdate(posting_date) }}<br>
@@ -557,9 +557,9 @@ def get_default_email_templates():
 		{
 			"doctype": "Email Template",
 			"name": "Payment Receipt Template",
-			"subject": "Payment Received",
+			"subject": "{{ company }} - Payment Receipt",
 			"response": """
-				Dear {{ party }},<br>
+				Dear {{ party_name }},<br><br>
 				Thank you for your payment. It was a pleasure doing business with you. We look forward to work together again!<br><br>
 
 				Invoice No : {% for ref in references %}{% if ref.reference_doctype == "Sales Invoice" %}{{ ref.reference_name }}{% endif %}{% endfor %}<br>
