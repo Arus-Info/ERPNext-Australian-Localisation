@@ -269,6 +269,7 @@ def send_remittance_email_from_pb(docname: str):
 		frappe.throw(_("Please set a Remittance Advice Template in AU Localisation Settings"))
 
 	sent = []
+	not_sent = []
 
 	for row in doc.payment_created:
 		email = frappe.db.get_value(
@@ -276,6 +277,13 @@ def send_remittance_email_from_pb(docname: str):
 			{"link_doctype": "Supplier", "link_name": row.party, "is_primary_contact": 1},
 			"email_id",
 		)
+
+		# without an email there is nothing to send to, and calling make() with
+		# recipients=None would still log a Communication against the Payment Entry
+		if not email:
+			if row.party not in not_sent:
+				not_sent.append(row.party)
+			continue
 
 		_send_remittance_email(
 			payment_entry=row.payment_entry,
