@@ -59,23 +59,21 @@
    "link_fieldname": "au_bank_statement_import_log"
   }
  ],
- "modified": "2026-07-24 20:36:28.552848",
+ "modified": "2026-07-30 12:55:52.179371",
  "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
  "name": "AU Bank Statement Import Log",
  "owner": "Administrator",
  "permissions": [
   {
-   "create": 1,
    "delete": 1,
    "email": 1,
    "export": 1,
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "System Manager",
-   "share": 1,
-   "write": 1
+   "role": "Accounts Manager",
+   "share": 1
   }
  ],
  "row_format": "Dynamic",

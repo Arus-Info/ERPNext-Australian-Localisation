@@ -12,31 +12,37 @@ frappe.ui.form.on("Bank Account", {
 			fetch_provider_accounts(frm, {
 				always() {
 					fetch_account_btn.prop("disabled", false);
-				},
+				}
 			});
 		});
 
-		const sync_now_btn = frm.add_custom_button(__("Sync Now"), () => {
-			sync_now_btn.prop("disabled", true);
+		if (!frm.is_new()) {
+			const sync_now_btn = frm.add_custom_button(__("Sync Now"), () => {
+				sync_now_btn.prop("disabled", true);
 
-			frappe.call({
-				method: "erpnext_australian_localisation.integration.import_transaction.sync_account_transactions",
-				args: { bank_account: frm.doc.name },
+				frappe.call({
+					method: "erpnext_australian_localisation.integration.import_transaction.sync_account_transactions",
+					args: {
+						bank_account: frm.doc.name,
+						provider_account_id: frm.doc.provider_account_id,
+						sync_date: frm.doc.last_sync
+					},
 
-				callback(r) {
-					frappe.msgprint({
-						title: __("Sync Complete"),
-						message: r.message || __("Transactions Imported"),
-						indicator: "green",
-					});
-					frm.reload_doc();
-				},
+					callback(r) {
+						frappe.msgprint({
+							title: __("Sync Complete"),
+							message: r.message || __("Transactions Imported"),
+							indicator: "green"
+						});
+						frm.reload_doc();
+					},
 
-				always() {
-					sync_now_btn.prop("disabled", false);
-				},
+					always() {
+						sync_now_btn.prop("disabled", false);
+					}
+				});
 			});
-		});
+		}
 	},
 
 	enable_transaction_import(frm) {
@@ -50,7 +56,7 @@ frappe.ui.form.on("Bank Account", {
 
 		frappe.validated = false;
 		fetch_provider_accounts(frm, { save_on_select: true });
-	},
+	}
 });
 
 function fetch_provider_accounts(frm, opts = {}) {
@@ -66,7 +72,7 @@ function fetch_provider_accounts(frm, opts = {}) {
 			show_provider_account_dialog(frm, accounts, { save_on_select: opts.save_on_select });
 		},
 
-		always: opts.always,
+		always: opts.always
 	});
 }
 
@@ -74,17 +80,15 @@ function show_provider_account_dialog(frm, accounts, opts = {}) {
 	const rows = accounts
 		.map(
 			(account, i) => `
-				<tr data-value="${(account.id)}">
+				<tr data-value="${account.id}">
 					<td style="width: 40px; text-align: center;">
-						<input type="radio" name="provider_account" value="${(account.id)}" ${
-				i === 0 ? "checked" : ""
-			}>
+						<input type="radio" name="provider_account" value="${account.id}" ${i === 0 ? "checked" : ""}>
 					</td>
-					<td>${(account.name)}
-						<br><small class="text-muted">${(account.display_name)}</small>
+					<td>${account.name}
+						<br><small class="text-muted">${account.display_name}</small>
 					</td>
-					<td>${(account.account_no)}</td>
-					<td>${(account.id)}</td>
+					<td>${account.account_no}</td>
+					<td>${account.id}</td>
 				</tr>`
 		)
 		.join("");
@@ -108,8 +112,8 @@ function show_provider_account_dialog(frm, accounts, opts = {}) {
 						</thead>
 						<tbody>${rows}</tbody>
 					</table>
-				`,
-			},
+				`
+			}
 		],
 		primary_action_label: __("OK"),
 		primary_action() {
@@ -120,7 +124,7 @@ function show_provider_account_dialog(frm, accounts, opts = {}) {
 					frm.save();
 				}
 			});
-		},
+		}
 	});
 
 	dialog.show();
