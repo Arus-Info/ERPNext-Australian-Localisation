@@ -268,6 +268,8 @@ def send_remittance_email_from_pb(docname: str):
 	if not template:
 		frappe.throw(_("Please set a Remittance Advice Template in AU Localisation Settings"))
 
+	sent = []
+
 	for row in doc.payment_created:
 		email = frappe.db.get_value(
 			"Contact",
@@ -282,7 +284,23 @@ def send_remittance_email_from_pb(docname: str):
 			payment_batch=doc,
 		)
 
+		if row.party not in sent:
+			sent.append(row.party)
+
+	log_remittance_status(doc, sent)
+
 	return True
+
+
+def log_remittance_status(doc, sent):
+	"""Record on the Payment Batch timeline which suppliers the Remittance Advice was sent to."""
+	log = []
+
+	if sent:
+		log.append(_("Remittance advice has been sent to the supplier(s) {0}").format(", ".join(sent)))
+
+	if log:
+		doc.add_comment("Comment", "<br>".join(log))
 
 
 def _send_remittance_email(payment_entry, email, template, payment_batch=None):

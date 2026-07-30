@@ -124,14 +124,14 @@ frappe.ui.form.on("Payment Batch", {
 						if (missing.length === total) {
 							frappe.throw(
 								__(
-									"Please set a Primary Contact with email address in the supplier master for [{0}] to send Remittance Advice.",
+									"Please set a Primary Contact with email address in the supplier master for {0} to send Remittance Advice.",
 									[missing]
 								)
 							);
 						} else if (missing.length > 0) {
 							frappe.confirm(
 								__(
-									"Please set a Primary Contact with email address in the supplier master for [{0}] to send Remittance Advice, <br/><br/> Send remittance advice to the remaining suppliers only? ",
+									"Please set a Primary Contact with email address in the supplier master for {0} to send Remittance Advice, <br/><br/> Send remittance advice to the remaining suppliers only? ",
 									[missing]
 								),
 								do_send
@@ -191,7 +191,15 @@ function render_preview(frm) {
 			);
 
 			if (payment_entry) {
-				frappe.set_route("print", "Payment Entry", payment_entry);
+				frappe.set_route("print", "Payment Entry", payment_entry).then(() => {
+					const $print_format = $(".print-preview-sidebar").find(
+						'[data-fieldname="print_format"] input'
+					);
+					console.log($print_format);
+					if ($print_format.val() !== "Remittance Advice") {
+						$print_format.val("Remittance Advice").trigger("change");
+					}
+				});
 			}
 		});
 		const $target = $row.find('[data-fieldname="amount"]');
