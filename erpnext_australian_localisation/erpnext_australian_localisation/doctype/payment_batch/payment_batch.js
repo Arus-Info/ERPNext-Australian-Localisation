@@ -131,7 +131,7 @@ frappe.ui.form.on("Payment Batch", {
 						} else if (missing.length > 0) {
 							frappe.confirm(
 								__(
-									"Please set a Primary Contact with email address in the supplier master for {0} to send Remittance Advice, <br/><br/> Send remittance advice to the remaining suppliers only? ",
+									"Please set a Primary Contact with email address in the supplier master for {0} to send Remittance Advice. <br/><br/> Send remittance advice to the remaining suppliers only? ",
 									[missing]
 								),
 								do_send
