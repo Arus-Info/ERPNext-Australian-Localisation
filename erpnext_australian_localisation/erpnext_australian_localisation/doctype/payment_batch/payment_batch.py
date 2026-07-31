@@ -278,11 +278,9 @@ def send_remittance_email_from_pb(docname: str):
 			"email_id",
 		)
 
-		# without an email there is nothing to send to, and calling make() with
-		# recipients=None would still log a Communication against the Payment Entry
 		if not email:
-			if row.party not in not_sent:
-				not_sent.append(row.party)
+			if row.party_name not in not_sent:
+				not_sent.append(row.party_name)
 			continue
 
 		_send_remittance_email(
@@ -292,8 +290,8 @@ def send_remittance_email_from_pb(docname: str):
 			payment_batch=doc,
 		)
 
-		if row.party not in sent:
-			sent.append(row.party)
+		if row.party_name not in sent:
+			sent.append(row.party_name)
 
 	log_remittance_status(doc, sent)
 

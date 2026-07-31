@@ -191,13 +191,14 @@ function render_preview(frm) {
 			);
 
 			if (payment_entry) {
+				const print_format = frm.doc.party_type === "Employee" ? "" : "Remittance Advice";
+
 				frappe.set_route("print", "Payment Entry", payment_entry).then(() => {
 					const $print_format = $(".print-preview-sidebar").find(
 						'[data-fieldname="print_format"] input'
 					);
-					console.log($print_format);
-					if ($print_format.val() !== "Remittance Advice") {
-						$print_format.val("Remittance Advice").trigger("change");
+					if ($print_format.val() !== print_format) {
+						$print_format.val(print_format).trigger("change");
 					}
 				});
 			}

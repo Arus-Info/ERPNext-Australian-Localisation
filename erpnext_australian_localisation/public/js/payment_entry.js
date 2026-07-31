@@ -1,12 +1,9 @@
 frappe.ui.form.on("Payment Entry", {
 	refresh(frm) {
 		frm.print_doc = () => {
-			const format = get_print_format(frm);
-			if (format) {
-				frm.meta.default_print_format = format;
+			frm.meta.default_print_format = get_print_format(frm);
+			$(".print-preview-sidebar").find('[data-fieldname="print_format"] input').val("");
 
-				$(".print-preview-sidebar").find('[data-fieldname="print_format"] input').val("");
-			}
 			frappe.route_options = { frm };
 			frappe.set_route("print", frm.doctype, frm.doc.name);
 		};
@@ -74,6 +71,7 @@ frappe.ui.form.on("Payment Entry", {
 });
 
 function get_print_format(frm) {
+	if (frm.doc.party_type === "Employee") return null;
 	if (frm.doc.payment_type === "Pay") return "Remittance Advice";
 	if (frm.doc.payment_type === "Receive") return "Payment Receipt";
 	return null;
