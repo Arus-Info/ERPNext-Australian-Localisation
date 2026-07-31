@@ -29,7 +29,9 @@ def check_party_email(docname: str, party_type: str):
 def send_payment_receipt(docname: str):
 	doc = frappe.get_doc("Payment Entry", docname)
 
-	template = frappe.db.get_single_value("AU Localisation Settings", "payment_receipt_template")
+	template = frappe.get_cached_value(
+		"AU Localisation Settings", "AU Localisation Settings", "payment_receipt_template"
+	)
 	if not template:
 		frappe.throw(_("Please set a Payment Receipt Template in AU Localisation Settings"))
 
@@ -67,7 +69,9 @@ def send_payment_receipt(docname: str):
 
 @frappe.whitelist()
 def send_remittance_email(docname: str):
-	template = frappe.db.get_single_value("AU Localisation Settings", "remittance_advice_template")
+	template = frappe.get_cached_value(
+		"AU Localisation Settings", "AU Localisation Settings", "remittance_advice_template"
+	)
 	if not template:
 		frappe.throw(_("Please set a Remittance Advice Template in AU Localisation Settings"))
 	party = frappe.db.get_value(
