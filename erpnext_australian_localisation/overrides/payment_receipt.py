@@ -8,11 +8,16 @@ from erpnext_australian_localisation.erpnext_australian_localisation.doctype.pay
 
 @frappe.whitelist()
 def check_party_email(docname: str, party_type: str):
-	party = frappe.db.get_value("Payment Entry", docname, "party")
-
+	# party, party_name = frappe.db.get_value("Payment Entry", docname, ["party", "party_name"])
+	entry = frappe.db.get_value(
+		"Payment Entry",
+		docname,
+		["party", "party_name"],
+		as_dict=True,
+	)
 	email = frappe.db.get_value(
 		"Contact",
-		{"link_doctype": party_type, "link_name": party, "is_primary_contact": 1},
+		{"link_doctype": party_type, "link_name": entry.party, "is_primary_contact": 1},
 		"email_id",
 	)
 	if not email:
@@ -20,7 +25,7 @@ def check_party_email(docname: str, party_type: str):
 		frappe.throw(
 			_(
 				"Please set a Primary Contact with email address in the {0} master for {1} to send the {2}"
-			).format(party_type, party, action)
+			).format(party_type, entry.party_name, action)
 		)
 	return True
 
