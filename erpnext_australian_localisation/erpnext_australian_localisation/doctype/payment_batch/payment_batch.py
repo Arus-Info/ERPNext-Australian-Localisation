@@ -241,7 +241,7 @@ def get_missing_email_suppliers(docname: str):
 	payment_rows = frappe.get_all(
 		"Payment Batch Item",
 		filters={"parent": docname},
-		fields=["party"],
+		fields=["party", "party_name"],
 		limit_page_length=0,
 	)
 
@@ -252,7 +252,7 @@ def get_missing_email_suppliers(docname: str):
 			"email_id",
 		)
 		if not email:
-			no_email.append(row.party)
+			no_email.append(row.party_name)
 	return no_email
 
 
