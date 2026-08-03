@@ -562,7 +562,8 @@ def get_default_email_templates():
 				Dear {{ party_name }},<br><br>
 				Thank you for your payment. It was a pleasure doing business with you. We look forward to work together again!<br><br>
 
-				Invoice No : {% for ref in references %}{% if ref.reference_doctype == "Sales Invoice" %}{{ ref.reference_name }}{% endif %}{% endfor %}<br>
+				Invoice No : {% for ref in references %}{% if ref.reference_doctype == "Sales Invoice" %}{{ ref.reference_name }}{% if not loop.last %}, {% endif %}{% endif %}{% endfor %}<br>
+				Reference No : {{ reference_no or "-" }}<br>
 				Payment Date : {{ frappe.utils.formatdate(posting_date) }}<br>
 				Payment Received : {{ frappe.format(paid_amount or " - ",{"fieldtype":"Currency"}) }}<br><br>
 
