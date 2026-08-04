@@ -73,7 +73,7 @@
 												{% if doc.tax_id %} ABN: {{ doc.tax_id }} <br />
 												{% endif %}
 												<!-- prettier-ignore -->
-												{% set address_list = frappe.get_list("Address", filters=[["Dynamic Link","link_doctype","=","Customer"],["Dynamic Link","link_name","=",doc.party_name]],limit=1) %}
+												{% set address_list = frappe.get_list("Address", filters=[["Dynamic Link","link_doctype","=","Customer"],["Dynamic Link","link_name","=",doc.party]],limit=1) %}
 												{% if address_list %} {% set addr = frappe.get_doc("Address", address_list[0]) %}
 												{{ frappe.render_template("/templates/print_format/au_address.html",{"address": addr}) }}
 												<br />
