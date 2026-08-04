@@ -17,7 +17,9 @@ frappe.ui.form.on("Payment Entry", {
 					args: { docname: frm.doc.name, party_type: "Customer" },
 					callback() {
 						frappe.confirm(
-							__("Do you want to send the payment receipt email to {0}?", [frm.doc.party_name]),
+							__("Do you want to send the payment receipt email to {0}?", [
+								frm.doc.party_name
+							]),
 							() => {
 								frappe.call({
 									method: "erpnext_australian_localisation.overrides.payment_receipt.send_payment_receipt",
@@ -45,7 +47,9 @@ frappe.ui.form.on("Payment Entry", {
 					args: { docname: frm.doc.name, party_type: "Supplier" },
 					callback() {
 						frappe.confirm(
-							__("Do you want to send the remittance advice email to {0}?", [frm.doc.party_name]),
+							__("Do you want to send the remittance advice email to {0}?", [
+								frm.doc.party_name
+							]),
 							() => {
 								frappe.call({
 									method: "erpnext_australian_localisation.overrides.payment_receipt.send_remittance_email",
