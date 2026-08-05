@@ -1,5 +1,13 @@
 frappe.ui.form.on("Payment Entry", {
 	refresh(frm) {
+		frm.print_doc = () => {
+			frm.meta.default_print_format = get_print_format(frm);
+			$(".print-preview-sidebar").find('[data-fieldname="print_format"] input').val("");
+
+			frappe.route_options = { frm };
+			frappe.set_route("print", frm.doctype, frm.doc.name);
+		};
+
 		if (frm.doc.docstatus !== 1) return;
 
 		if (frm.doc.party_type === "Customer") {
@@ -9,7 +17,9 @@ frappe.ui.form.on("Payment Entry", {
 					args: { docname: frm.doc.name, party_type: "Customer" },
 					callback() {
 						frappe.confirm(
-							__("Send payment receipt email to {0}?", [frm.doc.party]),
+							__("Do you want to send the payment receipt email to {0}?", [
+								frm.doc.party_name
+							]),
 							() => {
 								frappe.call({
 									method: "erpnext_australian_localisation.overrides.payment_receipt.send_payment_receipt",
@@ -37,17 +47,19 @@ frappe.ui.form.on("Payment Entry", {
 					args: { docname: frm.doc.name, party_type: "Supplier" },
 					callback() {
 						frappe.confirm(
-							__("Send remittance advice email to {0}?", [frm.doc.party]),
+							__("Do you want to send the remittance advice email to {0}?", [
+								frm.doc.party_name
+							]),
 							() => {
 								frappe.call({
 									method: "erpnext_australian_localisation.overrides.payment_receipt.send_remittance_email",
 									args: { docname: frm.doc.name },
 									freeze: true,
-									freeze_message: __("Sending remittance email..."),
+									freeze_message: __("Sending remittance advice..."),
 									callback(r) {
 										if (r.message) {
 											frappe.show_alert({
-												message: __("Remittance email sent successfully"),
+												message: __("Remittance advice sent successfully"),
 												indicator: "green"
 											});
 										}
@@ -61,3 +73,10 @@ frappe.ui.form.on("Payment Entry", {
 		}
 	}
 });
+
+function get_print_format(frm) {
+	if (frm.doc.party_type === "Employee") return null;
+	if (frm.doc.payment_type === "Pay") return "Remittance Advice";
+	if (frm.doc.payment_type === "Receive") return "Payment Receipt";
+	return null;
+}
