@@ -6,7 +6,7 @@ from erpnext_australian_localisation.integration import basiq_connector
 
 
 @frappe.whitelist()
-def sync_account_transactions(bank_account, provider_account_id, sync_date):
+def sync_account_transactions(bank_account: str, provider_account_id: str, sync_date: str):
 	log = frappe.get_doc(
 		{
 			"doctype": "AU Bank Statement Import Log",

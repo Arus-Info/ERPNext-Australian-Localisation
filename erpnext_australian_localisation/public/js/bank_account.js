@@ -6,16 +6,6 @@ frappe.ui.form.on("Bank Account", {
 
 		frm.set_df_property("last_sync", "read_only", frm.doc.last_sync ? 1 : 0);
 
-		const fetch_account_btn = frm.add_custom_button(__("Fetch Account ID"), () => {
-			fetch_account_btn.prop("disabled", true);
-
-			fetch_provider_accounts(frm, {
-				always() {
-					fetch_account_btn.prop("disabled", false);
-				}
-			});
-		});
-
 		if (!frm.is_new()) {
 			const sync_now_btn = frm.add_custom_button(__("Sync Now"), () => {
 				sync_now_btn.prop("disabled", true);
@@ -55,11 +45,11 @@ frappe.ui.form.on("Bank Account", {
 		}
 
 		frappe.validated = false;
-		fetch_provider_accounts(frm, { save_on_select: true });
+		fetch_provider_accounts(frm);
 	}
 });
 
-function fetch_provider_accounts(frm, opts = {}) {
+function fetch_provider_accounts(frm) {
 	frappe.call({
 		method: "erpnext_australian_localisation.integration.import_transaction.get_provider_accounts",
 
@@ -69,63 +59,56 @@ function fetch_provider_accounts(frm, opts = {}) {
 				frappe.msgprint(__("No accounts found"));
 				return;
 			}
-			show_provider_account_dialog(frm, accounts, { save_on_select: opts.save_on_select });
-		},
 
-		always: opts.always
-	});
-}
+			const rows = accounts
+				.map(
+					(account, i) => `
+						<tr data-value="${account.id}">
+							<td style="width: 40px; text-align: center;">
+								<input type="radio" name="provider_account" value="${account.id}" ${i === 0 ? "checked" : ""}>
+							</td>
+							<td>${account.name}
+								<br><small class="text-muted">${account.display_name}</small>
+							</td>
+							<td>${account.account_no}</td>
+							<td>${account.id}</td>
+						</tr>`
+				)
+				.join("");
 
-function show_provider_account_dialog(frm, accounts, opts = {}) {
-	const rows = accounts
-		.map(
-			(account, i) => `
-				<tr data-value="${account.id}">
-					<td style="width: 40px; text-align: center;">
-						<input type="radio" name="provider_account" value="${account.id}" ${i === 0 ? "checked" : ""}>
-					</td>
-					<td>${account.name}
-						<br><small class="text-muted">${account.display_name}</small>
-					</td>
-					<td>${account.account_no}</td>
-					<td>${account.id}</td>
-				</tr>`
-		)
-		.join("");
-
-	const dialog = new frappe.ui.Dialog({
-		title: __("Select Account"),
-		size: "large",
-		fields: [
-			{
-				fieldname: "accounts_html",
-				fieldtype: "HTML",
-				options: `
-					<table class="table table-bordered">
-						<thead>
-							<tr>
-								<th></th>
-								<th>${__("Name")}</th>
-								<th>${__("Account No")}</th>
-								<th>${__("Account ID")}</th>
-							</tr>
-						</thead>
-						<tbody>${rows}</tbody>
-					</table>
-				`
-			}
-		],
-		primary_action_label: __("OK"),
-		primary_action() {
-			const selected = dialog.$wrapper.find('input[name="provider_account"]:checked').val();
-			frm.set_value("provider_account_id", selected).then(() => {
-				dialog.hide();
-				if (opts.save_on_select) {
-					frm.save();
+			const dialog = new frappe.ui.Dialog({
+				title: __("Select Account"),
+				size: "large",
+				fields: [
+					{
+						fieldname: "accounts_html",
+						fieldtype: "HTML",
+						options: `
+							<table class="table table-bordered">
+								<thead>
+									<tr>
+										<th></th>
+										<th>${__("Name")}</th>
+										<th>${__("Account No")}</th>
+										<th>${__("Account ID")}</th>
+									</tr>
+								</thead>
+								<tbody>${rows}</tbody>
+							</table>
+						`
+					}
+				],
+				primary_action_label: __("OK"),
+				primary_action() {
+					const selected = dialog.$wrapper.find('input[name="provider_account"]:checked').val();
+					frm.set_value("provider_account_id", selected).then(() => {
+						dialog.hide();
+						frm.save();
+					});
 				}
 			});
+
+			dialog.show();
 		}
 	});
-
-	dialog.show();
 }
