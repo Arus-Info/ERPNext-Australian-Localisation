@@ -8,19 +8,24 @@ from erpnext_australian_localisation.erpnext_australian_localisation.doctype.pay
 
 @frappe.whitelist()
 def check_party_email(docname: str, party_type: str):
-	party = frappe.db.get_value("Payment Entry", docname, "party")
-
+	# party, party_name = frappe.db.get_value("Payment Entry", docname, ["party", "party_name"])
+	entry = frappe.db.get_value(
+		"Payment Entry",
+		docname,
+		["party", "party_name"],
+		as_dict=True,
+	)
 	email = frappe.db.get_value(
 		"Contact",
-		{"link_doctype": party_type, "link_name": party, "is_primary_contact": 1},
+		{"link_doctype": party_type, "link_name": entry.party, "is_primary_contact": 1},
 		"email_id",
 	)
 	if not email:
-		action = _("remittance advice") if party_type == "Supplier" else _("payment receipt")
+		action = _("Remittance Advice") if party_type == "Supplier" else _("Payment Receipt")
 		frappe.throw(
-			_("Please set a Primary Contact in the {0} [{1}] details before sending the {2}").format(
-				party_type, party, action
-			)
+			_(
+				"Please set a Primary Contact with email address in the {0} master for {1} to send the {2}"
+			).format(party_type, entry.party_name, action)
 		)
 	return True
 
@@ -29,7 +34,9 @@ def check_party_email(docname: str, party_type: str):
 def send_payment_receipt(docname: str):
 	doc = frappe.get_doc("Payment Entry", docname)
 
-	template = frappe.db.get_single_value("AU Localisation Settings", "payment_receipt_template")
+	template = frappe.get_cached_value(
+		"AU Localisation Settings", "AU Localisation Settings", "payment_receipt_template"
+	)
 	if not template:
 		frappe.throw(_("Please set a Payment Receipt Template in AU Localisation Settings"))
 
@@ -67,7 +74,9 @@ def send_payment_receipt(docname: str):
 
 @frappe.whitelist()
 def send_remittance_email(docname: str):
-	template = frappe.db.get_single_value("AU Localisation Settings", "remittance_advice_template")
+	template = frappe.get_cached_value(
+		"AU Localisation Settings", "AU Localisation Settings", "remittance_advice_template"
+	)
 	if not template:
 		frappe.throw(_("Please set a Remittance Advice Template in AU Localisation Settings"))
 	party = frappe.db.get_value(

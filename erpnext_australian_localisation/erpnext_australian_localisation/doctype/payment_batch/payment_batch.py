@@ -241,7 +241,7 @@ def get_missing_email_suppliers(docname: str):
 	payment_rows = frappe.get_all(
 		"Payment Batch Item",
 		filters={"parent": docname},
-		fields=["party"],
+		fields=["party", "party_name"],
 		limit_page_length=0,
 	)
 
@@ -252,7 +252,7 @@ def get_missing_email_suppliers(docname: str):
 			"email_id",
 		)
 		if not email:
-			no_email.append(row.party)
+			no_email.append(row.party_name)
 	return no_email
 
 
@@ -260,13 +260,16 @@ def get_missing_email_suppliers(docname: str):
 def send_remittance_email_from_pb(docname: str):
 	doc = frappe.get_doc("Payment Batch", docname)
 
-	template = frappe.db.get_single_value(
+	template = frappe.get_cached_value(
+		"AU Localisation Settings",
 		"AU Localisation Settings",
 		"remittance_advice_template",
 	)
 
 	if not template:
-		frappe.throw(_("Please set a Remittance Email Template in AU Localisation Settings"))
+		frappe.throw(_("Please set a Remittance Advice Template in AU Localisation Settings"))
+
+	sent = set()
 
 	for row in doc.payment_created:
 		email = frappe.db.get_value(
@@ -275,6 +278,9 @@ def send_remittance_email_from_pb(docname: str):
 			"email_id",
 		)
 
+		if not email:
+			continue
+
 		_send_remittance_email(
 			payment_entry=row.payment_entry,
 			email=email,
@@ -282,7 +288,18 @@ def send_remittance_email_from_pb(docname: str):
 			payment_batch=doc,
 		)
 
+		sent.add(row.party_name)
+
+	log_remittance_status(doc, sent)
+
 	return True
+
+
+def log_remittance_status(doc, sent):
+	doc.add_comment(
+		"Comment",
+		_("Remittance advice has been sent to the supplier(s) {0}").format(", ".join(sorted(sent))),
+	)
 
 
 def _send_remittance_email(payment_entry, email, template, payment_batch=None):
