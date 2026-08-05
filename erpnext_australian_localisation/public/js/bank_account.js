@@ -100,7 +100,9 @@ function fetch_provider_accounts(frm) {
 				],
 				primary_action_label: __("OK"),
 				primary_action() {
-					const selected = dialog.$wrapper.find('input[name="provider_account"]:checked').val();
+					const selected = dialog.$wrapper
+						.find('input[name="provider_account"]:checked')
+						.val();
 					frm.set_value("provider_account_id", selected).then(() => {
 						dialog.hide();
 						frm.save();
