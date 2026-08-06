@@ -46,7 +46,7 @@ def get_headers(api_key):
 
 
 def get_accounts():
-	settings = frappe.get_single("AU Localisation Settings")
+	settings = frappe.get_cached_doc("AU Localisation Settings")
 	api_key = settings.get_password("api_key")
 
 	url = f"{BASIQ_API_BASE}/users/{settings.user_id}/accounts"
@@ -57,7 +57,7 @@ def get_accounts():
 
 
 def get_transactions(provider_account_id, sync_date=None):
-	settings = frappe.get_single("AU Localisation Settings")
+	settings = frappe.get_cached_doc("AU Localisation Settings")
 	api_key = settings.get_password("api_key")
 
 	filter_expr = f"account.id.eq('{provider_account_id}')"
