@@ -11,7 +11,7 @@ frappe.ui.form.on("Bank Account", {
 				sync_now_btn.prop("disabled", true);
 
 				frappe.call({
-					method: "erpnext_australian_localisation.integration.import_transaction.sync_account_transactions",
+					method: "erpnext_australian_localisation.integration.basiq.import_transaction.sync_account_transactions",
 					args: {
 						bank_account: frm.doc.name,
 						provider_account_id: frm.doc.provider_account_id,
@@ -51,7 +51,7 @@ frappe.ui.form.on("Bank Account", {
 
 function fetch_provider_accounts(frm) {
 	frappe.call({
-		method: "erpnext_australian_localisation.integration.import_transaction.get_provider_accounts",
+		method: "erpnext_australian_localisation.integration.basiq.import_transaction.get_provider_accounts",
 
 		callback(r) {
 			const accounts = r.message || [];

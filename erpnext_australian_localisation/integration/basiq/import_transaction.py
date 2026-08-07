@@ -2,7 +2,7 @@ import frappe
 from frappe import _
 from frappe.utils import add_to_date, get_datetime, getdate, now_datetime
 
-from erpnext_australian_localisation.integration import basiq_connector
+from erpnext_australian_localisation.integration.basiq import basiq_connector
 
 
 @frappe.whitelist()
