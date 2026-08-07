@@ -252,7 +252,7 @@ BAI2_FIELDS = {
 			"fieldtype": "Column Break",
 			"label": "Bank Statement Import",
 			"insert_after": "file_format",
-            "module": "ERPNext Australian Localisation",
+			"module": "ERPNext Australian Localisation",
 		},
 		{
 			"label": "Bank Statement Format",
@@ -260,7 +260,7 @@ BAI2_FIELDS = {
 			"fieldtype": "Link",
 			"options": "AU Bank Statement Format",
 			"insert_after": "bank_file_format_column",
-            "module": "ERPNext Australian Localisation",
+			"module": "ERPNext Australian Localisation",
 		},
 	],
 	"Bank Statement Import": [
@@ -271,7 +271,7 @@ BAI2_FIELDS = {
 			"insert_after": "import_file",
 			"hidden": 1,
 			"no_copy": 1,
-            "module": "ERPNext Australian Localisation",
+			"module": "ERPNext Australian Localisation",
 		},
 		{
 			"fieldname": "bs_download_template",
@@ -280,7 +280,7 @@ BAI2_FIELDS = {
 			"insert_after": "download_template",
 			"hidden": 1,
 			"no_copy": 1,
-            "module": "ERPNext Australian Localisation",
+			"module": "ERPNext Australian Localisation",
 		},
 	],
 }
@@ -346,14 +346,14 @@ ABN_GUID_FIELDS = {
 			"label": "ABN Information",
 			"fieldtype": "Section Break",
 			"insert_after": "tax_withholding_group",
-            "module": "ERPNext Australian Localisation",
+			"module": "ERPNext Australian Localisation",
 		},
 		{
 			"fieldname": "is_verify_abn",
 			"label": "Verify ABN",
 			"fieldtype": "Check",
 			"insert_after": "section_break_abn",
-            "module": "ERPNext Australian Localisation",
+			"module": "ERPNext Australian Localisation",
 		},
 		{
 			"fieldname": "entity_name",
@@ -361,7 +361,7 @@ ABN_GUID_FIELDS = {
 			"fieldtype": "Data",
 			"insert_after": "is_verify_abn",
 			"read_only": 1,
-            "module": "ERPNext Australian Localisation",
+			"module": "ERPNext Australian Localisation",
 		},
 		{
 			"fieldname": "abn_status",
@@ -383,7 +383,7 @@ ABN_GUID_FIELDS = {
 			"fieldname": "column_break_abn",
 			"fieldtype": "Column Break",
 			"insert_after": "abn_effective_from",
-            "module": "ERPNext Australian Localisation",
+			"module": "ERPNext Australian Localisation",
 		},
 		{
 			"fieldname": "address_postcode",
@@ -391,7 +391,7 @@ ABN_GUID_FIELDS = {
 			"fieldtype": "Data",
 			"insert_after": "column_break_abn",
 			"read_only": 1,
-            "module": "ERPNext Australian Localisation",
+			"module": "ERPNext Australian Localisation",
 		},
 		{
 			"fieldname": "address_state",
@@ -399,7 +399,7 @@ ABN_GUID_FIELDS = {
 			"fieldtype": "Data",
 			"insert_after": "address_postcode",
 			"read_only": 1,
-            "module": "ERPNext Australian Localisation",
+			"module": "ERPNext Australian Localisation",
 		},
 		{
 			"fieldname": "business_name",
@@ -407,7 +407,7 @@ ABN_GUID_FIELDS = {
 			"fieldtype": "Data",
 			"insert_after": "address_state",
 			"read_only": 1,
-            "module": "ERPNext Australian Localisation",
+			"module": "ERPNext Australian Localisation",
 		},
 	],
 }
