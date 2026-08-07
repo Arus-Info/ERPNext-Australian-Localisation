@@ -219,7 +219,7 @@ doc_events = {
 scheduler_events = {
 	"monthly": ["erpnext_australian_localisation.tasks.bas_report.create_scheduled_bas_reports"],
 	"cron": {
-		"0 0 * * *": ["erpnext_australian_localisation.integration.import_transaction.fetch_transactions"]
+		"0 0 * * *": ["erpnext_australian_localisation.integration.basiq.import_transaction.fetch_transactions"]
 	},
 }
 
