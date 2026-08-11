@@ -221,7 +221,8 @@ scheduler_events = {
 	"cron": {
 		"0 0 * * *": [
 			"erpnext_australian_localisation.integration.basiq.import_transaction.fetch_transactions"
-		]
+		],
+		"0 0 15 * *": ["erpnext_australian_localisation.overrides.abn_verification.refresh_abn_details"],
 	},
 }
 

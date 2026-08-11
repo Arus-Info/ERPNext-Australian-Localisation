@@ -409,5 +409,13 @@ ABN_GUID_FIELDS = {
 			"read_only": 1,
 			"module": "ERPNext Australian Localisation",
 		},
+		{
+			"fieldname": "gst_status",
+			"label": "GST Status",
+			"fieldtype": "Data",
+			"insert_after": "business_name",
+			"read_only": 1,
+			"module": "ERPNext Australian Localisation",
+		},
 	],
 }
