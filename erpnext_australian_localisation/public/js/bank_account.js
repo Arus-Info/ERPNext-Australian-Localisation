@@ -10,6 +10,19 @@ frappe.ui.form.on("Bank Account", {
 			const sync_now_btn = frm.add_custom_button(__("Sync Now"), () => {
 				sync_now_btn.prop("disabled", true);
 
+				const importing_dialog = new frappe.ui.Dialog({
+					title: __("Sync Now"),
+					fields: [
+						{
+							fieldname: "importing_msg",
+							fieldtype: "HTML",
+							options: `<p>${__("Importing Transactions...")}</p>`
+						}
+					]
+				});
+				importing_dialog.get_close_btn().hide();
+				importing_dialog.show();
+
 				frappe.call({
 					method: "erpnext_australian_localisation.integration.basiq.import_transaction.sync_account_transactions",
 					args: {
@@ -19,6 +32,7 @@ frappe.ui.form.on("Bank Account", {
 					},
 
 					callback(r) {
+						importing_dialog.hide();
 						frappe.msgprint({
 							title: __("Sync Complete"),
 							message: r.message || __("Transactions Imported"),
