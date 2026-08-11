@@ -11,7 +11,13 @@
   "abn_lookup_guid",
   "section_break_lmnb",
   "remittance_advice_template",
-  "payment_receipt_template"
+  "column_break_qoxu",
+  "payment_receipt_template",
+  "open_banking_integration_section",
+  "provider",
+  "column_break_wfua",
+  "user_id",
+  "api_key"
  ],
  "fields": [
   {
@@ -37,6 +43,37 @@
    "label": "ABN Lookup GUID"
   },
   {
+   "fieldname": "open_banking_integration_section",
+   "fieldtype": "Section Break",
+   "label": "Open Banking Integration"
+  },
+  {
+   "default": "Choose a Provider",
+   "fieldname": "provider",
+   "fieldtype": "Select",
+   "label": "Provider",
+   "options": "Choose a Provider\nBasiq"
+  },
+  {
+   "depends_on": "eval:doc.provider != \"Choose a Provider\"",
+   "fieldname": "user_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "User ID",
+   "mandatory_depends_on": "eval:doc.provider != \"Choose a Provider\""
+  },
+  {
+   "depends_on": "eval:doc.provider != \"Choose a Provider\"",
+   "fieldname": "api_key",
+   "fieldtype": "Password",
+   "label": "API Key",
+   "mandatory_depends_on": "eval:doc.provider != \"Choose a Provider\""
+  },
+  {
+   "fieldname": "column_break_wfua",
+   "fieldtype": "Column Break"
+  },
+  {
    "fieldname": "section_break_lmnb",
    "fieldtype": "Section Break"
   },
@@ -51,13 +88,17 @@
    "fieldtype": "Link",
    "label": "Payment Receipt Template",
    "options": "Email Template"
+  },
+  {
+   "fieldname": "column_break_qoxu",
+   "fieldtype": "Column Break"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-07-06 14:23:29.474315",
+ "modified": "2026-07-24 16:52:48.073694",
  "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
  "name": "AU Localisation Settings",

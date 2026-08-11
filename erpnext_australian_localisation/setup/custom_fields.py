@@ -252,6 +252,7 @@ BAI2_FIELDS = {
 			"fieldtype": "Column Break",
 			"label": "Bank Statement Import",
 			"insert_after": "file_format",
+			"module": "ERPNext Australian Localisation",
 		},
 		{
 			"label": "Bank Statement Format",
@@ -259,6 +260,7 @@ BAI2_FIELDS = {
 			"fieldtype": "Link",
 			"options": "AU Bank Statement Format",
 			"insert_after": "bank_file_format_column",
+			"module": "ERPNext Australian Localisation",
 		},
 	],
 	"Bank Statement Import": [
@@ -269,6 +271,7 @@ BAI2_FIELDS = {
 			"insert_after": "import_file",
 			"hidden": 1,
 			"no_copy": 1,
+			"module": "ERPNext Australian Localisation",
 		},
 		{
 			"fieldname": "bs_download_template",
@@ -277,9 +280,65 @@ BAI2_FIELDS = {
 			"insert_after": "download_template",
 			"hidden": 1,
 			"no_copy": 1,
+			"module": "ERPNext Australian Localisation",
 		},
 	],
 }
+OPEN_BANKING_FIELDS = {
+	"Bank Account": [
+		{
+			"fieldname": "section_break_open_banking",
+			"label": "Open Banking",
+			"fieldtype": "Section Break",
+			"insert_after": "bank_statement_format",
+			"module": "ERPNext Australian Localisation",
+		},
+		{
+			"fieldname": "enable_transaction_import",
+			"label": "Enable Transaction Import",
+			"fieldtype": "Check",
+			"insert_after": "section_break_open_banking",
+			"depends_on": 'eval:au_localisation_settings.provider != "Choose a Provider"',
+			"module": "ERPNext Australian Localisation",
+		},
+		{
+			"fieldname": "provider_account_id",
+			"label": "Provider Account ID",
+			"fieldtype": "Data",
+			"read_only": 1,
+			"no_copy": 1,
+			"unique": 1,
+			"insert_after": "enable_transaction_import",
+			"depends_on": "eval: doc.enable_transaction_import",
+			"mandatory_depends_on": "eval: doc.enable_transaction_import",
+			"module": "ERPNext Australian Localisation",
+		},
+		{
+			"fieldname": "last_sync",
+			"label": "Last Sync",
+			"fieldtype": "Datetime",
+			"read_only": 1,
+			"no_copy": 1,
+			"insert_after": "provider_account_id",
+			"depends_on": "eval: doc.enable_transaction_import",
+			"mandatory_depends_on": "eval: doc.enable_transaction_import",
+			"module": "ERPNext Australian Localisation",
+		},
+	],
+	"Bank Transaction": [
+		{
+			"fieldname": "au_bank_statement_import_log",
+			"label": "Bank Statement Import Log",
+			"fieldtype": "Link",
+			"options": "AU Bank Statement Import Log",
+			"read_only": 1,
+			"no_copy": 1,
+			"insert_after": "transaction_id",
+			"module": "ERPNext Australian Localisation",
+		},
+	],
+}
+
 ABN_GUID_FIELDS = {
 	("Supplier", "Customer"): [
 		{
@@ -287,12 +346,14 @@ ABN_GUID_FIELDS = {
 			"label": "ABN Information",
 			"fieldtype": "Section Break",
 			"insert_after": "tax_withholding_group",
+			"module": "ERPNext Australian Localisation",
 		},
 		{
 			"fieldname": "is_verify_abn",
 			"label": "Verify ABN",
 			"fieldtype": "Check",
 			"insert_after": "section_break_abn",
+			"module": "ERPNext Australian Localisation",
 		},
 		{
 			"fieldname": "entity_name",
@@ -300,6 +361,7 @@ ABN_GUID_FIELDS = {
 			"fieldtype": "Data",
 			"insert_after": "is_verify_abn",
 			"read_only": 1,
+			"module": "ERPNext Australian Localisation",
 		},
 		{
 			"fieldname": "abn_status",
@@ -307,6 +369,7 @@ ABN_GUID_FIELDS = {
 			"fieldtype": "Data",
 			"insert_after": "entity_name",
 			"read_only": 1,
+			"module": "ERPNext Australian Localisation",
 		},
 		{
 			"fieldname": "abn_effective_from",
@@ -314,11 +377,13 @@ ABN_GUID_FIELDS = {
 			"fieldtype": "Data",
 			"insert_after": "abn_status",
 			"read_only": 1,
+			"module": "ERPNext Australian Localisation",
 		},
 		{
 			"fieldname": "column_break_abn",
 			"fieldtype": "Column Break",
 			"insert_after": "abn_effective_from",
+			"module": "ERPNext Australian Localisation",
 		},
 		{
 			"fieldname": "address_postcode",
@@ -326,6 +391,7 @@ ABN_GUID_FIELDS = {
 			"fieldtype": "Data",
 			"insert_after": "column_break_abn",
 			"read_only": 1,
+			"module": "ERPNext Australian Localisation",
 		},
 		{
 			"fieldname": "address_state",
@@ -333,6 +399,7 @@ ABN_GUID_FIELDS = {
 			"fieldtype": "Data",
 			"insert_after": "address_postcode",
 			"read_only": 1,
+			"module": "ERPNext Australian Localisation",
 		},
 		{
 			"fieldname": "business_name",
@@ -340,6 +407,15 @@ ABN_GUID_FIELDS = {
 			"fieldtype": "Data",
 			"insert_after": "address_state",
 			"read_only": 1,
+			"module": "ERPNext Australian Localisation",
+		},
+		{
+			"fieldname": "gst_status",
+			"label": "GST Status",
+			"fieldtype": "Data",
+			"insert_after": "business_name",
+			"read_only": 1,
+			"module": "ERPNext Australian Localisation",
 		},
 	],
 }

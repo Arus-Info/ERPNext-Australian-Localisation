@@ -68,6 +68,7 @@ doctype_js = {
 	"Supplier": "public/js/supplier.js",
 	"Customer": "public/js/customer.js",
 	"Bank Statement Import": "public/js/bank_statement_import.js",
+	"Bank Account": "public/js/bank_account.js",
 	"Payment Entry": "public/js/payment_entry.js",
 }
 
@@ -217,6 +218,12 @@ doc_events = {
 
 scheduler_events = {
 	"monthly": ["erpnext_australian_localisation.tasks.bas_report.create_scheduled_bas_reports"],
+	"cron": {
+		"0 0 * * *": [
+			"erpnext_australian_localisation.integration.basiq.import_transaction.fetch_transactions"
+		],
+		"0 0 15 * *": ["erpnext_australian_localisation.overrides.abn_verification.refresh_abn_details"],
+	},
 }
 
 # Testing
