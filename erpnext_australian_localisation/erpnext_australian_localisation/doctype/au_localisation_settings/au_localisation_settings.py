@@ -32,6 +32,7 @@ def get_au_email_templates():
 
 	return list(set(filter(None, templates)))
 
+
 @frappe.whitelist()
 def get_disabled_email_templates():
 	"""Templates that are not yet ticked as `enabled` for CRM."""
@@ -47,7 +48,6 @@ def get_disabled_email_templates():
 
 @frappe.whitelist()
 def enable_email_templates():
-
 	if "crm" not in frappe.get_installed_apps():
 		return []
 

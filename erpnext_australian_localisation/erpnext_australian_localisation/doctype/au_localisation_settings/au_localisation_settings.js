@@ -53,15 +53,13 @@ frappe.ui.form.on("AU Localisation Settings", {
 	}
 });
 
-
 async function set_email_template_notice(frm) {
-	
 	if (!frappe.boot.versions.crm) {
 		return;
 	}
 
 	const { message: disabled } = await frappe.call({
-		method: "erpnext_australian_localisation.erpnext_australian_localisation.doctype.au_localisation_settings.au_localisation_settings.get_disabled_email_templates",
+		method: "erpnext_australian_localisation.erpnext_australian_localisation.doctype.au_localisation_settings.au_localisation_settings.get_disabled_email_templates"
 	});
 
 	if (!disabled?.length) {
@@ -76,8 +74,8 @@ async function set_email_template_notice(frm) {
 		<a href="#" class="enable-email-templates">Click Here</a> to see.`
 	);
 
-	frm.get_field("remittance_advice_template").$wrapper
-		.off("click", ".enable-email-templates")
+	frm.get_field("remittance_advice_template")
+		.$wrapper.off("click", ".enable-email-templates")
 		.on("click", ".enable-email-templates", async function (e) {
 			e.preventDefault();
 
