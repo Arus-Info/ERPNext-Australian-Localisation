@@ -19,7 +19,6 @@ def is_draft(company):
 
 
 def get_au_email_templates():
-
 	from erpnext_australian_localisation.setup.install_fixtures import get_default_email_templates
 
 	return [record["name"] for record in get_default_email_templates()]
