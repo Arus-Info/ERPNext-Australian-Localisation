@@ -19,23 +19,14 @@ def is_draft(company):
 
 
 def get_au_email_templates():
+
 	from erpnext_australian_localisation.setup.install_fixtures import get_default_email_templates
 
-	settings = frappe.get_single("AU Localisation Settings")
-
-	templates = [row["name"] for row in get_default_email_templates()]
-
-	templates += [
-		settings.remittance_advice_template,
-		settings.payment_receipt_template,
-	]
-
-	return list({template for template in templates if template})
+	return [record["name"] for record in get_default_email_templates()]
 
 
 @frappe.whitelist()
 def get_disabled_email_templates():
-	"""Templates that are not yet ticked as `enabled` for CRM."""
 	if "crm" not in frappe.get_installed_apps():
 		return []
 
