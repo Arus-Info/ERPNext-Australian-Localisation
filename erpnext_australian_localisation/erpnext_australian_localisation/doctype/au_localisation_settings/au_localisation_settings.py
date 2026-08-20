@@ -30,7 +30,7 @@ def get_au_email_templates():
 		settings.payment_receipt_template,
 	]
 
-	return list(set(filter(None, templates)))
+	return list({template for template in templates if template})
 
 
 @frappe.whitelist()
