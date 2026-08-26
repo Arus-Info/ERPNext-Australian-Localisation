@@ -26,8 +26,6 @@ def get_au_email_templates():
 
 @frappe.whitelist()
 def get_disabled_email_templates():
-	if "crm" not in frappe.get_installed_apps():
-		return []
 
 	return frappe.get_all(
 		"Email Template",
@@ -38,10 +36,6 @@ def get_disabled_email_templates():
 
 @frappe.whitelist()
 def enable_email_templates():
-	if "crm" not in frappe.get_installed_apps():
-		return []
-
-	frappe.has_permission("Email Template", "write", throw=True)
 
 	enabled = get_disabled_email_templates()
 	for template in enabled:
