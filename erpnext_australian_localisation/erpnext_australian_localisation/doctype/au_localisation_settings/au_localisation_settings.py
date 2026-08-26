@@ -26,7 +26,6 @@ def get_au_email_templates():
 
 @frappe.whitelist()
 def get_disabled_email_templates():
-
 	return frappe.get_all(
 		"Email Template",
 		filters={"name": ("in", get_au_email_templates()), "enabled": 0},
@@ -36,7 +35,6 @@ def get_disabled_email_templates():
 
 @frappe.whitelist()
 def enable_email_templates():
-
 	enabled = get_disabled_email_templates()
 	for template in enabled:
 		frappe.db.set_value("Email Template", template, "enabled", 1)
