@@ -545,7 +545,7 @@ def get_default_email_templates():
 				Dear {{ party_name }},<br><br>
 				Please find attached the remittance advice PDF for your reference.<br><br>
 
-				Payment Date : {{ frappe.utils.formatdate(posting_date) }}<br>
+				Payment Date : {{ frappe.utils.formatdate(reference_date) }}<br>
 				Mode Of Payment : {{ mode_of_payment or "-" }}<br>
 				Paid Amount : {{ frappe.format(paid_amount or " - ",{"fieldtype":"Currency"}) }}<br>
 				Reference No : {{ reference_no or "-" }}<br><br>
@@ -564,7 +564,7 @@ def get_default_email_templates():
 
 				Invoice No : {% for ref in references %}{% if ref.reference_doctype == "Sales Invoice" %}{{ ref.reference_name }}{% if not loop.last %}, {% endif %}{% endif %}{% endfor %}<br>
 				Reference No : {{ reference_no or "-" }}<br>
-				Payment Date : {{ frappe.utils.formatdate(posting_date) }}<br>
+				Payment Date : {{ frappe.utils.formatdate(reference_date) }}<br>
 				Payment Received : {{ frappe.format(paid_amount or " - ",{"fieldtype":"Currency"}) }}<br><br>
 
 				Regards,<br>
