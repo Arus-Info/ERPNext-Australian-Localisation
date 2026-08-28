@@ -11,6 +11,7 @@
   "abn_lookup_guid",
   "section_break_lmnb",
   "remittance_advice_template",
+  "column_break_rmpt",
   "payment_receipt_template"
  ],
  "fields": [
@@ -45,6 +46,10 @@
    "fieldtype": "Link",
    "label": "Remittance Advice Template",
    "options": "Email Template"
+  },
+  {
+   "fieldname": "column_break_rmpt",
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "payment_receipt_template",
