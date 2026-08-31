@@ -1,5 +1,6 @@
 <style>
 	{% include "templates/includes/au_print_format.css" %}
+
 </style>
 {% if doc.payment_type == "Receive" and doc.party_type == "Customer" %} {% if doc.docstatus == 0 %}
 <div class="watermark">DRAFT</div>
@@ -148,25 +149,25 @@
 							<td>
 								<div>
 									<div class="table-start">
-										<div
-											style="
-												text-align: left;
-												display: grid;
-												grid-template-columns: 0.3fr max-content;
-												column-gap: 3px;
-											"
-										>
-											<div><b>Payment Method</b></div>
-											<div>: {{ doc.mode_of_payment or "-" }}</div>
-
-											<div><b>Payment Ref Date</b></div>
+										<div class="payment-info">
 											<div>
-												: {{ frappe.format(doc.reference_date or
-												"-",{"fieldtype":"Date"}) }}
+												<div>Payment Method</div>
+												<div>:</div>
+												<div>{{ doc.mode_of_payment or "-" }}</div>
+												<div></div>
 											</div>
-
-											<div><b>Payment Ref No</b></div>
-											<div>: {{ doc.reference_no or "-" }}</div>
+											<div>
+												<div>Payment Ref Date</div>
+												<div>:</div>
+												<div>{{ frappe.format(doc.reference_date, {"fieldtype":"Date"}) if doc.reference_date else "-" }}</div>
+												<div></div>
+											</div>
+											<div>
+												<div>Payment Ref No</div>
+												<div>:</div>
+												<div>{{ doc.reference_no or "-" }}</div>
+												<div></div>
+											</div>
 										</div>
 									</div>
 								</div>
