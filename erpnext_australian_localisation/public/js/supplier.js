@@ -7,6 +7,19 @@ frappe.ui.form.on("Supplier", {
 	refresh(frm) {
 		au_localisation.abn.setup(frm);
 	},
+	bank_account_no(frm) {
+		const account_number = frm.doc.bank_account_no || "";
+
+		if (account_number.length === 10) {
+			frm.set_df_property(
+				"bank_account_no",
+				"description",
+				__("10 digit bank account numbers will not be supported for abn file generation.")
+			);
+		} else {
+			frm.set_df_property("bank_account_no", "description", "");
+		}
+	},
 
 	tax_id(frm) {
 		// if (!frm.doc.tax_id) {

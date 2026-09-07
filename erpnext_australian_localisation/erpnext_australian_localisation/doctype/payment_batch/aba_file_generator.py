@@ -22,7 +22,6 @@ def aba_account_field(bank_account_no, owner):
 	return bank_account_no.rjust(ABA_ACCOUNT_WIDTH)
 
 
-@frappe.whitelist()
 def generate_aba_file(payment_batch):
 	bank_account = frappe.db.get_value(
 		"Bank Account",
