@@ -3,6 +3,24 @@ from datetime import datetime
 import frappe
 from frappe import _
 
+ABA_ACCOUNT_WIDTH = 9
+
+
+def aba_account_field(bank_account_no, owner):
+	"""Return the account number padded to the 9-character ABA field.
+
+	Supplier, Employee and Bank Account store up to 10 digits, but the ABA
+	detail record holds 9. A longer number is refused here rather than cut
+	to nine digits, which would pay a different account.
+	"""
+	if len(bank_account_no) > ABA_ACCOUNT_WIDTH:
+		frappe.throw(
+			_("Bank account number for {0} has {1} digits; an ABA file allows at most {2}.").format(
+				owner, len(bank_account_no), ABA_ACCOUNT_WIDTH
+			)
+		)
+	return bank_account_no.rjust(ABA_ACCOUNT_WIDTH)
+
 
 @frappe.whitelist()
 def generate_aba_file(payment_batch):
@@ -60,7 +78,10 @@ def generate_aba_file(payment_batch):
 			)
 
 		if party_account_details.bank_account_no:
-			content += party_account_details.bank_account_no[0:9].rjust(9)
+			content += aba_account_field(
+				party_account_details.bank_account_no,
+				f"{payment_entry.party_type} {payment_entry.party}",
+			)
 		else:
 			frappe.throw(
 				_("Bank account number not found for {0} {1}").format(
@@ -80,7 +101,7 @@ def generate_aba_file(payment_batch):
 			frappe.throw(_("Branch code not found for Bank Account {0}").format(payment_batch.bank_account))
 
 		if bank_account.bank_account_no:
-			content += bank_account.bank_account_no[0:9].rjust(9)
+			content += aba_account_field(bank_account.bank_account_no, payment_batch.bank_account)
 		else:
 			frappe.throw(
 				_("Bank account number not found for Bank Account {0}").format(payment_batch.bank_account)
