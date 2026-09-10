@@ -16,7 +16,7 @@ def aba_account_field(bank_account_no, owner):
 	if len(bank_account_no) > ABA_ACCOUNT_WIDTH:
 		frappe.throw(
 			_(
-				"The Bank account number for {0} has {1} digits.ABA files allow a maximum of {2} digits."
+				"The Bank account number for {0} has {1} digits. ABA files allow a maximum of {2} digits."
 			).format(owner, len(bank_account_no), ABA_ACCOUNT_WIDTH)
 		)
 	return bank_account_no.rjust(ABA_ACCOUNT_WIDTH)
@@ -26,7 +26,7 @@ def generate_aba_file(payment_batch):
 	bank_account = frappe.db.get_value(
 		"Bank Account",
 		payment_batch.bank_account,
-		["company", "apca_number", "bank_account_no", "branch_code", "fi_abbr", "account_name"],
+		["company", "apca_number", "bank_account_no", "branch_code", "fi_abbr"],
 		as_dict=True,
 	)
 	posting_date = datetime.strptime(payment_batch.posting_date, "%Y-%m-%d")
@@ -98,7 +98,6 @@ def generate_aba_file(payment_batch):
 		bank_account_link = frappe.utils.get_link_to_form(
 			"Bank Account",
 			payment_batch.bank_account,
-			bank_account.account_name,
 		)
 
 		if bank_account.branch_code:
