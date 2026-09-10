@@ -6,8 +6,7 @@ from frappe.utils.data import now_datetime
 
 def before_tests():
 	frappe.clear_cache()
-
-	if not frappe.db.a_row_exists("Company"):
+	if not frappe.db.exists("Company", "_Test AU Company"):
 		current_year = now_datetime().year
 		setup_complete(
 			{
@@ -27,3 +26,4 @@ def before_tests():
 				"chart_of_accounts": "Australia - Chart of Accounts with Account Numbers",
 			}
 		)
+		frappe.db.commit()  # nosemgrep

@@ -67,6 +67,7 @@ doctype_js = {
 	"Purchase Receipt": "public/js/setup_input_taxed_sales.js",
 	"Supplier": "public/js/supplier.js",
 	"Customer": "public/js/customer.js",
+	"Employee": "public/js/employee.js",
 	"Bank Statement Import": "public/js/bank_statement_import.js",
 	"Payment Entry": "public/js/payment_entry.js",
 }
