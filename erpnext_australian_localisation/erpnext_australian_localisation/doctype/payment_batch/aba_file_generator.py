@@ -15,14 +15,13 @@ def aba_account_field(bank_account_no, owner):
 	"""
 	if len(bank_account_no) > ABA_ACCOUNT_WIDTH:
 		frappe.throw(
-			_("Bank account number for {0} has {1} digits; an ABA file allows at most {2}.").format(
-				owner, len(bank_account_no), ABA_ACCOUNT_WIDTH
-			)
+			_(
+				"The Bank account number for {0} has {1} digits. ABA files allow a maximum of {2} digits."
+			).format(owner, len(bank_account_no), ABA_ACCOUNT_WIDTH)
 		)
 	return bank_account_no.rjust(ABA_ACCOUNT_WIDTH)
 
 
-@frappe.whitelist()
 def generate_aba_file(payment_batch):
 	bank_account = frappe.db.get_value(
 		"Bank Account",
@@ -68,25 +67,26 @@ def generate_aba_file(payment_batch):
 			["bank_account_no", "branch_code", payment_entry.party_type.lower() + "_name"],
 			as_dict=True,
 		)
+		party_link = frappe.utils.get_link_to_form(
+			payment_entry.party_type,
+			payment_entry.party,
+			payment_entry.party_name,
+		)
 		content += "1"
 
 		if party_account_details.branch_code:
 			content += party_account_details.branch_code[0:7].ljust(7)
 		else:
-			frappe.throw(
-				_("Branch code not found for {0} {1}").format(payment_entry.party_type, payment_entry.party)
-			)
+			frappe.throw(_("Branch code not found for {0} {1}").format(payment_entry.party_type, party_link))
 
 		if party_account_details.bank_account_no:
 			content += aba_account_field(
 				party_account_details.bank_account_no,
-				f"{payment_entry.party_type} {payment_entry.party}",
+				f"{payment_entry.party_type} {party_link}",
 			)
 		else:
 			frappe.throw(
-				_("Bank account number not found for {0} {1}").format(
-					payment_entry.party_type, payment_entry.party
-				)
+				_("Bank account number not found for {0} {1}").format(payment_entry.party_type, party_link)
 			)
 
 		content += " "
@@ -95,17 +95,20 @@ def generate_aba_file(payment_batch):
 		content += party_account_details.get(payment_entry.party_type.lower() + "_name")[0:32].ljust(32)
 		content += reference_no[0:18].ljust(18)
 
+		bank_account_link = frappe.utils.get_link_to_form(
+			"Bank Account",
+			payment_batch.bank_account,
+		)
+
 		if bank_account.branch_code:
 			content += bank_account.branch_code[0:7].ljust(7)
 		else:
-			frappe.throw(_("Branch code not found for Bank Account {0}").format(payment_batch.bank_account))
+			frappe.throw(_("Branch code not found for Bank Account {0}").format(bank_account_link))
 
 		if bank_account.bank_account_no:
-			content += aba_account_field(bank_account.bank_account_no, payment_batch.bank_account)
+			content += aba_account_field(bank_account.bank_account_no, bank_account_link)
 		else:
-			frappe.throw(
-				_("Bank account number not found for Bank Account {0}").format(payment_batch.bank_account)
-			)
+			frappe.throw(_("Bank account number not found for Bank Account {0}").format(bank_account_link))
 		content += bank_account.company[0:16].ljust(16)
 		content += "0" * 8
 		content += "\n"
