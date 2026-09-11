@@ -45,9 +45,7 @@ def before_submit(doc, event):
 				else "Subjected"
 			)
 			allocations = [(tax.au_tax_code, round(tax.base_tax_amount_after_discount_amount, 2))]
-			if doc.doctype == "Purchase Invoice" and any(
-				item.au_tax_code in {"AUPPVTUSE", "AUPINPTAX"} for item in doc.items
-			):
+			if doc.doctype == "Purchase Invoice":
 				allocations = get_purchase_tax_allocations(doc, tax)
 			for tax_code, amount in allocations:
 				# Excluded GST forms part of the purchase and its G13/G15 exclusion.
@@ -65,7 +63,11 @@ def get_purchase_tax_allocations(doc, tax):
 	"""Use ERPNext v16's company-currency item tax amounts for mixed eligibility."""
 	cent = Decimal("0.01")
 	total = Decimal(str(tax.base_tax_amount_after_discount_amount)).quantize(cent, rounding=ROUND_HALF_UP)
+	if tax.get("add_deduct_tax") == "Deduct":
+		total = -total
 	codes = {item.au_tax_code for item in doc.items}
+	if not codes & {"AUPPVTUSE", "AUPINPTAX"}:
+		return [(tax.au_tax_code, float(total))]
 	if len(codes) == 1:
 		return [(next(iter(codes)), float(total))]
 

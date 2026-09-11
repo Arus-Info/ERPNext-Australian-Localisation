@@ -26,7 +26,7 @@ class Row(dict):
 
 
 class TestPurchaseGSTEligibility(TestCase):
-	def purchase(self, items, tax_amount=100, detail=None):
+	def purchase(self, items, tax_amount=100, detail=None, add_deduct_tax="Add"):
 		doc = SimpleNamespace(
 			doctype="Purchase Invoice",
 			name="EXAMPLE-1",
@@ -38,6 +38,7 @@ class TestPurchaseGSTEligibility(TestCase):
 			taxes=[
 				Row(
 					account_head="GST",
+					add_deduct_tax=add_deduct_tax,
 					base_tax_amount_after_discount_amount=tax_amount,
 					tax_amount_after_discount_amount=tax_amount / 1.5,
 				)
@@ -146,6 +147,43 @@ class TestPurchaseGSTEligibility(TestCase):
 		self.assertEqual(
 			self.purchase([{"item_code": "A", "base_net_amount": 1000}]), {"1B": 100, "G11": 1100}
 		)
+
+	def test_deducted_tax_reduces_ordinary_purchase_credit(self):
+		for sign in (1, -1):
+			with self.subTest(sign=sign):
+				self.assertEqual(
+					self.purchase(
+						[{"item_code": "B", "base_net_amount": sign * 1000}],
+						tax_amount=sign * 100,
+						add_deduct_tax="Deduct",
+					),
+					{"1B": sign * -100, "G11": sign * 900},
+				)
+
+	def test_deducted_tax_preserves_mixed_and_single_exclusions(self):
+		for flag, label in [("private_use", "G15"), ("input_taxed", "G13")]:
+			for sign in (1, -1):
+				with self.subTest(flag=flag, sign=sign):
+					self.assertEqual(
+						self.purchase(
+							[
+								{"item_code": "P", "base_net_amount": sign * 300, flag: 1},
+								{"item_code": "B", "base_net_amount": sign * 700},
+							],
+							tax_amount=sign * 100,
+							add_deduct_tax="Deduct",
+							detail={"P": [10, sign * -30], "B": [10, sign * -70]},
+						),
+						{"1B": sign * -70, "G11": sign * 900, label: sign * 270},
+					)
+					self.assertEqual(
+						self.purchase(
+							[{"item_code": "P", "base_net_amount": sign * 1000, flag: 1}],
+							tax_amount=sign * 100,
+							add_deduct_tax="Deduct",
+						),
+						{"G11": sign * 900, label: sign * 900},
+					)
 
 	def test_mixed_purchase_uses_item_tax_in_company_currency(self):
 		totals = self.purchase(
