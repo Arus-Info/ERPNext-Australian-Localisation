@@ -2,7 +2,7 @@
 # See license.txt
 
 import frappe
-from frappe.tests import FrappeTestCase
+from frappe.tests.utils import FrappeTestCase
 
 from erpnext_australian_localisation.erpnext_australian_localisation.doctype.payment_batch.aba_file_generator import (
 	aba_account_field,
