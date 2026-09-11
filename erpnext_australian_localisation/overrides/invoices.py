@@ -1,3 +1,5 @@
+from decimal import ROUND_HALF_UP, Decimal, InvalidOperation
+
 import frappe
 import pandas as pd
 
@@ -42,18 +44,67 @@ def before_submit(doc, event):
 				if frappe.db.get_value("Account", tax.account_head, "account_type") == "Tax"
 				else "Subjected"
 			)
-			result.extend(
-				generate_bas_labels(
-					tax_management,
-					tax_allocation,
-					tax.au_tax_code,
-					tax.account_head,
-					round(tax.tax_amount_after_discount_amount, 2),
-					sum_depends_on[1],
+			allocations = [(tax.au_tax_code, round(tax.base_tax_amount_after_discount_amount, 2))]
+			if doc.doctype == "Purchase Invoice" and any(
+				item.au_tax_code in {"AUPPVTUSE", "AUPINPTAX"} for item in doc.items
+			):
+				allocations = get_purchase_tax_allocations(doc, tax)
+			for tax_code, amount in allocations:
+				# Excluded GST forms part of the purchase and its G13/G15 exclusion.
+				management = "Subjected" if tax_code in {"AUPPVTUSE", "AUPINPTAX"} else tax_management
+				result.extend(
+					generate_bas_labels(
+						management, tax_allocation, tax_code, tax.account_head, amount, sum_depends_on[1]
+					)
 				)
-			)
 
 		create_au_bas_entries(doc.doctype, doc.name, doc.company, doc.posting_date, result, sum_depends_on)
+
+
+def get_purchase_tax_allocations(doc, tax):
+	"""Use ERPNext v16's company-currency item tax amounts for mixed eligibility."""
+	cent = Decimal("0.01")
+	total = Decimal(str(tax.base_tax_amount_after_discount_amount)).quantize(cent, rounding=ROUND_HALF_UP)
+	codes = {item.au_tax_code for item in doc.items}
+	if len(codes) == 1:
+		return [(next(iter(codes)), float(total))]
+
+	message = frappe._(
+		"Mixed purchase GST requires item tax amounts that reconcile to the company-currency tax total. "
+		"Recalculate the invoice taxes and check each item's eligibility before submitting."
+	)
+	try:
+		item_codes = {id(item): item.au_tax_code for item in doc.items}
+		seen = set()
+		amounts = {}
+		for row in getattr(doc, "_item_wise_tax_details", None) or []:
+			if row.tax is not tax:
+				continue
+			key = id(row.item)
+			if key not in item_codes or key in seen:
+				raise ValueError
+			seen.add(key)
+			amount = Decimal(str(row.amount))
+			if not amount.is_finite():
+				raise ValueError
+			code = item_codes[key]
+			amounts[code] = amounts.get(code, Decimal(0)) + amount
+		if seen != set(item_codes) or sum(amounts.values()).quantize(cent, rounding=ROUND_HALF_UP) != total:
+			raise ValueError
+	except (ValueError, TypeError, InvalidOperation):
+		frappe.throw(message)
+
+	allocated = {code: amount.quantize(cent, rounding=ROUND_HALF_UP) for code, amount in amounts.items()}
+	residual = total - sum(allocated.values())
+	for code in sorted(amounts, key=lambda code: abs(amounts[code]), reverse=True):
+		if not residual:
+			break
+		adjustment = (
+			max(-allocated[code], residual) if amounts[code] >= 0 else min(-allocated[code], residual)
+		)
+		allocated[code] += adjustment
+		residual -= adjustment
+	return [(code, float(amount)) for code, amount in allocated.items()]
 
 
 # Generate BAS Labels for the given tax_allocation, au_tax_code and account
