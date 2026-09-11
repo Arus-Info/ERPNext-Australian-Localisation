@@ -51,7 +51,7 @@ def validate_reporting_scope(doc):
 
 
 @frappe.whitelist()
-def get_gst(name):
+def get_gst(name: str):
 	"""
 	Update the BAS Report G labels based on the reporting method
 	"""
