@@ -87,20 +87,16 @@ def update_aulocalisation_settings(company):
 
 
 def on_trash(doc, event):
-
 	delete_tax_rules(doc.name)
 	remove_bas_reporting_period(doc.name)
 
 
 def delete_tax_rules(company):
-
 	for tax_rule in frappe.get_all("Tax Rule", filters={"company": company}, pluck="name"):
 		frappe.delete_doc("Tax Rule", tax_rule, ignore_permissions=True)
 
 
-
 def remove_bas_reporting_period(company):
-
 	au_localisation_settings = frappe.get_doc("AU Localisation Settings")
 	rows = [row for row in au_localisation_settings.bas_reporting_period if row.company != company]
 
