@@ -11,6 +11,7 @@ from frappe.model.document import Document
 
 class AUBASReport(Document):
 	def before_submit(self):
+		validate_reporting_scope(self)
 		if self.reporting_status != "Validated":
 			frappe.throw(_("Only BAS Report at Validated state can be submitted"))
 
@@ -32,12 +33,30 @@ class AUBASReport(Document):
 				frappe.throw(_("BAS Report found for this period"))
 
 
+def validate_reporting_scope(doc):
+	if doc.reporting_method != "Full reporting method" and frappe.db.exists(
+		"AU BAS Entry",
+		{
+			"company": doc.company,
+			"date": ["between", [doc.start_date, doc.end_date]],
+			"tax_code": ["in", ["AUPPVTUSE", "AUPINPTAX"]],
+		},
+	):
+		frappe.throw(
+			_(
+				"This period contains private or input-taxed purchases. Simpler BAS ledger totals cannot "
+				"apply their item exclusions. Reconcile the purchase entries and use the full reporting method."
+			)
+		)
+
+
 @frappe.whitelist()
-def get_gst(name):
+def get_gst(name: str):
 	"""
 	Update the BAS Report G labels based on the reporting method
 	"""
 	doc = frappe.get_doc("AU BAS Report", name)
+	validate_reporting_scope(doc)
 	doc.bas_updation_datetime = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
 
 	frappe.publish_realtime("bas_data_generator", user=frappe.session.user)
