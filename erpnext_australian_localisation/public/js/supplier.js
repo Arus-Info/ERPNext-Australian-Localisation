@@ -43,7 +43,7 @@ function set_bank_account_description(frm) {
 		frm.set_df_property(
 			"bank_account_no",
 			"description",
-			__("10 digit bank account numbers will not be supported for abn file generation.")
+			__("10 digit bank account numbers will not be supported for aba file generation.")
 		);
 	} else {
 		frm.set_df_property("bank_account_no", "description", "");
