@@ -324,6 +324,16 @@ OPEN_BANKING_FIELDS = {
 			"mandatory_depends_on": "eval: doc.enable_transaction_import",
 			"module": "ERPNext Australian Localisation",
 		},
+		{
+			"fieldname": "connection_id",
+			"label": "Connection ID",
+			"fieldtype": "Data",
+			"read_only": 1,
+            "hidden": 1,
+			"insert_after": "last_sync",
+			"depends_on": "eval: doc.enable_transaction_import",
+			"module": "ERPNext Australian Localisation",
+		},
 	],
 	"Bank Transaction": [
 		{

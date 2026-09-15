@@ -17,6 +17,12 @@ def sync_bank_connection(connection_id):
 
 
 @frappe.whitelist()
-def submit_mfa_response(response_url, inputs):
-	inputs = frappe.parse_json(inputs) if isinstance(inputs, str) else inputs
-	return basiq_connector.submit_mfa_response(response_url, inputs)
+def get_sync_job(job_id):
+	return basiq_connector.get_job(job_id)
+
+
+@frappe.whitelist()
+def submit_mfa_response(response_url, mfa_response):
+
+	mfa_response = frappe.parse_json(mfa_response) if isinstance(mfa_response, str) else mfa_response
+	return basiq_connector.submit_mfa_response(response_url, mfa_response)

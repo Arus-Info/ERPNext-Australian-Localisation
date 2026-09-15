@@ -5,48 +5,6 @@ frappe.ui.form.on("Bank Account", {
 		}
 
 		frm.set_df_property("last_sync", "read_only", frm.doc.last_sync ? 1 : 0);
-
-		if (!frm.is_new()) {
-			const sync_now_btn = frm.add_custom_button(__("Sync Now"), () => {
-				sync_now_btn.prop("disabled", true);
-
-				const importing_dialog = new frappe.ui.Dialog({
-					title: __("Sync Now"),
-					fields: [
-						{
-							fieldname: "importing_msg",
-							fieldtype: "HTML",
-							options: `<p>${__("Importing Transactions...")}</p>`
-						}
-					]
-				});
-				importing_dialog.get_close_btn().hide();
-				importing_dialog.show();
-
-				frappe.call({
-					method: "erpnext_australian_localisation.integration.basiq.import_transaction.sync_account_transactions",
-					args: {
-						bank_account: frm.doc.name,
-						provider_account_id: frm.doc.provider_account_id,
-						sync_date: frm.doc.last_sync
-					},
-
-					callback(r) {
-						importing_dialog.hide();
-						frappe.msgprint({
-							title: __("Sync Complete"),
-							message: r.message || __("Transactions Imported"),
-							indicator: "green"
-						});
-						frm.reload_doc();
-					},
-
-					always() {
-						sync_now_btn.prop("disabled", false);
-					}
-				});
-			});
-		}
 	},
 
 	enable_transaction_import(frm) {
@@ -59,13 +17,72 @@ frappe.ui.form.on("Bank Account", {
 		}
 
 		frappe.validated = false;
-		fetch_provider_accounts(frm);
+		fetch_provider_connections(frm);
 	}
 });
 
-function fetch_provider_accounts(frm) {
+function fetch_provider_connections(frm) {
+	frappe.call({
+		method: "erpnext_australian_localisation.integration.basiq.import_transaction.get_provider_connections",
+
+		callback(r) {
+			const connections = r.message || [];
+			if (!connections.length) {
+				frappe.msgprint(__("No bank connections found"));
+				return;
+			}
+
+			const rows = connections
+				.map(
+					(connection, i) => `
+						<tr>
+							<td style="width: 40px; text-align: center;">
+								<input type="radio" name="provider_connection" value="${connection.id}" ${i === 0 ? "checked" : ""}>
+							</td>
+							<td>${connection.institution || connection.id}</td>
+						</tr>`
+				)
+				.join("");
+
+			const dialog = new frappe.ui.Dialog({
+				title: __("Select Bank Connection"),
+				size: "large",
+				fields: [
+					{
+						fieldname: "connections_html",
+						fieldtype: "HTML",
+						options: `
+							<table class="table table-bordered">
+								<thead>
+									<tr>
+										<th></th>
+										<th>${__("Institution")}</th>
+									</tr>
+								</thead>
+								<tbody>${rows}</tbody>
+							</table>
+						`
+					}
+				],
+				primary_action_label: __("Next"),
+				primary_action() {
+					const selected = dialog.$wrapper
+						.find('input[name="provider_connection"]:checked')
+						.val();
+					dialog.hide();
+					fetch_provider_accounts(frm, selected);
+				}
+			});
+
+			dialog.show();
+		}
+	});
+}
+
+function fetch_provider_accounts(frm, connection_id) {
 	frappe.call({
 		method: "erpnext_australian_localisation.integration.basiq.import_transaction.get_provider_accounts",
+		args: { connection_id },
 
 		callback(r) {
 			const accounts = r.message || [];
@@ -77,7 +94,7 @@ function fetch_provider_accounts(frm) {
 			const rows = accounts
 				.map(
 					(account, i) => `
-						<tr data-value="${account.id}">
+						<tr>
 							<td style="width: 40px; text-align: center;">
 								<input type="radio" name="provider_account" value="${account.id}" ${i === 0 ? "checked" : ""}>
 							</td>
@@ -117,10 +134,24 @@ function fetch_provider_accounts(frm) {
 					const selected = dialog.$wrapper
 						.find('input[name="provider_account"]:checked')
 						.val();
-					frm.set_value("provider_account_id", selected).then(() => {
-						dialog.hide();
-						frm.save();
-					});
+					frm.set_value("provider_account_id", selected)
+						.then(() => frm.set_value("connection_id", connection_id))
+						.then(() => {
+							dialog.hide();
+							return frm.save();
+						})
+						.then(() =>
+							frappe.call({
+								method:
+									"erpnext_australian_localisation.integration.basiq.import_transaction.ensure_connected_account",
+								args: { connection_id }
+							})
+						);
+				},
+				secondary_action_label: __("Back"),
+				secondary_action() {
+					dialog.hide();
+					fetch_provider_connections(frm);
 				}
 			});
 

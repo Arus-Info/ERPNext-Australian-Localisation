@@ -17,7 +17,9 @@
   "provider",
   "column_break_wfua",
   "user_id",
-  "api_key"
+  "api_key",
+  "section_break_yjss",
+  "table_talc"
  ],
  "fields": [
   {
@@ -84,10 +86,6 @@
    "options": "Email Template"
   },
   {
-   "fieldname": "column_break_rmpt",
-   "fieldtype": "Column Break"
-  },
-  {
    "fieldname": "payment_receipt_template",
    "fieldtype": "Link",
    "label": "Payment Receipt Template",
@@ -96,13 +94,22 @@
   {
    "fieldname": "column_break_qoxu",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_yjss",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "table_talc",
+   "fieldtype": "Table",
+   "options": "Connected Accounts"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-07-24 16:52:48.073694",
+ "modified": "2026-09-03 20:37:55.349336",
  "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
  "name": "AU Localisation Settings",

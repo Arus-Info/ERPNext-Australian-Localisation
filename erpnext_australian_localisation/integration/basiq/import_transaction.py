@@ -1,12 +1,14 @@
+from datetime import datetime
+
 import frappe
-from frappe import _
 from frappe.utils import add_to_date, get_datetime, getdate, now_datetime
 
 from erpnext_australian_localisation.integration.basiq import basiq_connector
 
 
 @frappe.whitelist()
-def sync_account_transactions(bank_account: str, provider_account_id: str, sync_date: str):
+def sync_account_transactions(
+	bank_account: str, provider_account_id: str, sync_date: datetime | str):
 	log = frappe.get_doc(
 		{
 			"doctype": "AU Bank Statement Import Log",
@@ -57,12 +59,113 @@ def sync_account_transactions(bank_account: str, provider_account_id: str, sync_
 		log.save(ignore_permissions=True)
 
 
-def fetch_transactions():
-	accounts = frappe.get_all(
-		"Bank Account",
-		filters={"enable_transaction_import": 1, "provider_account_id": ["is", "set"]},
-		fields=["name", "provider_account_id", "last_sync"],
+@frappe.whitelist()
+def get_provider_accounts(connection_id=None):
+	accounts = basiq_connector.get_accounts(connection_id=connection_id)
+
+	linked_account_ids = set(
+		frappe.get_all(
+			"Bank Account",
+			filters={"provider_account_id": ["is", "set"]},
+			pluck="provider_account_id",
+		)
 	)
+
+	result = []
+	for account in accounts:
+		if account.get("id") in linked_account_ids:
+			continue
+
+		result.append(
+			{
+				"id": account.get("id"),
+				"name": account.get("name"),
+				"display_name": account.get("displayName"),
+				"account_no": account.get("accountNo"),
+				"balance": account.get("balance"),
+			}
+		)
+	return result
+
+
+@frappe.whitelist()
+def get_provider_connections():
+	connections = basiq_connector.get_connections()
+	result = []
+	for connection in connections:
+		institution_name = basiq_connector.get_institution_name(connection.get("institution"))
+
+		result.append(
+			{
+				"id": connection.get("id"),
+				"institution": institution_name,
+			}
+		)
+	return result
+
+
+@frappe.whitelist()
+def ensure_connected_account(connection_id):
+	settings = frappe.get_doc("AU Localisation Settings")
+
+	existing_row = next(
+		(row for row in settings.table_talc if row.connection_id == connection_id), None
+	)
+	if existing_row:
+		return
+
+	connection = next(
+		(c for c in basiq_connector.get_connections() if c.get("id") == connection_id), None
+	)
+
+	institution_name = basiq_connector.get_institution_name(connection.get("institution"))
+	mfa_challenge = 1 if connection.get("mfaEnabled") else 0
+
+	settings.append(
+		"table_talc",
+		{
+			"institution": institution_name,
+			"connection_id": connection_id,
+			"mfa_challenge": mfa_challenge,
+		},
+	)
+	settings.save(ignore_permissions=True)
+
+
+def get_non_mfa_connections():
+	return frappe.get_all(
+		"Connected Accounts",
+		filters={"mfa_challenge": 0},
+		fields=["connection_id"],
+	)
+
+
+@frappe.whitelist()
+def get_connection_accounts(connection_id):
+	return frappe.get_all(
+		"Bank Account",
+		filters={
+			"connection_id": connection_id,
+			"enable_transaction_import": 1,
+			"provider_account_id": ["is", "set"],
+		},
+		fields=["name", "account_name", "provider_account_id", "last_sync"],
+	)
+
+
+@frappe.whitelist()
+def sync_connection_transactions(connection_id=None, bank_account=None):
+	if bank_account:
+		accounts = [
+			frappe.db.get_value(
+				"Bank Account",
+				bank_account,
+				["name", "provider_account_id", "last_sync"],
+				as_dict=True,
+			)
+		]
+	else:
+		accounts = get_connection_accounts(connection_id)
 
 	for account in accounts:
 		sync_account_transactions(
@@ -74,18 +177,11 @@ def fetch_transactions():
 	return "Transactions Imported"
 
 
-@frappe.whitelist()
-def get_provider_accounts():
-	accounts = basiq_connector.get_accounts()
-	result = []
-	for account in accounts:
-		result.append(
-			{
-				"id": account.get("id"),
-				"name": account.get("name"),
-				"display_name": account.get("displayName"),
-				"account_no": account.get("accountNo"),
-				"balance": account.get("balance"),
-			}
-		)
-	return result
+def refresh_non_mfa_connections():
+	for row in get_non_mfa_connections():
+		basiq_connector.refresh_connection(row.connection_id)
+
+
+def sync_non_mfa_connections():
+	for row in get_non_mfa_connections():
+		sync_connection_transactions(connection_id=row.connection_id)
