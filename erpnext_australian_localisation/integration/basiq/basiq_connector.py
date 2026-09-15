@@ -161,7 +161,6 @@ def get_job(job_id):
 
 
 def submit_mfa_response(response_url, mfa_response):
-
 	settings = frappe.get_cached_doc("AU Localisation Settings")
 	api_key = settings.get_password("api_key")
 

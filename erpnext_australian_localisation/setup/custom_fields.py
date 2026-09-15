@@ -329,7 +329,7 @@ OPEN_BANKING_FIELDS = {
 			"label": "Connection ID",
 			"fieldtype": "Data",
 			"read_only": 1,
-            "hidden": 1,
+			"hidden": 1,
 			"insert_after": "last_sync",
 			"depends_on": "eval: doc.enable_transaction_import",
 			"module": "ERPNext Australian Localisation",

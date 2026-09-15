@@ -7,8 +7,7 @@ from erpnext_australian_localisation.integration.basiq import basiq_connector
 
 
 @frappe.whitelist()
-def sync_account_transactions(
-	bank_account: str, provider_account_id: str, sync_date: datetime | str):
+def sync_account_transactions(bank_account: str, provider_account_id: str, sync_date: datetime | str):
 	log = frappe.get_doc(
 		{
 			"doctype": "AU Bank Statement Import Log",
@@ -108,15 +107,11 @@ def get_provider_connections():
 def ensure_connected_account(connection_id):
 	settings = frappe.get_doc("AU Localisation Settings")
 
-	existing_row = next(
-		(row for row in settings.table_talc if row.connection_id == connection_id), None
-	)
+	existing_row = next((row for row in settings.table_talc if row.connection_id == connection_id), None)
 	if existing_row:
 		return
 
-	connection = next(
-		(c for c in basiq_connector.get_connections() if c.get("id") == connection_id), None
-	)
+	connection = next((c for c in basiq_connector.get_connections() if c.get("id") == connection_id), None)
 
 	institution_name = basiq_connector.get_institution_name(connection.get("institution"))
 	mfa_challenge = 1 if connection.get("mfaEnabled") else 0

@@ -72,9 +72,7 @@ function disable_connected_accounts_row_actions(frm) {
 	if (!grid.wrapper.hasClass("connected-accounts-grid")) {
 		grid.wrapper.addClass("connected-accounts-grid");
 		$("<style>")
-			.text(
-				".connected-accounts-grid .grid-row-check { display: none !important; }"
-			)
+			.text(".connected-accounts-grid .grid-row-check { display: none !important; }")
 			.appendTo(grid.wrapper);
 	}
 }
@@ -220,12 +218,28 @@ function start_connection_sync(frm, connection_id, bank_account) {
 			progress_dialog.get_close_btn().hide();
 			progress_dialog.show();
 
-			poll_basiq_sync_job(frm, job_id, progress_dialog, 0, null, connection_id, bank_account);
+			poll_basiq_sync_job(
+				frm,
+				job_id,
+				progress_dialog,
+				0,
+				null,
+				connection_id,
+				bank_account
+			);
 		}
 	});
 }
 
-function poll_basiq_sync_job(frm, job_id, progress_dialog, attempts, submitted_url, connection_id, bank_account) {
+function poll_basiq_sync_job(
+	frm,
+	job_id,
+	progress_dialog,
+	attempts,
+	submitted_url,
+	connection_id,
+	bank_account
+) {
 	frappe.call({
 		method: "erpnext_australian_localisation.erpnext_australian_localisation.doctype.connected_accounts.connected_accounts.get_sync_job",
 		args: { job_id },
@@ -241,7 +255,14 @@ function poll_basiq_sync_job(frm, job_id, progress_dialog, attempts, submitted_u
 
 			if (mfa_step && mfa_response_url !== submitted_url) {
 				progress_dialog.hide();
-				show_basiq_mfa_dialog(frm, job_id, mfa_step, progress_dialog, connection_id, bank_account);
+				show_basiq_mfa_dialog(
+					frm,
+					job_id,
+					mfa_step,
+					progress_dialog,
+					connection_id,
+					bank_account
+				);
 				return;
 			}
 
@@ -254,7 +275,9 @@ function poll_basiq_sync_job(frm, job_id, progress_dialog, attempts, submitted_u
 					title: __("Bank Connection Refresh Failed"),
 					message: is_mfa_failure
 						? __("Incorrect answer. Please try again.")
-						: failed_step.result?.detail || failed_step.result?.title || __("Unknown error"),
+						: failed_step.result?.detail ||
+						  failed_step.result?.title ||
+						  __("Unknown error"),
 					indicator: "red"
 				});
 				return;

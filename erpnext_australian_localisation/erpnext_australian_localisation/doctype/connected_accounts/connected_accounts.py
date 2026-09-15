@@ -23,6 +23,5 @@ def get_sync_job(job_id):
 
 @frappe.whitelist()
 def submit_mfa_response(response_url, mfa_response):
-
 	mfa_response = frappe.parse_json(mfa_response) if isinstance(mfa_response, str) else mfa_response
 	return basiq_connector.submit_mfa_response(response_url, mfa_response)

@@ -37,7 +37,9 @@ function fetch_provider_connections(frm) {
 					(connection, i) => `
 						<tr>
 							<td style="width: 40px; text-align: center;">
-								<input type="radio" name="provider_connection" value="${connection.id}" ${i === 0 ? "checked" : ""}>
+								<input type="radio" name="provider_connection" value="${connection.id}" ${
+						i === 0 ? "checked" : ""
+					}>
 							</td>
 							<td>${connection.institution || connection.id}</td>
 						</tr>`
@@ -142,8 +144,7 @@ function fetch_provider_accounts(frm, connection_id) {
 						})
 						.then(() =>
 							frappe.call({
-								method:
-									"erpnext_australian_localisation.integration.basiq.import_transaction.ensure_connected_account",
+								method: "erpnext_australian_localisation.integration.basiq.import_transaction.ensure_connected_account",
 								args: { connection_id }
 							})
 						);
