@@ -55,7 +55,6 @@ frappe.ui.form.on("AU Localisation Settings", {
 	}
 });
 
-
 async function set_email_template_notice(frm) {
 	if (!frappe.boot.versions.crm) {
 		return;
@@ -121,7 +120,9 @@ function show_connection_accounts_dialog(frm, connection_id) {
 							<td>${account.account_name || account.name}</td>
 							<td>${account.last_sync ? frappe.datetime.str_to_user(account.last_sync) : __("Never")}</td>
 							<td style="text-align: right;">
-								<button class="btn btn-xs btn-default sync-account-btn" data-name="${account.name}">${__("Sync")}</button>
+								<button class="btn btn-xs btn-default sync-account-btn" data-name="${account.name}">${__(
+						"Sync"
+					)}</button>
 							</td>
 						</tr>`
 				)
@@ -168,7 +169,10 @@ function start_connection_sync(frm, connection_id, bank_account) {
 		callback: (r) => {
 			const job_id = r.message?.id;
 			if (!job_id) {
-				return frappe.show_alert({ message: __("Bank connection refresh initiated"), indicator: "green" });
+				return frappe.show_alert({
+					message: __("Bank connection refresh initiated"),
+					indicator: "green"
+				});
 			}
 
 			const progress_dialog = new frappe.ui.Dialog({
@@ -184,12 +188,28 @@ function start_connection_sync(frm, connection_id, bank_account) {
 			progress_dialog.get_close_btn().hide();
 			progress_dialog.show();
 
-			poll_basiq_sync_job(frm, job_id, progress_dialog, 0, null, connection_id, bank_account);
+			poll_basiq_sync_job(
+				frm,
+				job_id,
+				progress_dialog,
+				0,
+				null,
+				connection_id,
+				bank_account
+			);
 		}
 	});
 }
 
-function poll_basiq_sync_job(frm, job_id, progress_dialog, attempts, submitted_url, connection_id, bank_account) {
+function poll_basiq_sync_job(
+	frm,
+	job_id,
+	progress_dialog,
+	attempts,
+	submitted_url,
+	connection_id,
+	bank_account
+) {
 	frappe.call({
 		method: "erpnext_australian_localisation.erpnext_australian_localisation.doctype.connected_accounts.connected_accounts.get_sync_job",
 		args: { job_id },
@@ -199,11 +219,19 @@ function poll_basiq_sync_job(frm, job_id, progress_dialog, attempts, submitted_u
 			const mfa_step = steps.find(
 				(s) => s.title === "mfa-challenge" && ["pending", "in-progress"].includes(s.status)
 			);
-			const mfa_response_url = mfa_step && (mfa_step.result?.links?.response || mfa_step.result?.url);
+			const mfa_response_url =
+				mfa_step && (mfa_step.result?.links?.response || mfa_step.result?.url);
 
 			if (mfa_step && mfa_response_url !== submitted_url) {
 				progress_dialog.hide();
-				return show_basiq_mfa_dialog(frm, job_id, mfa_step, progress_dialog, connection_id, bank_account);
+				return show_basiq_mfa_dialog(
+					frm,
+					job_id,
+					mfa_step,
+					progress_dialog,
+					connection_id,
+					bank_account
+				);
 			}
 
 			const failed_step = steps.find((s) => s.status === "failed");
@@ -214,7 +242,9 @@ function poll_basiq_sync_job(frm, job_id, progress_dialog, attempts, submitted_u
 					title: __("Bank Connection Refresh Failed"),
 					message: is_mfa_failure
 						? __("Incorrect answer. Please try again.")
-						: failed_step.result?.detail || failed_step.result?.title || __("Unknown error"),
+						: failed_step.result?.detail ||
+						  failed_step.result?.title ||
+						  __("Unknown error"),
 					indicator: "red"
 				});
 			}
@@ -224,7 +254,16 @@ function poll_basiq_sync_job(frm, job_id, progress_dialog, attempts, submitted_u
 			}
 
 			setTimeout(
-				() => poll_basiq_sync_job(frm, job_id, progress_dialog, attempts + 1, submitted_url, connection_id, bank_account),
+				() =>
+					poll_basiq_sync_job(
+						frm,
+						job_id,
+						progress_dialog,
+						attempts + 1,
+						submitted_url,
+						connection_id,
+						bank_account
+					),
 				BASIQ_POLL_INTERVAL_MS
 			);
 		}
@@ -232,7 +271,9 @@ function poll_basiq_sync_job(frm, job_id, progress_dialog, attempts, submitted_u
 }
 
 function import_bank_transactions(frm, progress_dialog, connection_id, bank_account) {
-	progress_dialog.fields_dict.progress_msg.$wrapper.html(`<p>${__("Importing transactions...")}</p>`);
+	progress_dialog.fields_dict.progress_msg.$wrapper.html(
+		`<p>${__("Importing transactions...")}</p>`
+	);
 
 	const finish = (message, indicator) => {
 		progress_dialog.hide();
@@ -266,10 +307,20 @@ function show_basiq_mfa_dialog(frm, job_id, step, progress_dialog, connection_id
 
 	if (is_security_question) {
 		result.input.forEach((question, i) =>
-			fields.push({ fieldtype: "Data", fieldname: `mfa_answer_${i}`, label: question, reqd: 1 })
+			fields.push({
+				fieldtype: "Data",
+				fieldname: `mfa_answer_${i}`,
+				label: question,
+				reqd: 1
+			})
 		);
 	} else {
-		fields.push({ fieldtype: "Data", fieldname: "mfa_code", label: __("Verification Code"), reqd: 1 });
+		fields.push({
+			fieldtype: "Data",
+			fieldname: "mfa_code",
+			label: __("Verification Code"),
+			reqd: 1
+		});
 	}
 
 	const d = new frappe.ui.Dialog({
@@ -289,13 +340,24 @@ function show_basiq_mfa_dialog(frm, job_id, step, progress_dialog, connection_id
 				args: { response_url, mfa_response },
 				callback: () => {
 					progress_dialog.show();
-					poll_basiq_sync_job(frm, job_id, progress_dialog, 0, response_url, connection_id, bank_account);
+					poll_basiq_sync_job(
+						frm,
+						job_id,
+						progress_dialog,
+						0,
+						response_url,
+						connection_id,
+						bank_account
+					);
 				}
 			});
 		},
 		on_hide() {
 			if (!submitted) {
-				frappe.show_alert({ message: __("Bank verification cancelled"), indicator: "orange" });
+				frappe.show_alert({
+					message: __("Bank verification cancelled"),
+					indicator: "orange"
+				});
 			}
 		}
 	});
