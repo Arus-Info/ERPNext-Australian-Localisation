@@ -59,7 +59,7 @@ def sync_account_transactions(bank_account: str, provider_account_id: str, sync_
 
 
 @frappe.whitelist()
-def get_provider_accounts(connection_id=None):
+def get_provider_accounts(connection_id: str | None = None):
 	accounts = basiq_connector.get_accounts(connection_id=connection_id)
 
 	linked_account_ids = set(
@@ -104,7 +104,7 @@ def get_provider_connections():
 
 
 @frappe.whitelist()
-def ensure_connected_account(connection_id):
+def ensure_connected_account(connection_id: str):
 	settings = frappe.get_doc("AU Localisation Settings")
 
 	existing_row = next((row for row in settings.table_talc if row.connection_id == connection_id), None)
@@ -136,7 +136,7 @@ def get_non_mfa_connections():
 
 
 @frappe.whitelist()
-def get_connection_accounts(connection_id):
+def get_connection_accounts(connection_id: str):
 	return frappe.get_all(
 		"Bank Account",
 		filters={
