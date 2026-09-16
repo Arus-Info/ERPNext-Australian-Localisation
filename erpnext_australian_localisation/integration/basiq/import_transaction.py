@@ -173,10 +173,16 @@ def sync_connection_transactions(connection_id: str | None = None, bank_account:
 
 
 def refresh_non_mfa_connections():
+	if not frappe.get_cached_doc("AU Localisation Settings").enable_open_banking:
+		return
+
 	for row in get_non_mfa_connections():
 		basiq_connector.refresh_connection(row.connection_id)
 
 
 def sync_non_mfa_connections():
+	if not frappe.get_cached_doc("AU Localisation Settings").enable_open_banking:
+		return
+
 	for row in get_non_mfa_connections():
 		sync_connection_transactions(connection_id=row.connection_id)

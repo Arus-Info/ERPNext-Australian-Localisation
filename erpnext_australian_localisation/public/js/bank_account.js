@@ -12,7 +12,11 @@ frappe.ui.form.on("Bank Account", {
 	},
 
 	validate(frm) {
-		if (!frm.doc.enable_transaction_import || frm.doc.provider_account_id) {
+		if (
+			!frm.doc.enable_transaction_import ||
+			frm.doc.provider_account_id ||
+			!au_localisation_settings.enable_open_banking
+		) {
 			return;
 		}
 

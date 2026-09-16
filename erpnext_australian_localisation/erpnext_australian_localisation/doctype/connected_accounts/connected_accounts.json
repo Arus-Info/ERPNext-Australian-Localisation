@@ -17,7 +17,6 @@
    "fieldname": "connection_id",
    "fieldtype": "Data",
    "hidden": 1,
-   "in_list_view": 1,
    "label": "Connection ID",
    "read_only": 1,
    "unique": 1
@@ -25,7 +24,6 @@
   {
    "fieldname": "sync_bank",
    "fieldtype": "Button",
-   "in_list_view": 1,
    "label": "Sync Bank"
   },
   {
@@ -48,7 +46,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-09-03 17:41:34.692991",
+ "modified": "2026-09-16 18:19:20.832566",
  "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
  "name": "Connected Accounts",

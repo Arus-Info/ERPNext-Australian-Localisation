@@ -298,7 +298,7 @@ OPEN_BANKING_FIELDS = {
 			"label": "Enable Transaction Import",
 			"fieldtype": "Check",
 			"insert_after": "section_break_open_banking",
-			"depends_on": 'eval:au_localisation_settings.provider != "Choose a Provider"',
+			"depends_on": 'eval:au_localisation_settings.enable_open_banking && au_localisation_settings.provider != "Choose a Provider"',
 			"module": "ERPNext Australian Localisation",
 		},
 		{
