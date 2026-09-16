@@ -149,7 +149,7 @@ def get_connection_accounts(connection_id: str):
 
 
 @frappe.whitelist()
-def sync_connection_transactions(connection_id=None, bank_account=None):
+def sync_connection_transactions(connection_id: str | None = None, bank_account: str | None = None):
 	if bank_account:
 		accounts = [
 			frappe.db.get_value(
