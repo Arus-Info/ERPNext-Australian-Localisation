@@ -26,10 +26,14 @@ frappe.ui.form.on("Bank Account", {
 });
 
 function fetch_provider_connections(frm) {
+	frappe.msgprint(__("Searching for bank connections..."));
+
 	frappe.call({
 		method: "erpnext_australian_localisation.integration.basiq.import_transaction.get_provider_connections",
 
 		callback(r) {
+			frappe.hide_msgprint(true);
+
 			const connections = r.message || [];
 			if (!connections.length) {
 				frappe.msgprint(__("No bank connections found"));
@@ -86,11 +90,15 @@ function fetch_provider_connections(frm) {
 }
 
 function fetch_provider_accounts(frm, connection_id) {
+	frappe.msgprint(__("Searching for accounts..."));
+
 	frappe.call({
 		method: "erpnext_australian_localisation.integration.basiq.import_transaction.get_provider_accounts",
 		args: { connection_id },
 
 		callback(r) {
+			frappe.hide_msgprint(true);
+
 			const accounts = r.message || [];
 			if (!accounts.length) {
 				frappe.msgprint(__("No accounts found"));

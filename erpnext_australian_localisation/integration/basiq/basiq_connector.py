@@ -101,13 +101,25 @@ def get_accounts(connection_id=None):
 
 def get_connections():
 	settings = frappe.get_cached_doc("AU Localisation Settings")
+
+	cache = frappe.cache()
+	cache_key = f"basiq_connections:{settings.user_id}"
+
+	connections = cache.get_value(cache_key)
+	if connections:
+		return connections
+
 	api_key = settings.get_password("api_key")
 
 	url = f"{BASIQ_API_BASE}/users/{settings.user_id}/connections"
 	response = requests.get(url, headers=get_headers(api_key), timeout=30)
 	response.raise_for_status()
 
-	return response.json().get("data", [])
+	connections = response.json().get("data", [])
+	if connections:
+		cache.set_value(cache_key, connections, expires_in_sec=60)
+
+	return connections
 
 
 def get_institution(institution_id):
