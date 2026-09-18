@@ -35,8 +35,7 @@ def _fetch_access_token(api_key, cache_key, data):
 	return token
 
 
-def get_headers(api_key, user_id=None):
-	# user_id is unused here, it keeps the signature shared with get_client_headers
+def get_headers(api_key):
 	data = {"scope": "SERVER_ACCESS"}
 	token = _fetch_access_token(api_key, "basiq_access_token", data)
 
@@ -62,13 +61,10 @@ def get_user_id():
 	return frappe.get_cached_doc("AU Localisation Settings").user_id
 
 
-def _basiq_request(url, method="GET", headers_for=get_headers, extra_headers={}, timeout=30, **kwargs):
-	settings = frappe.get_cached_doc("AU Localisation Settings")
-	api_key = settings.get_password("api_key")
+def _basiq_request(url, method="GET", timeout=30, **kwargs):
+	api_key = frappe.get_cached_doc("AU Localisation Settings").get_password("api_key")
 
-	headers = {**headers_for(api_key, settings.user_id), **extra_headers}
-
-	response = requests.request(method, url, headers=headers, timeout=timeout, **kwargs)
+	response = requests.request(method, url, headers=get_headers(api_key), timeout=timeout, **kwargs)
 	response.raise_for_status()
 
 	return response
@@ -144,13 +140,19 @@ def get_job(job_id):
 
 
 def submit_mfa_response(response_url, mfa_response):
-	response = _basiq_request(
+	# this endpoint needs a client scope token, not the server one _basiq_request uses
+	settings = frappe.get_cached_doc("AU Localisation Settings")
+
+	headers = get_client_headers(settings.get_password("api_key"), settings.user_id)
+	headers["Content-Type"] = "application/json"
+
+	response = requests.post(
 		response_url,
-		method="POST",
-		headers_for=get_client_headers,
-		extra_headers={"Content-Type": "application/json"},
+		headers=headers,
 		json={"mfa-response": mfa_response},
+		timeout=30,
 	)
+	response.raise_for_status()
 
 	return response.json() if response.content else {}
 
