@@ -253,6 +253,17 @@ function poll_basiq_sync_job(
 				return import_bank_transactions(frm, progress_dialog, connection_id, bank_account);
 			}
 
+			if (attempts >= BASIQ_MAX_POLL_ATTEMPTS) {
+				progress_dialog.hide();
+				return frappe.msgprint({
+					title: __("Bank Connection Refresh Timed Out"),
+					message: __(
+						"The bank is taking longer than expected to respond. Please try again later."
+					),
+					indicator: "orange"
+				});
+			}
+
 			setTimeout(
 				() =>
 					poll_basiq_sync_job(

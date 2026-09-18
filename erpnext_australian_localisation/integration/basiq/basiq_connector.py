@@ -5,48 +5,8 @@ BASIQ_API_BASE = "https://au-api.basiq.io"
 BASIQ_API_VERSION = "3.0"
 
 
-def get_access_token(api_key):
+def _fetch_access_token(api_key, cache_key, data):
 	cache = frappe.cache()
-
-	token = cache.get_value("basiq_access_token")
-	if token:
-		return token
-
-	response = requests.post(
-		f"{BASIQ_API_BASE}/token",
-		headers={
-			"Authorization": f"Basic {api_key}",
-			"Accept": "application/json",
-			"Content-Type": "application/x-www-form-urlencoded",
-			"basiq-version": BASIQ_API_VERSION,
-		},
-		data={"scope": "SERVER_ACCESS"},
-		timeout=30,
-	)
-	response.raise_for_status()
-
-	data = response.json()
-	token = data["access_token"]
-
-	cache.set_value(
-		"basiq_access_token",
-		token,
-		expires_in_sec=3000,
-	)
-	return token
-
-
-def get_headers(api_key):
-	return {
-		"Authorization": f"Bearer {get_access_token(api_key)}",
-		"Accept": "application/json",
-		"basiq-version": BASIQ_API_VERSION,
-	}
-
-
-def get_client_access_token(api_key, user_id):
-	cache = frappe.cache()
-	cache_key = f"basiq_client_access_token:{user_id}"
 
 	token = cache.get_value(cache_key)
 	if token:
@@ -60,13 +20,12 @@ def get_client_access_token(api_key, user_id):
 			"Content-Type": "application/x-www-form-urlencoded",
 			"basiq-version": BASIQ_API_VERSION,
 		},
-		data={"scope": "CLIENT_ACCESS", "userId": user_id},
+		data=data,
 		timeout=30,
 	)
 	response.raise_for_status()
 
-	data = response.json()
-	token = data["access_token"]
+	token = response.json()["access_token"]
 
 	cache.set_value(
 		cache_key,
@@ -76,21 +35,48 @@ def get_client_access_token(api_key, user_id):
 	return token
 
 
-def get_client_headers(api_key, user_id):
+def get_headers(api_key, user_id=None):
+	# user_id is unused here, it keeps the signature shared with get_client_headers
+	data = {"scope": "SERVER_ACCESS"}
+	token = _fetch_access_token(api_key, "basiq_access_token", data)
+
 	return {
-		"Authorization": f"Bearer {get_client_access_token(api_key, user_id)}",
+		"Authorization": f"Bearer {token}",
 		"Accept": "application/json",
 		"basiq-version": BASIQ_API_VERSION,
 	}
 
 
-def get_accounts(connection_id=None):
+def get_client_headers(api_key, user_id):
+	data = {"scope": "CLIENT_ACCESS", "userId": user_id}
+	token = _fetch_access_token(api_key, f"basiq_client_access_token:{user_id}", data)
+
+	return {
+		"Authorization": f"Bearer {token}",
+		"Accept": "application/json",
+		"basiq-version": BASIQ_API_VERSION,
+	}
+
+
+def get_user_id():
+	return frappe.get_cached_doc("AU Localisation Settings").user_id
+
+
+def _basiq_request(url, method="GET", headers_for=get_headers, extra_headers={}, timeout=30, **kwargs):
 	settings = frappe.get_cached_doc("AU Localisation Settings")
 	api_key = settings.get_password("api_key")
 
-	url = f"{BASIQ_API_BASE}/users/{settings.user_id}/accounts"
-	response = requests.get(url, headers=get_headers(api_key), timeout=30)
+	headers = {**headers_for(api_key, settings.user_id), **extra_headers}
+
+	response = requests.request(method, url, headers=headers, timeout=timeout, **kwargs)
 	response.raise_for_status()
+
+	return response
+
+
+def get_accounts(connection_id=None):
+	url = f"{BASIQ_API_BASE}/users/{get_user_id()}/accounts"
+	response = _basiq_request(url)
 
 	accounts = response.json().get("data", [])
 	if connection_id:
@@ -100,20 +86,17 @@ def get_accounts(connection_id=None):
 
 
 def get_connections():
-	settings = frappe.get_cached_doc("AU Localisation Settings")
+	user_id = get_user_id()
 
 	cache = frappe.cache()
-	cache_key = f"basiq_connections:{settings.user_id}"
+	cache_key = f"basiq_connections:{user_id}"
 
 	connections = cache.get_value(cache_key)
 	if connections:
 		return connections
 
-	api_key = settings.get_password("api_key")
-
-	url = f"{BASIQ_API_BASE}/users/{settings.user_id}/connections"
-	response = requests.get(url, headers=get_headers(api_key), timeout=30)
-	response.raise_for_status()
+	url = f"{BASIQ_API_BASE}/users/{user_id}/connections"
+	response = _basiq_request(url)
 
 	connections = response.json().get("data", [])
 	if connections:
@@ -130,12 +113,8 @@ def get_institution(institution_id):
 	if institution:
 		return institution
 
-	settings = frappe.get_cached_doc("AU Localisation Settings")
-	api_key = settings.get_password("api_key")
-
 	url = f"{BASIQ_API_BASE}/institutions/{institution_id}"
-	response = requests.get(url, headers=get_headers(api_key), timeout=30)
-	response.raise_for_status()
+	response = _basiq_request(url)
 
 	institution = response.json()
 	cache.set_value(cache_key, institution, expires_in_sec=86400)
@@ -151,54 +130,37 @@ def get_institution_name(institution):
 
 
 def refresh_connection(connection_id):
-	settings = frappe.get_cached_doc("AU Localisation Settings")
-	api_key = settings.get_password("api_key")
-
-	url = f"{BASIQ_API_BASE}/users/{settings.user_id}/connections/{connection_id}/refresh"
-	response = requests.post(url, headers=get_headers(api_key), timeout=30)
-	response.raise_for_status()
+	url = f"{BASIQ_API_BASE}/users/{get_user_id()}/connections/{connection_id}/refresh"
+	response = _basiq_request(url, method="POST")
 
 	return response.json()
 
 
 def get_job(job_id):
-	settings = frappe.get_cached_doc("AU Localisation Settings")
-	api_key = settings.get_password("api_key")
-
 	url = f"{BASIQ_API_BASE}/jobs/{job_id}"
-	response = requests.get(url, headers=get_headers(api_key), timeout=30)
-	response.raise_for_status()
+	response = _basiq_request(url)
 
 	return response.json()
 
 
 def submit_mfa_response(response_url, mfa_response):
-	settings = frappe.get_cached_doc("AU Localisation Settings")
-	api_key = settings.get_password("api_key")
-
-	headers = get_client_headers(api_key, settings.user_id)
-	headers["Content-Type"] = "application/json"
-
-	response = requests.post(
+	response = _basiq_request(
 		response_url,
-		headers=headers,
+		method="POST",
+		headers_for=get_client_headers,
+		extra_headers={"Content-Type": "application/json"},
 		json={"mfa-response": mfa_response},
-		timeout=30,
 	)
-	response.raise_for_status()
 
 	return response.json() if response.content else {}
 
 
 def get_transactions(provider_account_id, sync_date=None):
-	settings = frappe.get_cached_doc("AU Localisation Settings")
-	api_key = settings.get_password("api_key")
-
 	filter_expr = f"account.id.eq('{provider_account_id}')"
 	if sync_date:
 		filter_expr += f",transaction.postDate.gteq('{sync_date.strftime('%Y-%m-%d')}')"
 
-	url = f"{BASIQ_API_BASE}/users/{settings.user_id}/transactions"
+	url = f"{BASIQ_API_BASE}/users/{get_user_id()}/transactions"
 	params = {
 		"filter": filter_expr,
 		"limit": 500,
@@ -207,13 +169,7 @@ def get_transactions(provider_account_id, sync_date=None):
 	transactions = []
 
 	while url:
-		response = requests.get(
-			url,
-			headers=get_headers(api_key),
-			params=params,
-			timeout=60,
-		)
-		response.raise_for_status()
+		response = _basiq_request(url, params=params, timeout=60)
 		# pagination: get the next page of results if available
 		payload = response.json()
 
