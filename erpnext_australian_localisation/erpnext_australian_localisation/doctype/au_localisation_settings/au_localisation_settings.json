@@ -11,8 +11,17 @@
   "abn_lookup_guid",
   "section_break_lmnb",
   "remittance_advice_template",
-  "column_break_rmpt",
-  "payment_receipt_template"
+  "column_break_qoxu",
+  "payment_receipt_template",
+  "open_banking_integration_section",
+  "enable_open_banking",
+  "provider",
+  "column_break_wfua",
+  "user_id",
+  "api_key",
+  "section_break_yjss",
+  "column_break_oavc",
+  "table_talc"
  ],
  "fields": [
   {
@@ -38,6 +47,38 @@
    "label": "ABN Lookup GUID"
   },
   {
+   "fieldname": "open_banking_integration_section",
+   "fieldtype": "Section Break",
+   "label": "Open Banking Integration"
+  },
+  {
+   "default": "Choose a Provider",
+   "depends_on": "eval:doc.enable_open_banking == 1",
+   "fieldname": "provider",
+   "fieldtype": "Select",
+   "label": "Provider",
+   "options": "Choose a Provider\nBasiq"
+  },
+  {
+   "depends_on": "eval:doc.enable_open_banking == 1 && doc.provider != \"Choose a Provider\"",
+   "fieldname": "user_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "User ID",
+   "mandatory_depends_on": "eval:doc.enable_open_banking == 1 && doc.provider != \"Choose a Provider\""
+  },
+  {
+   "depends_on": "eval:doc.enable_open_banking == 1 && doc.provider != \"Choose a Provider\"",
+   "fieldname": "api_key",
+   "fieldtype": "Password",
+   "label": "API Key",
+   "mandatory_depends_on": "eval:doc.enable_open_banking == 1 && doc.provider != \"Choose a Provider\""
+  },
+  {
+   "fieldname": "column_break_wfua",
+   "fieldtype": "Column Break"
+  },
+  {
    "fieldname": "section_break_lmnb",
    "fieldtype": "Section Break"
   },
@@ -48,21 +89,42 @@
    "options": "Email Template"
   },
   {
-   "fieldname": "column_break_rmpt",
-   "fieldtype": "Column Break"
-  },
-  {
    "fieldname": "payment_receipt_template",
    "fieldtype": "Link",
    "label": "Payment Receipt Template",
    "options": "Email Template"
+  },
+  {
+   "fieldname": "column_break_qoxu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.enable_open_banking == 1 && doc.provider != \"Choose a Provider\"",
+   "fieldname": "section_break_yjss",
+   "fieldtype": "Section Break"
+  },
+  {
+   "depends_on": "eval:doc.enable_open_banking == 1 && doc.provider != \"Choose a Provider\"",
+   "fieldname": "table_talc",
+   "fieldtype": "Table",
+   "options": "Connected Accounts"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_open_banking",
+   "fieldtype": "Check",
+   "label": "Enable Open banking"
+  },
+  {
+   "fieldname": "column_break_oavc",
+   "fieldtype": "Column Break"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-07-06 14:23:29.474315",
+ "modified": "2026-09-16 18:30:04.969536",
  "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
  "name": "AU Localisation Settings",

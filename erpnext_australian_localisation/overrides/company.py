@@ -71,6 +71,26 @@ def on_update(doc, event):
 	if doc.country == "Australia":
 		create_simpler_bas_report_setup(doc.name, doc.chart_of_accounts)
 
+	set_default_operating_cost_account(doc)
+
+
+def set_default_operating_cost_account(doc):
+	"""
+	Accounts for a new company only exist after insertion, so this runs on_update
+	rather than after_insert. Only applies on the initial creation of the company,
+	not on later updates.
+	"""
+	if not doc.flags.in_insert:
+		return
+
+	account = frappe.db.get_value(
+		"Account", {"account_number": "63510", "company": doc.name}, "name"
+	) or frappe.db.get_value(
+		"Account", {"account_name": "Accrued Expenses Manufacturing", "company": doc.name}, "name"
+	)
+
+	doc.db_set("default_operating_cost_account", account or None, update_modified=False)
+
 
 def update_aulocalisation_settings(company):
 	au_localisation_settings = frappe.get_cached_doc("AU Localisation Settings")

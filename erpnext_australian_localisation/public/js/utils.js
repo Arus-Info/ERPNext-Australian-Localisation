@@ -106,7 +106,8 @@ au_localisation.abn.show_popup = function (frm, data) {
 				read_only: 1
 			},
 			{ label: "Postcode", fieldname: "address_postcode", fieldtype: "Data", read_only: 1 },
-			{ label: "State", fieldname: "address_state", fieldtype: "Data", read_only: 1 }
+			{ label: "State", fieldname: "address_state", fieldtype: "Data", read_only: 1 },
+			{ label: "GST Status", fieldname: "gst_status", fieldtype: "Data", read_only: 1 }
 		],
 		primary_action_label: __("OK"),
 		primary_action() {
@@ -129,6 +130,7 @@ au_localisation.abn.apply_details = function (frm, data) {
 	frm.set_value("abn_effective_from", data.abn_effective_from);
 	frm.set_value("address_postcode", data.address_postcode);
 	frm.set_value("address_state", data.address_state);
+	frm.set_value("gst_status", data.gst_status);
 
 	au_localisation.abn.apply_indicator(frm.fields_dict.abn_status.$wrapper, data.abn_status);
 };
@@ -140,7 +142,8 @@ au_localisation.abn.clear_tax_id_fields = function (frm) {
 		abn_status: null,
 		abn_effective_from: null,
 		address_postcode: null,
-		address_state: null
+		address_state: null,
+		gst_status: null
 	});
 };
 
