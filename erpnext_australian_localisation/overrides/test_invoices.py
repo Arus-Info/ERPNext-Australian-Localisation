@@ -26,15 +26,15 @@ class Row(dict):
 
 
 class TestPurchaseGSTEligibility(TestCase):
-	def purchase(self, items, tax_amount=100, detail=None, add_deduct_tax="Add"):
+	def purchase(self, items, tax_amount=100, detail=None, add_deduct_tax="Add", doctype="Purchase Invoice"):
 		doc = SimpleNamespace(
-			doctype="Purchase Invoice",
+			doctype=doctype,
 			name="EXAMPLE-1",
 			company="Example",
 			posting_date="2026-07-01",
 			taxes_and_charges="GST",
 			conversion_rate=1.5,
-			items=[Row(expense_account="Expense", **item) for item in items],
+			items=[Row(expense_account="Expense", income_account="Income", **item) for item in items],
 			taxes=[
 				Row(
 					account_head="GST",
@@ -69,8 +69,14 @@ class TestPurchaseGSTEligibility(TestCase):
 				return "AUD"
 			if doctype == "Account":
 				return "Tax"
-			if doctype in ("Item Tax Template", "Purchase Taxes and Charges Template"):
+			if doctype in (
+				"Item Tax Template",
+				"Purchase Taxes and Charges Template",
+				"Sales Taxes and Charges Template",
+			):
 				return filters
+			if doctype == "AU Tax Determination" and doc.doctype == "Sales Invoice":
+				return "AUSGST"
 			if doctype == "AU Tax Determination":
 				return "AUPNCAFR" if filters.get("item_tax_template") == "GST-free" else "AUPNCASGT"
 			raise AssertionError(doctype)
@@ -95,6 +101,8 @@ class TestPurchaseGSTEligibility(TestCase):
 				totals.get(row.bas_label, 0)
 				+ row.get("gst_offset_basis", 0)
 				+ row.get("gst_offset_amount", 0)
+				+ row.get("gst_pay_basis", 0)
+				+ row.get("gst_pay_amount", 0)
 			)
 		self.created = created
 		return totals
@@ -142,6 +150,13 @@ class TestPurchaseGSTEligibility(TestCase):
 				self.assertEqual(totals.get("1B", 0), 0)
 				self.assertEqual(totals["G11"], 1100)
 				self.assertEqual(totals[label], 1100)
+
+	def test_foreign_currency_sale_reports_company_currency_gst(self):
+		# The document tax is 66.67 at a 1.5 rate; BAS labels must use the AUD amount.
+		self.assertEqual(
+			self.purchase([{"item_code": "A", "base_net_amount": 1000}], doctype="Sales Invoice"),
+			{"1A": 100, "G1": 1100},
+		)
 
 	def test_ordinary_purchase_keeps_its_credit(self):
 		self.assertEqual(

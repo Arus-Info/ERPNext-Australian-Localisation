@@ -8,6 +8,8 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 
+from erpnext_australian_localisation.overrides.invoices import EXCLUDED_PURCHASE_TAX_CODES
+
 
 class AUBASReport(Document):
 	def before_submit(self):
@@ -39,7 +41,7 @@ def validate_reporting_scope(doc):
 		{
 			"company": doc.company,
 			"date": ["between", [doc.start_date, doc.end_date]],
-			"tax_code": ["in", ["AUPPVTUSE", "AUPINPTAX"]],
+			"tax_code": ["in", sorted(EXCLUDED_PURCHASE_TAX_CODES)],
 		},
 	):
 		frappe.throw(

@@ -3,6 +3,9 @@ from decimal import ROUND_HALF_UP, Decimal, InvalidOperation
 import frappe
 import pandas as pd
 
+# Purchase GST that is not creditable (private use, input-taxed).
+EXCLUDED_PURCHASE_TAX_CODES = frozenset({"AUPPVTUSE", "AUPINPTAX"})
+
 
 def before_submit(doc, event):
 	if doc.taxes_and_charges:
@@ -49,7 +52,7 @@ def before_submit(doc, event):
 				allocations = get_purchase_tax_allocations(doc, tax)
 			for tax_code, amount in allocations:
 				# Excluded GST forms part of the purchase and its G13/G15 exclusion.
-				management = "Subjected" if tax_code in {"AUPPVTUSE", "AUPINPTAX"} else tax_management
+				management = "Subjected" if tax_code in EXCLUDED_PURCHASE_TAX_CODES else tax_management
 				result.extend(
 					generate_bas_labels(
 						management, tax_allocation, tax_code, tax.account_head, amount, sum_depends_on[1]
@@ -66,7 +69,7 @@ def get_purchase_tax_allocations(doc, tax):
 	if tax.get("add_deduct_tax") == "Deduct":
 		total = -total
 	codes = {item.au_tax_code for item in doc.items}
-	if not codes & {"AUPPVTUSE", "AUPINPTAX"}:
+	if not codes & EXCLUDED_PURCHASE_TAX_CODES:
 		return [(tax.au_tax_code, float(total))]
 	if len(codes) == 1:
 		return [(next(iter(codes)), float(total))]
