@@ -4,10 +4,24 @@ import requests
 BASIQ_API_BASE = "https://au-api.basiq.io"
 BASIQ_API_VERSION = "3.0"
 
+# institution "authorization" -> Bank Account "MFA Requirement"
+MFA_REQUIREMENTS = {
+	"user-mfa": "Always",
+	"user-mfa-intermittent": "Sometimes",
+}
 
-def _fetch_access_token(api_key, cache_key, data):
+
+def get_access_token(client_access=False):
+	settings = frappe.get_cached_doc("AU Localisation Settings")
+
+	if client_access:
+		cache_key = f"basiq_client_access_token:{settings.user_id}"
+		data = {"scope": "CLIENT_ACCESS", "userId": settings.user_id}
+	else:
+		cache_key = "basiq_access_token"
+		data = {"scope": "SERVER_ACCESS"}
+
 	cache = frappe.cache()
-
 	token = cache.get_value(cache_key)
 	if token:
 		return token
@@ -15,7 +29,7 @@ def _fetch_access_token(api_key, cache_key, data):
 	response = requests.post(
 		f"{BASIQ_API_BASE}/token",
 		headers={
-			"Authorization": f"Basic {api_key}",
+			"Authorization": f"Basic {settings.get_password('api_key')}",
 			"Accept": "application/json",
 			"Content-Type": "application/x-www-form-urlencoded",
 			"basiq-version": BASIQ_API_VERSION,
@@ -26,135 +40,107 @@ def _fetch_access_token(api_key, cache_key, data):
 	response.raise_for_status()
 
 	token = response.json()["access_token"]
-
-	cache.set_value(
-		cache_key,
-		token,
-		expires_in_sec=3000,
-	)
+	cache.set_value(cache_key, token, expires_in_sec=3000)
 	return token
 
 
-def get_headers(api_key):
-	data = {"scope": "SERVER_ACCESS"}
-	token = _fetch_access_token(api_key, "basiq_access_token", data)
+def get_user_url():
+	return f"{BASIQ_API_BASE}/users/{frappe.get_cached_doc('AU Localisation Settings').user_id}"
 
-	return {
-		"Authorization": f"Bearer {token}",
+
+def _basiq_request(url, method="GET", timeout=30, client_access=False, **kwargs):
+	headers = {
+		"Authorization": f"Bearer {get_access_token(client_access)}",
 		"Accept": "application/json",
 		"basiq-version": BASIQ_API_VERSION,
 	}
-
-
-def get_client_headers(api_key, user_id):
-	data = {"scope": "CLIENT_ACCESS", "userId": user_id}
-	token = _fetch_access_token(api_key, f"basiq_client_access_token:{user_id}", data)
-
-	return {
-		"Authorization": f"Bearer {token}",
-		"Accept": "application/json",
-		"basiq-version": BASIQ_API_VERSION,
-	}
-
-
-def get_user_id():
-	return frappe.get_cached_doc("AU Localisation Settings").user_id
-
-
-def _basiq_request(url, method="GET", timeout=30, **kwargs):
-	api_key = frappe.get_cached_doc("AU Localisation Settings").get_password("api_key")
-
-	response = requests.request(method, url, headers=get_headers(api_key), timeout=timeout, **kwargs)
+	response = requests.request(method, url, headers=headers, timeout=timeout, **kwargs)
 	response.raise_for_status()
+	return response.json() if response.content else {}
 
-	return response
 
+def _cached_request(cache_key, url, expires_in_sec):
+	cache = frappe.cache()
 
-def get_accounts(connection_id=None):
-	url = f"{BASIQ_API_BASE}/users/{get_user_id()}/accounts"
-	response = _basiq_request(url)
+	data = cache.get_value(cache_key)
+	if data is None:
+		data = _basiq_request(url)
+		cache.set_value(cache_key, data, expires_in_sec=expires_in_sec)
 
-	accounts = response.json().get("data", [])
-	if connection_id:
-		accounts = [account for account in accounts if account.get("connection") == connection_id]
-
-	return accounts
+	return data
 
 
 def get_connections():
-	user_id = get_user_id()
+	return _cached_request("basiq_connections", f"{get_user_url()}/connections", 60).get("data", [])
 
+
+def get_connection(connection_id):
+	return _cached_request(
+		f"basiq_connection:{connection_id}", f"{get_user_url()}/connections/{connection_id}", 86400
+	)
+
+
+def get_institutions():
+	# one call for every institution instead of one call per connection
 	cache = frappe.cache()
-	cache_key = f"basiq_connections:{user_id}"
 
-	connections = cache.get_value(cache_key)
-	if connections:
-		return connections
+	institutions = cache.get_value("basiq_institutions")
+	if institutions is None:
+		institutions = {}
+		url = f"{BASIQ_API_BASE}/institutions"
+		while url:
+			payload = _basiq_request(url, timeout=60)
+			for institution in payload.get("data", []):
+				# only keep what we read, the full list is large
+				institutions[institution.get("id")] = {
+					"id": institution.get("id"),
+					"name": institution.get("name"),
+					"authorization": institution.get("authorization"),
+				}
+			url = payload.get("links", {}).get("next")
 
-	url = f"{BASIQ_API_BASE}/users/{user_id}/connections"
-	response = _basiq_request(url)
+		cache.set_value("basiq_institutions", institutions, expires_in_sec=86400)
 
-	connections = response.json().get("data", [])
-	if connections:
-		cache.set_value(cache_key, connections, expires_in_sec=60)
-
-	return connections
+	return institutions
 
 
-def get_institution(institution_id):
-	cache = frappe.cache()
-	cache_key = f"basiq_institution:{institution_id}"
+def get_institution(institution):
+	# connections give the institution either as an id or as {"id": ...}
+	institution_id = institution.get("id") if isinstance(institution, dict) else institution
 
-	institution = cache.get_value(cache_key)
-	if institution:
-		return institution
-
-	url = f"{BASIQ_API_BASE}/institutions/{institution_id}"
-	response = _basiq_request(url)
-
-	institution = response.json()
-	cache.set_value(cache_key, institution, expires_in_sec=86400)
-	return institution
+	# fall back to a single lookup for an institution added since the list was cached
+	return get_institutions().get(institution_id) or _cached_request(
+		f"basiq_institution:{institution_id}", f"{BASIQ_API_BASE}/institutions/{institution_id}", 86400
+	)
 
 
 def get_institution_name(institution):
-	institution_id = institution.get("id") if isinstance(institution, dict) else institution
 	try:
-		return get_institution(institution_id).get("name") or institution_id
+		return get_institution(institution).get("name")
 	except Exception:
-		return institution_id
+		return None
 
 
-def refresh_connection(connection_id):
-	url = f"{BASIQ_API_BASE}/users/{get_user_id()}/connections/{connection_id}/refresh"
-	response = _basiq_request(url, method="POST")
+def get_account_holder(connection):
+	# the connection list may leave out the profile, so fall back to fetching the connection itself
+	try:
+		profile = connection.get("profile") or get_connection(connection.get("id")).get("profile") or {}
+	except Exception:
+		return None
 
-	return response.json()
-
-
-def get_job(job_id):
-	url = f"{BASIQ_API_BASE}/jobs/{job_id}"
-	response = _basiq_request(url)
-
-	return response.json()
-
-
-def submit_mfa_response(response_url, mfa_response):
-	# this endpoint needs a client scope token, not the server one _basiq_request uses
-	settings = frappe.get_cached_doc("AU Localisation Settings")
-
-	headers = get_client_headers(settings.get_password("api_key"), settings.user_id)
-	headers["Content-Type"] = "application/json"
-
-	response = requests.post(
-		response_url,
-		headers=headers,
-		json={"mfa-response": mfa_response},
-		timeout=30,
+	return profile.get("fullName") or " ".join(
+		filter(None, [profile.get("firstName"), profile.get("lastName")])
 	)
-	response.raise_for_status()
 
-	return response.json() if response.content else {}
+
+def get_mfa_requirement(connection_id):
+	authorization = get_institution(get_connection(connection_id).get("institution")).get("authorization")
+	return MFA_REQUIREMENTS.get(authorization, "Not Required")
+
+
+def get_accounts(connection_id):
+	accounts = _basiq_request(f"{get_user_url()}/accounts").get("data", [])
+	return [account for account in accounts if account.get("connection") == connection_id]
 
 
 def get_transactions(provider_account_id, sync_date=None):
@@ -162,22 +148,41 @@ def get_transactions(provider_account_id, sync_date=None):
 	if sync_date:
 		filter_expr += f",transaction.postDate.gteq('{sync_date.strftime('%Y-%m-%d')}')"
 
-	url = f"{BASIQ_API_BASE}/users/{get_user_id()}/transactions"
-	params = {
-		"filter": filter_expr,
-		"limit": 500,
-	}
+	url = f"{get_user_url()}/transactions"
+	params = {"filter": filter_expr, "limit": 500}
 
 	transactions = []
-
 	while url:
-		response = _basiq_request(url, params=params, timeout=60)
-		# pagination: get the next page of results if available
-		payload = response.json()
-
+		payload = _basiq_request(url, params=params, timeout=60)
 		transactions.extend(payload.get("data", []))
 
+		# the next link already carries the filter
 		url = payload.get("links", {}).get("next")
 		params = None
 
 	return transactions
+
+
+@frappe.whitelist()
+def refresh_connection(connection_id: str):
+	return _basiq_request(f"{get_user_url()}/connections/{connection_id}/refresh", method="POST")
+
+
+@frappe.whitelist()
+def get_job(job_id: str):
+	return _basiq_request(f"{BASIQ_API_BASE}/jobs/{job_id}")
+
+
+@frappe.whitelist()
+def submit_mfa_response(response_url: str, mfa_response: str | list):
+	# the url comes from the browser, don't send a Basiq token anywhere else
+	if not response_url.startswith(f"{BASIQ_API_BASE}/"):
+		frappe.throw(frappe._("Invalid MFA response URL"))
+
+	# this endpoint needs a client scope token, not the server one
+	return _basiq_request(
+		response_url,
+		method="POST",
+		client_access=True,
+		json={"mfa-response": frappe.parse_json(mfa_response)},
+	)

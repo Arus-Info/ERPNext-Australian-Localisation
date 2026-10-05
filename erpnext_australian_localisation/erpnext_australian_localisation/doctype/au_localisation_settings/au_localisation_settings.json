@@ -18,10 +18,7 @@
   "provider",
   "column_break_wfua",
   "user_id",
-  "api_key",
-  "section_break_yjss",
-  "column_break_oavc",
-  "table_talc"
+  "api_key"
  ],
  "fields": [
   {
@@ -99,32 +96,17 @@
    "fieldtype": "Column Break"
   },
   {
-   "depends_on": "eval:doc.enable_open_banking == 1 && doc.provider != \"Choose a Provider\"",
-   "fieldname": "section_break_yjss",
-   "fieldtype": "Section Break"
-  },
-  {
-   "depends_on": "eval:doc.enable_open_banking == 1 && doc.provider != \"Choose a Provider\"",
-   "fieldname": "table_talc",
-   "fieldtype": "Table",
-   "options": "Connected Accounts"
-  },
-  {
    "default": "0",
    "fieldname": "enable_open_banking",
    "fieldtype": "Check",
    "label": "Enable Open banking"
-  },
-  {
-   "fieldname": "column_break_oavc",
-   "fieldtype": "Column Break"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-09-16 18:30:04.969536",
+ "modified": "2026-09-28 12:00:00.000000",
  "modified_by": "Administrator",
  "module": "ERPNext Australian Localisation",
  "name": "AU Localisation Settings",

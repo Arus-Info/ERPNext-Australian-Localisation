@@ -206,7 +206,10 @@ doc_events = {
 	},
 	"Employee": {"validate": "erpnext_australian_localisation.overrides.bank_details_validation.validate"},
 	"Bank Account": {
-		"validate": "erpnext_australian_localisation.overrides.bank_details_validation.bank_account_validation"
+		"validate": [
+			"erpnext_australian_localisation.overrides.bank_details_validation.bank_account_validation",
+			"erpnext_australian_localisation.integration.basiq.import_transaction.set_mfa_requirement",
+		]
 	},
 	"Bank Statement Import": {
 		"on_update": "erpnext_australian_localisation.overrides.bank_statement_import.after_save"
