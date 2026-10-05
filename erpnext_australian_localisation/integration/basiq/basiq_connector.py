@@ -129,7 +129,7 @@ def get_account_holder(connection):
 		return None
 
 	return profile.get("fullName") or " ".join(
-		filter(None, [profile.get("firstName"), profile.get("lastName")])
+		name for name in (profile.get("firstName"), profile.get("lastName")) if name
 	)
 
 
