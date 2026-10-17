@@ -20,7 +20,7 @@ concurrency:
 
 jobs:
   tests:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
     name: Server
@@ -45,6 +45,8 @@ jobs:
     steps:
       - name: Clone
         uses: actions/checkout@v6
+        with:
+          persist-credentials: false
 
       - name: Find tests
         run: |
@@ -63,7 +65,7 @@ jobs:
           check-latest: true
 
       - name: Cache pip
-        uses: actions/cache@v4
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/*requirements.txt', '**/pyproject.toml', '**/setup.py', '**/setup.cfg') }}
@@ -73,7 +75,7 @@ jobs:
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
-        run: 'echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT'
+        run: 'echo "dir=$(yarn cache dir)" >> "$GITHUB_OUTPUT"'
 
       - uses: actions/cache@v5
         id: yarn-cache
