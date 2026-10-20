@@ -44,6 +44,9 @@ bench install-app erpnext_australian_localisation
   - Sales amounts are reported in G1 based on GL Entries.
 - The final 1A and 1B label amounts will be reported to arrive at the amount business needs to pay the ATO or the amount ATO will refund the business
 - BAS reports can be generated Monthly / Quarterly
+- Full BAS excludes private and input-taxed purchase GST from 1B and includes it in G13/G15. Mixed eligibility requires ERPNext v16 item tax records that reconcile to the company-currency tax total. Split partly private acquisitions into separately supported business and private invoice rows.
+- Simpler BAS stops when the period contains private or input-taxed purchase entries because its ledger totals cannot apply those item exclusions. Use the full reporting method after reconciling the entries. Financial-acquisition and reduced-credit exceptions require separate assessment.
+- After updating purchase allocation, reconcile and regenerate affected existing invoice BAS entries and draft reports. Previously submitted BAS reports and ledger postings are not amended automatically.
 - BAS reports (detailed information with transactional document number) can be printed in PDF format
 - Payment Proposal (Batch) generation for Supplier / Employee Payment
 - ABA File generation for the Payment Batch which can be used to upload into the online banking system for bulk payments for the suppliers / employees
