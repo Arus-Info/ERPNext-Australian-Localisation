@@ -1,5 +1,6 @@
 import frappe
 import pandas as pd
+from frappe import _
 
 
 def before_submit(doc, event):
@@ -158,3 +159,15 @@ def on_cancel(doc, event):
 	bas_entries = frappe.get_list("AU BAS Entry", filters={"voucher_no": doc.name}, pluck="name")
 	for bas_entry in bas_entries:
 		frappe.delete_doc("AU BAS Entry", bas_entry, ignore_permissions=True)
+
+def on_save(doc, event):
+	for item in doc.items:
+		if item.input_taxed :
+			if not item.item_tax_template:
+				frappe.throw(_("Item Tax Template is mandatory"))
+
+			if frappe.db.exists(
+				"Item Tax Template Detail",
+				{"parent": item.item_tax_template, "tax_rate": ["!=", 0]},
+			):
+				frappe.throw(_("Item Tax Template should be Exempt"))
