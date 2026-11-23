@@ -42,13 +42,16 @@ def before_submit(doc, event):
 				if frappe.db.get_value("Account", tax.account_head, "account_type") == "Tax"
 				else "Subjected"
 			)
+			amount = round(tax.base_tax_amount_after_discount_amount, 2)
+			if doc.doctype == "Purchase Invoice" and tax.get("add_deduct_tax") == "Deduct":
+				amount = -amount
 			result.extend(
 				generate_bas_labels(
 					tax_management,
 					tax_allocation,
 					tax.au_tax_code,
 					tax.account_head,
-					round(tax.tax_amount_after_discount_amount, 2),
+					amount,
 					sum_depends_on[1],
 				)
 			)
