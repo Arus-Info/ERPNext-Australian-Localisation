@@ -160,9 +160,10 @@ def on_cancel(doc, event):
 	for bas_entry in bas_entries:
 		frappe.delete_doc("AU BAS Entry", bas_entry, ignore_permissions=True)
 
+
 def on_save(doc, event):
 	for item in doc.items:
-		if item.input_taxed :
+		if item.input_taxed:
 			if not item.item_tax_template:
 				frappe.throw(_("Item Tax Template is mandatory"))
 

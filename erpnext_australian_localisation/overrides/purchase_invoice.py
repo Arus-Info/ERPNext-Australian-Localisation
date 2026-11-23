@@ -14,6 +14,7 @@ def on_cancel(doc, event):
 	if payment_entry:
 		update_on_payment_entry_updation(payment_entry)
 
+
 def on_save(doc, event):
 	for item in doc.items:
 		if item.input_taxed or item.private_use:
@@ -30,4 +31,6 @@ def on_save(doc, event):
 				"Item Tax Template Detail",
 				{"parent": item.item_tax_template, "tax_rate": ["!=", 0]},
 			):
-				frappe.throw(_("Item Tax Template must be Exempt only. Other Item Tax Templates are not allowed."))
+				frappe.throw(
+					_("Item Tax Template must be Exempt only. Other Item Tax Templates are not allowed.")
+				)

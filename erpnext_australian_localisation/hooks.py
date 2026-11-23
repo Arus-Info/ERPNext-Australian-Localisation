@@ -180,8 +180,7 @@ doc_events = {
 	"Sales Invoice": {
 		"before_submit": "erpnext_australian_localisation.overrides.invoices.before_submit",
 		"on_cancel": "erpnext_australian_localisation.overrides.invoices.on_cancel",
-        "validate": "erpnext_australian_localisation.overrides.invoices.on_save",
-
+		"validate": "erpnext_australian_localisation.overrides.invoices.on_save",
 	},
 	"Purchase Invoice": {
 		"validate": "erpnext_australian_localisation.overrides.purchase_invoice.on_save",
