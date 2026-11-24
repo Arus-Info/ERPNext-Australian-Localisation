@@ -21,7 +21,7 @@ function get_item_tax_template(frm, cdt, cdn) {
 		frappe.call({
 			method: "erpnext.stock.get_item_details.get_item_tax_template",
 			args: {
-				ctx: {
+				args: {
 					item_code: item.item_code,
 					company: frm.doc.company,
 					base_net_rate: item.base_net_rate,

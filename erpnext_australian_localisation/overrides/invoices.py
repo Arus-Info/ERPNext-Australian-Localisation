@@ -165,10 +165,18 @@ def on_save(doc, event):
 	for item in doc.items:
 		if item.input_taxed:
 			if not item.item_tax_template:
-				frappe.throw(_("Item Tax Template is mandatory"))
+				frappe.throw(
+					_(
+						"Item Tax Template is mandatory when 'Input-taxed Sales' is checked, "
+						"because GST cannot be charged on these sales. "
+						"Please select an Exempt Item Tax Template."
+					)
+				)
 
 			if frappe.db.exists(
 				"Item Tax Template Detail",
 				{"parent": item.item_tax_template, "tax_rate": ["!=", 0]},
 			):
-				frappe.throw(_("Item Tax Template should be Exempt"))
+				frappe.throw(
+					_("Item Tax Template must be Exempt only. Other Item Tax Templates are not allowed.")
+				)
