@@ -1,5 +1,6 @@
 import frappe
 import pandas as pd
+from frappe import _
 
 
 def before_submit(doc, event):
@@ -158,3 +159,36 @@ def on_cancel(doc, event):
 	bas_entries = frappe.get_list("AU BAS Entry", filters={"voucher_no": doc.name}, pluck="name")
 	for bas_entry in bas_entries:
 		frappe.delete_doc("AU BAS Entry", bas_entry, ignore_permissions=True)
+
+
+def on_save(doc, event):
+	for item in doc.items:
+		if doc.doctype == "Sales Invoice":
+			if item.input_taxed:
+				if not item.item_tax_template:
+					frappe.throw(
+						_(
+							"Item Tax Template is mandatory when 'Input-taxed Sales' is checked, "
+							"because GST cannot be charged on these sales. "
+							"Please select an Exempt Item Tax Template."
+						)
+					)
+
+		elif doc.doctype == "Purchase Invoice":
+			if item.input_taxed or item.private_use:
+				if not item.item_tax_template:
+					frappe.throw(
+						_(
+							"Item Tax Template is mandatory when 'Purchase for Input-taxed Sales' or "
+							"'Purchase for private use' is checked, because GST credit cannot be claimed "
+							"on these purchases. Please select an Exempt Item Tax Template."
+						)
+					)
+
+		if frappe.db.exists(
+			"Item Tax Template Detail",
+			{"parent": item.item_tax_template, "tax_rate": ["!=", 0]},
+		):
+			frappe.throw(
+				_("Item Tax Template must be Exempt only. Other Item Tax Templates are not allowed.")
+			)
