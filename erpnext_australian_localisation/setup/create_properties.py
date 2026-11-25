@@ -8,6 +8,7 @@ from erpnext_australian_localisation.setup.custom_fields import (
 	CUSTOM_FIELDS_FOR_BANK_FILE,
 	EMPLOYEE_BANK_DETAILS,
 	HRMS_CUSTOM_FIELDS,
+	OPEN_BANKING_FIELDS,
 )
 from erpnext_australian_localisation.setup.property_setters import ABN_PROPERTIES, PROPERTIES
 
@@ -27,6 +28,7 @@ def initial_setup():
 	create_property_setter(PROPERTIES)
 	create_properties_for_bai2_file()
 	create_properties_for_abn_guid()
+	create_properties_for_open_banking()
 	installed_apps = frappe.get_installed_apps()
 	if "hrms" in installed_apps:
 		create_hrms_custom_fields()
@@ -48,3 +50,7 @@ def create_properties_for_bai2_file():
 def create_properties_for_abn_guid():
 	create_custom_fields(ABN_GUID_FIELDS, update=1)
 	create_property_setter(ABN_PROPERTIES)
+
+
+def create_properties_for_open_banking():
+	create_custom_fields(OPEN_BANKING_FIELDS, update=1)
