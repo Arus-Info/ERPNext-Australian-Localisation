@@ -164,26 +164,27 @@ def on_cancel(doc, event):
 def on_save(doc, event):
 	for item in doc.items:
 		if doc.doctype == "Sales Invoice":
-			if item.input_taxed:
-				if not item.item_tax_template:
-					frappe.throw(
-						_(
-							"Item Tax Template is mandatory when 'Input-taxed Sales' is checked, "
-							"because GST cannot be charged on these sales. "
-							"Please select an Exempt Item Tax Template."
-						)
-					)
-
+			needs_exempt_template = item.input_taxed
+			mandatory_msg = _(
+				"Item Tax Template is mandatory when 'Input-taxed Sales' is checked, "
+				"because GST cannot be charged on these sales. "
+				"Please select an Exempt Item Tax Template."
+			)
 		elif doc.doctype == "Purchase Invoice":
-			if item.input_taxed or item.private_use:
-				if not item.item_tax_template:
-					frappe.throw(
-						_(
-							"Item Tax Template is mandatory when 'Purchase for Input-taxed Sales' or "
-							"'Purchase for private use' is checked, because GST credit cannot be claimed "
-							"on these purchases. Please select an Exempt Item Tax Template."
-						)
-					)
+			needs_exempt_template = item.input_taxed or item.private_use
+			mandatory_msg = _(
+				"Item Tax Template is mandatory when 'Purchase for Input-taxed Sales' or "
+				"'Purchase for private use' is checked, because GST credit cannot be claimed "
+				"on these purchases. Please select an Exempt Item Tax Template."
+			)
+		else:
+			continue
+
+		if not needs_exempt_template:
+			continue
+
+		if not item.item_tax_template:
+			frappe.throw(mandatory_msg)
 
 		if frappe.db.exists(
 			"Item Tax Template Detail",
