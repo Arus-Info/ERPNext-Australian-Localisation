@@ -105,3 +105,50 @@ class TestPurchaseGSTEligibility(TestCase):
 					),
 					{"1B": sign * -100, "G11": sign * 900},
 				)
+
+
+class TestExemptItemTaxTemplateValidation(TestCase):
+	NON_EXEMPT = "GST 10%"
+	EXEMPT = "GST Exempt"
+
+	def validate(self, doctype, **item):
+		doc = SimpleNamespace(doctype=doctype, items=[Row(**item)])
+
+		def exists(doctype, filters):
+			self.assertEqual(doctype, "Item Tax Template Detail")
+			return filters["parent"] == self.NON_EXEMPT
+
+		with patch.object(frappe.db, "exists", side_effect=exists):
+			invoices.on_save(doc, "validate")
+
+	def test_ordinary_items_may_use_non_exempt_template(self):
+		for doctype in ("Sales Invoice", "Purchase Invoice"):
+			with self.subTest(doctype=doctype):
+				self.validate(doctype, item_tax_template=self.NON_EXEMPT)
+				self.validate(doctype, item_tax_template=None)
+
+	def test_flagged_items_require_a_template(self):
+		cases = [
+			("Sales Invoice", {"input_taxed": 1}),
+			("Purchase Invoice", {"input_taxed": 1}),
+			("Purchase Invoice", {"private_use": 1}),
+		]
+		for doctype, flags in cases:
+			with self.subTest(doctype=doctype, **flags):
+				with self.assertRaisesRegex(frappe.ValidationError, "mandatory"):
+					self.validate(doctype, item_tax_template=None, **flags)
+
+	def test_flagged_items_reject_non_exempt_template(self):
+		cases = [
+			("Sales Invoice", {"input_taxed": 1}),
+			("Purchase Invoice", {"input_taxed": 1}),
+			("Purchase Invoice", {"private_use": 1}),
+		]
+		for doctype, flags in cases:
+			with self.subTest(doctype=doctype, **flags):
+				with self.assertRaisesRegex(frappe.ValidationError, "Exempt only"):
+					self.validate(doctype, item_tax_template=self.NON_EXEMPT, **flags)
+				self.validate(doctype, item_tax_template=self.EXEMPT, **flags)
+
+	def test_sales_private_use_flag_is_ignored(self):
+		self.validate("Sales Invoice", private_use=1, item_tax_template=self.NON_EXEMPT)
