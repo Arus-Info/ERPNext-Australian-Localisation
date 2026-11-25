@@ -165,7 +165,6 @@ def on_save(doc, event):
 	for item in doc.items:
 		if doc.doctype == "Sales Invoice":
 			if item.input_taxed:
-
 				if not item.item_tax_template:
 					frappe.throw(
 						_(
@@ -176,8 +175,7 @@ def on_save(doc, event):
 					)
 
 		elif doc.doctype == "Purchase Invoice":
-			if (item.input_taxed or item.private_use):
-
+			if item.input_taxed or item.private_use:
 				if not item.item_tax_template:
 					frappe.throw(
 						_(
